@@ -78,7 +78,7 @@ export default function FilterBar({ onSortChange, onFilterChange }: FilterBarPro
                   style={{
                     color:
                       activeSort === opt.value
-                        ? "var(--hubb-accent, var(--hubb-accent, #06C167))"
+                        ? "var(--hubb-accent)"
                         : "var(--text-primary)",
                     fontWeight: activeSort === opt.value ? 600 : 400,
                   }}
@@ -107,7 +107,7 @@ export default function FilterBar({ onSortChange, onFilterChange }: FilterBarPro
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium shrink-0 transition-all"
             style={{
               background: active
-                ? "var(--hubb-accent, var(--hubb-accent, #06C167))"
+                ? "var(--hubb-accent)"
                 : "var(--bg-card)",
               color: active ? "white" : "var(--text-primary)",
               border: active

@@ -42,7 +42,7 @@ export default function PromoBanner() {
     <div
       className="rounded-2xl overflow-hidden relative"
       style={{
-        background: "linear-gradient(135deg, var(--hubb-accent, var(--hubb-accent, #06C167)) 0%, #00704A 100%)",
+        background: "linear-gradient(135deg, var(--hubb-accent) 0%, #00704A 100%)",
       }}
     >
       <div className="px-6 py-5 flex items-center justify-between relative z-10">

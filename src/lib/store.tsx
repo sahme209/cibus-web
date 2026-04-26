@@ -13,6 +13,14 @@ import * as api from "./api";
 
 // --- Cart Context ---
 
+interface PendingSwitch {
+  item: FoodItem;
+  quantity: number;
+  options: CustomizationOption[];
+  instructions: string;
+  fromRestaurant: string;
+}
+
 interface CartContextType {
   cart: Cart;
   addItem: (
@@ -26,6 +34,9 @@ interface CartContextType {
   clearCart: () => void;
   itemCount: number;
   subtotal: number;
+  pendingSwitch: PendingSwitch | null;
+  confirmSwitch: () => void;
+  cancelSwitch: () => void;
 }
 
 const emptyCart: Cart = { items: [], restaurantID: null, restaurantName: null };
@@ -38,6 +49,9 @@ const CartContext = createContext<CartContextType>({
   clearCart: () => {},
   itemCount: 0,
   subtotal: 0,
+  pendingSwitch: null,
+  confirmSwitch: () => {},
+  cancelSwitch: () => {},
 });
 
 export function useCart() {
@@ -102,10 +116,32 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem("hubb_cart");
     return saved ? JSON.parse(saved) : emptyCart;
   });
+  const [pendingSwitch, setPendingSwitch] = useState<PendingSwitch | null>(null);
 
   useEffect(() => {
     localStorage.setItem("hubb_cart", JSON.stringify(cart));
   }, [cart]);
+
+  const confirmSwitch = useCallback(() => {
+    if (!pendingSwitch) return;
+    const { item, quantity, options, instructions } = pendingSwitch;
+    setCart({
+      items: [
+        {
+          id: `${item.id}_${Date.now()}`,
+          foodItem: item,
+          quantity,
+          selectedOptions: options,
+          specialInstructions: instructions,
+        },
+      ],
+      restaurantID: item.restaurantID,
+      restaurantName: item.restaurantName,
+    });
+    setPendingSwitch(null);
+  }, [pendingSwitch]);
+
+  const cancelSwitch = useCallback(() => setPendingSwitch(null), []);
 
   const addItem = useCallback(
     (
@@ -116,23 +152,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     ) => {
       setCart((prev) => {
         if (prev.restaurantID && prev.restaurantID !== item.restaurantID) {
-          const confirmed = window.confirm(
-            "Adding items from a different restaurant will clear your current cart. Continue?"
-          );
-          if (!confirmed) return prev;
-          return {
-            items: [
-              {
-                id: `${item.id}_${Date.now()}`,
-                foodItem: item,
-                quantity,
-                selectedOptions: options,
-                specialInstructions: instructions,
-              },
-            ],
-            restaurantID: item.restaurantID,
-            restaurantName: item.restaurantName,
-          };
+          setPendingSwitch({
+            item,
+            quantity,
+            options,
+            instructions,
+            fromRestaurant: prev.restaurantName || "another restaurant",
+          });
+          return prev;
         }
 
         const existing = prev.items.find(
@@ -281,6 +308,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           clearCart,
           itemCount,
           subtotal,
+          pendingSwitch,
+          confirmSwitch,
+          cancelSwitch,
         }}
       >
         <AddressContext.Provider

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useToast } from "@/components/ToastProvider";
 import * as api from "@/lib/api";
 import type { Order, OrderStatus } from "@/lib/types";
 
@@ -25,6 +26,12 @@ export default function TrackingPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [tracking, setTracking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [cancelling, setCancelling] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [ratingComment, setRatingComment] = useState("");
+  const [submittingRating, setSubmittingRating] = useState(false);
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (!id) return;
@@ -104,6 +111,38 @@ export default function TrackingPage() {
         </div>
       </div>
     );
+  }
+
+  const canCancel = order.status === "placed" || order.status === "confirmed";
+
+  async function handleCancel() {
+    setCancelling(true);
+    try {
+      await api.cancelOrder(id);
+      setOrder((prev) => prev ? { ...prev, status: "cancelled" } : prev);
+      showToast("Order cancelled successfully");
+    } catch (err: any) {
+      showToast(err.message || "Failed to cancel order", "error");
+    } finally {
+      setCancelling(false);
+    }
+  }
+
+  async function handleRate() {
+    if (rating === 0) {
+      showToast("Please select a rating", "error");
+      return;
+    }
+    setSubmittingRating(true);
+    try {
+      await api.rateOrder(id, { rating, comment: ratingComment || undefined });
+      setRatingSubmitted(true);
+      showToast("Thanks for your feedback!");
+    } catch (err: any) {
+      showToast(err.message || "Failed to submit rating", "error");
+    } finally {
+      setSubmittingRating(false);
+    }
   }
 
   const currentStep = getStepIndex(order.status);
@@ -321,8 +360,78 @@ export default function TrackingPage() {
           </div>
         </div>
 
+        {/* Cancel Order */}
+        {canCancel && (
+          <button
+            onClick={handleCancel}
+            disabled={cancelling}
+            className="w-full mt-5 py-3 rounded-2xl text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-50 animate-fade-up"
+            style={{
+              background: "var(--bg-card)",
+              color: "var(--hubb-orange)",
+              border: "1px solid var(--border-default)",
+            }}
+          >
+            {cancelling ? "Cancelling..." : "Cancel Order"}
+          </button>
+        )}
+
+        {/* Rating UI */}
+        {isDelivered && !ratingSubmitted && (
+          <div
+            className="rounded-2xl p-5 mt-5 animate-fade-up"
+            style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+          >
+            <h3 className="font-bold text-sm mb-3" style={{ color: "var(--text-primary)" }}>
+              How was your order?
+            </h3>
+            <div className="flex gap-2 mb-3">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => setRating(star)}
+                  className="text-2xl transition-transform hover:scale-110"
+                  style={{ opacity: star <= rating ? 1 : 0.25 }}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+            <textarea
+              value={ratingComment}
+              onChange={(e) => setRatingComment(e.target.value)}
+              placeholder="Any feedback? (optional)"
+              rows={2}
+              className="w-full px-4 py-2.5 rounded-xl text-sm resize-none"
+              style={{
+                background: "var(--bg-search)",
+                color: "var(--text-primary)",
+                border: "none",
+              }}
+            />
+            <button
+              onClick={handleRate}
+              disabled={submittingRating || rating === 0}
+              className="w-full mt-3 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-50"
+              style={{ background: "var(--hubb-accent)" }}
+            >
+              {submittingRating ? "Submitting..." : "Submit Rating"}
+            </button>
+          </div>
+        )}
+        {isDelivered && ratingSubmitted && (
+          <div
+            className="rounded-2xl p-5 mt-5 text-center animate-fade-up"
+            style={{ background: "var(--hubb-tint)" }}
+          >
+            <p className="text-sm font-medium" style={{ color: "var(--hubb-green)" }}>
+              Thank you for your feedback!
+            </p>
+          </div>
+        )}
+
         {/* Actions */}
-        <div className="mt-6 flex gap-3 animate-fade-up">
+        <div className="mt-5 flex gap-3 animate-fade-up">
           <Link
             href="/orders"
             className="flex-1 text-center py-3 rounded-xl text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99]"

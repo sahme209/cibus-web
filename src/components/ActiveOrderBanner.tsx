@@ -68,13 +68,13 @@ export default function ActiveOrderBanner() {
     <Link
       href={`/tracking/${order.id}`}
       className="block w-full"
-      style={{ background: "var(--hubb-primary, var(--hubb-primary, #1D1D1F))" }}
+      style={{ background: "var(--hubb-primary)" }}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative flex items-center justify-center">
-            <span className="absolute w-2.5 h-2.5 rounded-full animate-ping" style={{ background: "var(--hubb-accent, var(--hubb-accent, #06C167))" }} />
-            <span className="w-2.5 h-2.5 rounded-full" style={{ background: "var(--hubb-accent, var(--hubb-accent, #06C167))" }} />
+            <span className="absolute w-2.5 h-2.5 rounded-full animate-ping" style={{ background: "var(--hubb-accent)" }} />
+            <span className="w-2.5 h-2.5 rounded-full" style={{ background: "var(--hubb-accent)" }} />
           </div>
           <span className="text-white text-sm font-medium">
             {STATUS_LABELS[order.status] || order.status} — {order.restaurantName}
@@ -88,7 +88,7 @@ export default function ActiveOrderBanner() {
           )}
           <span
             className="text-xs font-bold px-3 py-1 rounded-full"
-            style={{ background: "var(--hubb-accent, var(--hubb-accent, #06C167))", color: "white" }}
+            style={{ background: "var(--hubb-accent)", color: "white" }}
           >
             Track →
           </span>

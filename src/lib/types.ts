@@ -72,6 +72,7 @@ export interface DeliveryAddress {
 
 export interface Order {
   id: string;
+  restaurantID: string;
   items: CartItem[];
   status: OrderStatus;
   restaurantName: string;

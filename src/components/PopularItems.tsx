@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import * as api from "@/lib/api";
 import { useCart } from "@/lib/store";
+import { useToast } from "./ToastProvider";
 import type { FoodItem } from "@/lib/types";
 
 export default function PopularItems() {
   const [items, setItems] = useState<FoodItem[]>([]);
   const { addItem } = useCart();
+  const { showToast } = useToast();
 
   useEffect(() => {
     api
@@ -65,7 +67,7 @@ export default function PopularItems() {
                 {item.discountPercentage > 0 && (
                   <span
                     className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-xs font-bold text-white"
-                    style={{ background: "var(--hubb-accent, var(--hubb-accent, #06C167))" }}
+                    style={{ background: "var(--hubb-accent)" }}
                   >
                     {item.discountPercentage}% off
                   </span>
@@ -102,9 +104,9 @@ export default function PopularItems() {
                     )}
                   </div>
                   <button
-                    onClick={() => addItem(item, 1, [], "")}
+                    onClick={() => { addItem(item, 1, [], ""); showToast(`${item.name} added to cart`); }}
                     className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                    style={{ background: "var(--hubb-accent, var(--hubb-accent, #06C167))" }}
+                    style={{ background: "var(--hubb-accent)" }}
                   >
                     +
                   </button>

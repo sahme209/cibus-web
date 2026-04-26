@@ -118,6 +118,14 @@ export default function Navbar({ onCartClick }: NavbarProps) {
                       <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>{user?.email}</p>
                     </div>
                     <Link
+                      href="/profile"
+                      className="block px-4 py-2.5 text-sm hover:opacity-70"
+                      style={{ color: "var(--text-primary)" }}
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      My Account
+                    </Link>
+                    <Link
                       href="/orders"
                       className="block px-4 py-2.5 text-sm hover:opacity-70"
                       style={{ color: "var(--text-primary)" }}

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/store";
 import { useAuth, useAddress } from "@/lib/store";
+import { useToast } from "@/components/ToastProvider";
 import * as api from "@/lib/api";
 import Link from "next/link";
 
@@ -18,6 +19,7 @@ export default function CheckoutPage() {
   const [placing, setPlacing] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState<{ id: string; total: number } | null>(null);
   const [paymentMethod, setPaymentMethod] = useState("cash");
+  const { showToast } = useToast();
 
   if (!isLoggedIn) {
     return (
@@ -160,7 +162,7 @@ export default function CheckoutPage() {
       setOrderSuccess({ id: order.id || order.orderId, total });
       clearCart();
     } catch (err: any) {
-      alert(err.message || "Failed to place order");
+      showToast(err.message || "Failed to place order", "error");
     } finally {
       setPlacing(false);
     }

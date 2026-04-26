@@ -17,7 +17,7 @@ export default function AddressSelector() {
         className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm max-w-[200px] transition-colors"
         style={{ background: "var(--bg-search)", color: "var(--text-primary)" }}
       >
-        <svg className="w-4 h-4 shrink-0" style={{ color: "var(--hubb-accent, var(--hubb-accent, #06C167))" }} fill="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 shrink-0" style={{ color: "var(--hubb-accent)" }} fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
         </svg>
         <span className="truncate font-medium">
@@ -56,7 +56,7 @@ export default function AddressSelector() {
                 style={{
                   background:
                     selectedAddress?.id === addr.id
-                      ? "var(--hubb-tint, var(--hubb-tint, #E8F5EE))"
+                      ? "var(--hubb-tint)"
                       : "transparent",
                 }}
               >
@@ -65,7 +65,7 @@ export default function AddressSelector() {
                   style={{
                     color:
                       selectedAddress?.id === addr.id
-                        ? "var(--hubb-accent, var(--hubb-accent, #06C167))"
+                        ? "var(--hubb-accent)"
                         : "var(--text-tertiary)",
                   }}
                   fill="currentColor"
@@ -88,7 +88,7 @@ export default function AddressSelector() {
                   </p>
                 </div>
                 {selectedAddress?.id === addr.id && (
-                  <svg className="w-4 h-4 shrink-0 ml-auto" style={{ color: "var(--hubb-accent, var(--hubb-accent, #06C167))" }} fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 shrink-0 ml-auto" style={{ color: "var(--hubb-accent)" }} fill="currentColor" viewBox="0 0 24 24">
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                   </svg>
                 )}

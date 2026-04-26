@@ -7,10 +7,11 @@ import * as api from "@/lib/api";
 
 interface PastOrder {
   id: string;
+  restaurantID: string;
   restaurantName: string;
   restaurantImageURL: string;
   total: number;
-  items: { foodItem: { name: string } }[];
+  items: { foodItem: { name: string; restaurantID: string } }[];
 }
 
 export default function QuickReorder() {
@@ -45,7 +46,7 @@ export default function QuickReorder() {
         <Link
           href="/orders"
           className="text-sm font-semibold"
-          style={{ color: "var(--hubb-accent, var(--hubb-accent, #06C167))" }}
+          style={{ color: "var(--hubb-accent)" }}
         >
           View All →
         </Link>
@@ -54,7 +55,7 @@ export default function QuickReorder() {
         {orders.map((order) => (
           <Link
             key={order.id}
-            href={`/restaurant/${order.id}`}
+            href={`/restaurant/${order.restaurantID || order.items[0]?.foodItem?.restaurantID || order.id}`}
             className="shrink-0 flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:-translate-y-0.5"
             style={{
               background: "var(--bg-card)",
@@ -94,7 +95,7 @@ export default function QuickReorder() {
               </p>
               <p
                 className="text-xs font-medium mt-0.5"
-                style={{ color: "var(--hubb-accent, var(--hubb-accent, #06C167))" }}
+                style={{ color: "var(--hubb-accent)" }}
               >
                 Rs. {Math.round(order.total)}
               </p>
