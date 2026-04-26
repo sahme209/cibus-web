@@ -20,6 +20,10 @@ export default function CheckoutPage() {
   const [orderSuccess, setOrderSuccess] = useState<{ id: string; total: number } | null>(null);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const { showToast } = useToast();
+  const [showAddAddress, setShowAddAddress] = useState(false);
+  const [newAddr, setNewAddr] = useState({ label: "", street: "", city: "" });
+  const [addingAddr, setAddingAddr] = useState(false);
+  const { refreshAddresses } = useAddress();
 
   if (!isLoggedIn) {
     return (
@@ -187,9 +191,71 @@ export default function CheckoutPage() {
             className="rounded-2xl p-5"
             style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
           >
-            <h2 className="font-bold text-sm mb-3" style={{ color: "var(--text-primary)" }}>
-              Delivery Address
-            </h2>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>
+                Delivery Address
+              </h2>
+              <button
+                onClick={() => setShowAddAddress(!showAddAddress)}
+                className="text-xs font-semibold"
+                style={{ color: "var(--hubb-accent)" }}
+              >
+                {showAddAddress ? "Cancel" : "+ Add New"}
+              </button>
+            </div>
+            {showAddAddress && (
+              <div className="rounded-xl p-3 mb-3 space-y-2" style={{ background: "var(--bg-search)" }}>
+                <input
+                  type="text"
+                  placeholder="Label (e.g. Home, Office)"
+                  value={newAddr.label}
+                  onChange={(e) => setNewAddr((p) => ({ ...p, label: e.target.value }))}
+                  className="w-full px-3 py-2.5 rounded-lg text-sm"
+                  style={{ background: "var(--bg-card)", color: "var(--text-primary)", border: "1px solid var(--border-default)" }}
+                />
+                <input
+                  type="text"
+                  placeholder="Street address"
+                  value={newAddr.street}
+                  onChange={(e) => setNewAddr((p) => ({ ...p, street: e.target.value }))}
+                  className="w-full px-3 py-2.5 rounded-lg text-sm"
+                  style={{ background: "var(--bg-card)", color: "var(--text-primary)", border: "1px solid var(--border-default)" }}
+                />
+                <input
+                  type="text"
+                  placeholder="City"
+                  value={newAddr.city}
+                  onChange={(e) => setNewAddr((p) => ({ ...p, city: e.target.value }))}
+                  className="w-full px-3 py-2.5 rounded-lg text-sm"
+                  style={{ background: "var(--bg-card)", color: "var(--text-primary)", border: "1px solid var(--border-default)" }}
+                />
+                <button
+                  onClick={async () => {
+                    if (!newAddr.label.trim() || !newAddr.street.trim() || !newAddr.city.trim()) {
+                      showToast("Please fill all address fields", "error");
+                      return;
+                    }
+                    setAddingAddr(true);
+                    try {
+                      await api.addAddress({ ...newAddr, latitude: 33.6844, longitude: 73.0479 });
+                      await refreshAddresses();
+                      setNewAddr({ label: "", street: "", city: "" });
+                      setShowAddAddress(false);
+                      showToast("Address added");
+                    } catch (err: any) {
+                      showToast(err.message || "Failed to add address", "error");
+                    } finally {
+                      setAddingAddr(false);
+                    }
+                  }}
+                  disabled={addingAddr}
+                  className="w-full py-2.5 rounded-lg text-sm font-bold text-white disabled:opacity-50"
+                  style={{ background: "var(--hubb-accent)" }}
+                >
+                  {addingAddr ? "Adding..." : "Save Address"}
+                </button>
+              </div>
+            )}
             {addresses.length > 0 ? (
               <div className="space-y-2">
                 {addresses.map((addr) => (
@@ -221,9 +287,18 @@ export default function CheckoutPage() {
                   </label>
                 ))}
               </div>
-            ) : (
-              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                No saved addresses. Add one from your profile.
+            ) : !showAddAddress ? (
+              <button
+                onClick={() => setShowAddAddress(true)}
+                className="w-full py-3 rounded-xl text-sm font-medium text-center"
+                style={{ background: "var(--bg-search)", color: "var(--text-secondary)" }}
+              >
+                Add a delivery address to continue
+              </button>
+            ) : null}
+            {!selectedAddress && addresses.length > 0 && (
+              <p className="text-xs mt-2" style={{ color: "var(--hubb-orange)" }}>
+                Please select an address
               </p>
             )}
           </div>
@@ -392,10 +467,21 @@ export default function CheckoutPage() {
           </div>
 
           {/* Place Order */}
+          {!selectedAddress && (
+            <div
+              className="flex items-center gap-2 px-4 py-3 rounded-xl text-xs font-medium"
+              style={{ background: "var(--bg-search)", color: "var(--hubb-orange)" }}
+            >
+              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              Add a delivery address to place your order
+            </div>
+          )}
           <button
             onClick={handlePlaceOrder}
             disabled={placing || !selectedAddress}
-            className="w-full py-4 rounded-2xl text-base font-bold text-white transition-colors disabled:opacity-50"
+            className="w-full py-4 rounded-2xl text-base font-bold text-white transition-all disabled:opacity-50 hover:scale-[1.01] active:scale-[0.99]"
             style={{ background: "var(--hubb-accent)" }}
           >
             {placing

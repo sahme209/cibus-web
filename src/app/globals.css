@@ -11,6 +11,8 @@
   --hubb-cream: #FFFBF5;
   --hubb-tint: #E8F5EE;
   --hubb-tint-soft: #F0F9F4;
+  --hubb-error-bg: #FEE2E2;
+  --hubb-error: #DC2626;
 
   --bg-primary: #FFFFFF;
   --bg-secondary: #F7F8FA;
@@ -56,6 +58,11 @@
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
     --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
     --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+
+    --hubb-tint: #0D2918;
+    --hubb-tint-soft: #0A1F13;
+    --hubb-error-bg: #2D1215;
+    --hubb-error: #EF4444;
   }
 }
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/lib/store";
 import * as api from "@/lib/api";
 
@@ -64,10 +65,12 @@ export default function QuickReorder() {
             }}
           >
             {order.restaurantImageURL ? (
-              <img
+              <Image
                 src={order.restaurantImageURL}
-                alt=""
-                className="w-12 h-12 rounded-lg object-cover shrink-0"
+                alt={order.restaurantName}
+                width={48}
+                height={48}
+                className="rounded-lg object-cover shrink-0"
               />
             ) : (
               <div

@@ -246,6 +246,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     } else {
       setAuthLoading(false);
     }
+
+    function handleAuthExpired() {
+      setUser(null);
+    }
+    window.addEventListener("hubb:auth-expired", handleAuthExpired);
+    return () => window.removeEventListener("hubb:auth-expired", handleAuthExpired);
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {

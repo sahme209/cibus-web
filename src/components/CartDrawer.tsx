@@ -2,6 +2,7 @@
 
 import { useCart } from "@/lib/store";
 import Link from "next/link";
+import Image from "next/image";
 
 interface CartDrawerProps {
   open: boolean;
@@ -81,10 +82,12 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
               {cart.items.map((ci) => (
                 <div key={ci.id} className="px-5 py-4 flex gap-3">
                   {ci.foodItem.imageURL ? (
-                    <img
+                    <Image
                       src={ci.foodItem.imageURL}
                       alt={ci.foodItem.name}
-                      className="w-14 h-14 rounded-lg object-cover shrink-0"
+                      width={56}
+                      height={56}
+                      className="rounded-lg object-cover shrink-0"
                     />
                   ) : (
                     <div

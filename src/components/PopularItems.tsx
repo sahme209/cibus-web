@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import * as api from "@/lib/api";
 import { useCart } from "@/lib/store";
 import { useToast } from "./ToastProvider";
@@ -51,9 +52,11 @@ export default function PopularItems() {
             >
               <div className="relative">
                 {item.imageURL ? (
-                  <img
+                  <Image
                     src={item.imageURL}
                     alt={item.name}
+                    width={176}
+                    height={112}
                     className="w-full h-28 object-cover"
                   />
                 ) : (

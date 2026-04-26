@@ -1,4 +1,5 @@
-const BASE_URL = "https://api-vtadzgdqca-uc.a.run.app";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://api-vtadzgdqca-uc.a.run.app";
 
 function getToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -20,6 +21,10 @@ async function request<T>(
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
 
   if (!res.ok) {
+    if (res.status === 401 && typeof window !== "undefined") {
+      localStorage.removeItem("hubb_token");
+      window.dispatchEvent(new Event("hubb:auth-expired"));
+    }
     const body = await res.json().catch(() => ({}));
     throw new APIError(res.status, body.message || res.statusText);
   }
