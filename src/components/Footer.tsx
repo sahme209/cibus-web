@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div>
             <h3 className="text-sm font-semibold mb-4" style={{ color: "var(--text-primary)" }}>
-              About Cibus
+              About HUBB
             </h3>
             <ul className="space-y-2.5">
               {["About Us", "Careers", "Blog", "Press"].map((item) => (
@@ -96,12 +96,12 @@ export default function Footer() {
           <div className="flex items-center gap-2">
             <div
               className="w-7 h-7 rounded-md flex items-center justify-center text-white text-xs font-bold"
-              style={{ background: "var(--cibus-accent)" }}
+              style={{ background: "var(--hubb-accent)" }}
             >
-              C
+              H
             </div>
             <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
-              &copy; {new Date().getFullYear()} Cibus. All rights reserved.
+              &copy; {new Date().getFullYear()} HUBB. All rights reserved.
             </span>
           </div>
           <div className="flex gap-6">

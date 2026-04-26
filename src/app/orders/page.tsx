@@ -64,7 +64,7 @@ export default function OrdersPage() {
           <Link
             href="/auth"
             className="inline-block mt-4 px-6 py-3 rounded-full text-sm font-semibold text-white"
-            style={{ background: "var(--cibus-accent)" }}
+            style={{ background: "var(--hubb-accent)" }}
           >
             Sign In
           </Link>
@@ -228,7 +228,7 @@ export default function OrdersPage() {
               <Link
                 href="/"
                 className="inline-block mt-4 px-6 py-3 rounded-full text-sm font-semibold text-white"
-                style={{ background: "var(--cibus-accent)" }}
+                style={{ background: "var(--hubb-accent)" }}
               >
                 Browse Restaurants
               </Link>

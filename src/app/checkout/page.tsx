@@ -36,7 +36,7 @@ export default function CheckoutPage() {
           <Link
             href="/auth"
             className="inline-block mt-4 px-6 py-3 rounded-full text-sm font-semibold text-white"
-            style={{ background: "var(--cibus-accent)" }}
+            style={{ background: "var(--hubb-accent)" }}
           >
             Sign In
           </Link>
@@ -62,7 +62,7 @@ export default function CheckoutPage() {
           <Link
             href="/"
             className="inline-block mt-4 px-6 py-3 rounded-full text-sm font-semibold text-white"
-            style={{ background: "var(--cibus-accent)" }}
+            style={{ background: "var(--hubb-accent)" }}
           >
             Browse Restaurants
           </Link>
@@ -80,7 +80,7 @@ export default function CheckoutPage() {
         <div className="text-center max-w-md mx-4">
           <div
             className="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-4xl mb-5"
-            style={{ background: "var(--cibus-tint)" }}
+            style={{ background: "var(--hubb-tint)" }}
           >
             ✅
           </div>
@@ -97,7 +97,7 @@ export default function CheckoutPage() {
             <Link
               href={`/tracking/${orderSuccess.id}`}
               className="px-6 py-3 rounded-full text-sm font-semibold text-white"
-              style={{ background: "var(--cibus-accent)" }}
+              style={{ background: "var(--hubb-accent)" }}
             >
               Track Order
             </Link>
@@ -197,7 +197,7 @@ export default function CheckoutPage() {
                     style={{
                       background:
                         selectedAddress?.id === addr.id
-                          ? "var(--cibus-tint)"
+                          ? "var(--hubb-tint)"
                           : "var(--bg-search)",
                     }}
                   >
@@ -206,7 +206,7 @@ export default function CheckoutPage() {
                       name="address"
                       checked={selectedAddress?.id === addr.id}
                       onChange={() => selectAddress(addr)}
-                      className="accent-[var(--cibus-accent)]"
+                      className="accent-[var(--hubb-accent)]"
                     />
                     <div>
                       <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
@@ -247,7 +247,7 @@ export default function CheckoutPage() {
                   style={{
                     background:
                       paymentMethod === pm.value
-                        ? "var(--cibus-tint)"
+                        ? "var(--hubb-tint)"
                         : "var(--bg-search)",
                   }}
                 >
@@ -256,7 +256,7 @@ export default function CheckoutPage() {
                     name="payment"
                     checked={paymentMethod === pm.value}
                     onChange={() => setPaymentMethod(pm.value)}
-                    className="accent-[var(--cibus-accent)]"
+                    className="accent-[var(--hubb-accent)]"
                   />
                   <span className="text-lg">{pm.icon}</span>
                   <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
@@ -300,14 +300,14 @@ export default function CheckoutPage() {
               </button>
             </div>
             {promoError && (
-              <p className="text-xs mt-2" style={{ color: "var(--cibus-orange)" }}>
+              <p className="text-xs mt-2" style={{ color: "var(--hubb-orange)" }}>
                 {promoError}
               </p>
             )}
             {discount > 0 && (
               <p
                 className="text-xs mt-2 font-medium"
-                style={{ color: "var(--cibus-accent)" }}
+                style={{ color: "var(--hubb-accent)" }}
               >
                 Discount applied: Rs. {discount} off!
               </p>
@@ -355,7 +355,7 @@ export default function CheckoutPage() {
                   style={{
                     color:
                       deliveryFee === 0
-                        ? "var(--cibus-accent)"
+                        ? "var(--hubb-accent)"
                         : "var(--text-primary)",
                   }}
                 >
@@ -370,8 +370,8 @@ export default function CheckoutPage() {
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-sm">
-                  <span style={{ color: "var(--cibus-accent)" }}>Discount</span>
-                  <span style={{ color: "var(--cibus-accent)" }}>
+                  <span style={{ color: "var(--hubb-accent)" }}>Discount</span>
+                  <span style={{ color: "var(--hubb-accent)" }}>
                     -Rs. {discount}
                   </span>
                 </div>
@@ -394,7 +394,7 @@ export default function CheckoutPage() {
             onClick={handlePlaceOrder}
             disabled={placing || !selectedAddress}
             className="w-full py-4 rounded-2xl text-base font-bold text-white transition-colors disabled:opacity-50"
-            style={{ background: "var(--cibus-accent)" }}
+            style={{ background: "var(--hubb-accent)" }}
           >
             {placing
               ? "Placing Order..."

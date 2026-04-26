@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCart } from "@/lib/store";
 import { useAuth } from "@/lib/store";
 import { useState } from "react";
+import AddressSelector from "./AddressSelector";
 
 export default function Navbar() {
   const { itemCount } = useCart();
@@ -17,14 +18,19 @@ export default function Navbar() {
         <Link href="/" className="flex items-center gap-2">
           <div
             className="flex h-9 w-9 items-center justify-center rounded-lg font-bold text-white text-lg"
-            style={{ background: "var(--cibus-accent)" }}
+            style={{ background: "var(--hubb-accent)" }}
           >
-            C
+            H
           </div>
           <span className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>
-            Cibus
+            HUBB
           </span>
         </Link>
+
+        {/* Address selector */}
+        <div className="hidden sm:block">
+          <AddressSelector />
+        </div>
 
         {/* Search */}
         <div className="hidden flex-1 max-w-lg mx-8 sm:block">
@@ -49,7 +55,7 @@ export default function Navbar() {
           <Link
             href="/cart"
             className="relative flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold text-white transition-colors"
-            style={{ background: itemCount > 0 ? "var(--cibus-accent)" : "var(--bg-surface)" }}
+            style={{ background: itemCount > 0 ? "var(--hubb-accent)" : "var(--bg-surface)" }}
           >
             <svg className="w-5 h-5" fill="none" stroke={itemCount > 0 ? "white" : "var(--text-secondary)"} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
@@ -69,7 +75,7 @@ export default function Navbar() {
               >
                 <div
                   className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                  style={{ background: "var(--cibus-accent)" }}
+                  style={{ background: "var(--hubb-accent)" }}
                 >
                   {user?.name?.charAt(0)?.toUpperCase() || "U"}
                 </div>
@@ -95,7 +101,7 @@ export default function Navbar() {
                   <button
                     onClick={() => { logout(); setShowUserMenu(false); }}
                     className="w-full text-left px-4 py-2.5 text-sm hover:opacity-70"
-                    style={{ color: "var(--cibus-orange)" }}
+                    style={{ color: "var(--hubb-orange)" }}
                   >
                     Sign Out
                   </button>

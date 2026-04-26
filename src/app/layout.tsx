@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ActiveOrderBanner from "@/components/ActiveOrderBanner";
 import { StoreProvider } from "@/lib/store";
 
 const geistSans = Geist({
@@ -16,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cibus — Food Delivery",
+  title: "HUBB — Food Delivery",
   description:
     "Order food online from your favorite restaurants. Fast delivery, exclusive deals, and premium quality.",
 };
@@ -33,6 +34,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <StoreProvider>
+          <ActiveOrderBanner />
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />

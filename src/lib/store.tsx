@@ -99,12 +99,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   // Cart
   const [cart, setCart] = useState<Cart>(() => {
     if (typeof window === "undefined") return emptyCart;
-    const saved = localStorage.getItem("cibus_cart");
+    const saved = localStorage.getItem("hubb_cart");
     return saved ? JSON.parse(saved) : emptyCart;
   });
 
   useEffect(() => {
-    localStorage.setItem("cibus_cart", JSON.stringify(cart));
+    localStorage.setItem("hubb_cart", JSON.stringify(cart));
   }, [cart]);
 
   const addItem = useCallback(
@@ -209,12 +209,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("cibus_token");
+    const token = localStorage.getItem("hubb_token");
     if (token) {
       api
         .getUserProfile()
         .then((u) => setUser(u))
-        .catch(() => localStorage.removeItem("cibus_token"))
+        .catch(() => localStorage.removeItem("hubb_token"))
         .finally(() => setAuthLoading(false));
     } else {
       setAuthLoading(false);

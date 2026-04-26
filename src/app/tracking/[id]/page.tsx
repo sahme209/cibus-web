@@ -93,7 +93,7 @@ export default function TrackingPage() {
           <Link
             href="/orders"
             className="text-sm mt-2 inline-block"
-            style={{ color: "var(--cibus-accent)" }}
+            style={{ color: "var(--hubb-accent)" }}
           >
             View All Orders
           </Link>
@@ -128,7 +128,7 @@ export default function TrackingPage() {
           {!isDelivered && !isCancelled && (
             <div
               className="w-3 h-3 rounded-full animate-pulse"
-              style={{ background: "var(--cibus-accent)" }}
+              style={{ background: "var(--hubb-accent)" }}
             />
           )}
         </div>
@@ -175,10 +175,10 @@ export default function TrackingPage() {
                         className="w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0 transition-all"
                         style={{
                           background: isCompleted
-                            ? "var(--cibus-accent)"
+                            ? "var(--hubb-accent)"
                             : "var(--bg-search)",
                           boxShadow: isCurrent
-                            ? "0 0 0 4px var(--cibus-tint)"
+                            ? "0 0 0 4px var(--hubb-tint)"
                             : "none",
                         }}
                       >
@@ -195,7 +195,7 @@ export default function TrackingPage() {
                           className="w-0.5 h-8 my-1"
                           style={{
                             background: isCompleted
-                              ? "var(--cibus-accent)"
+                              ? "var(--hubb-accent)"
                               : "var(--border-default)",
                           }}
                         />
@@ -303,7 +303,7 @@ export default function TrackingPage() {
           <Link
             href="/"
             className="flex-1 text-center py-3 rounded-xl text-sm font-semibold text-white"
-            style={{ background: "var(--cibus-accent)" }}
+            style={{ background: "var(--hubb-accent)" }}
           >
             Order Again
           </Link>

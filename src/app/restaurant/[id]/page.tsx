@@ -61,7 +61,7 @@ export default function RestaurantDetailPage() {
           <h2 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
             Restaurant not found
           </h2>
-          <Link href="/" className="text-sm mt-2 inline-block" style={{ color: "var(--cibus-accent)" }}>
+          <Link href="/" className="text-sm mt-2 inline-block" style={{ color: "var(--hubb-accent)" }}>
             Back to Home
           </Link>
         </div>
@@ -211,7 +211,7 @@ export default function RestaurantDetailPage() {
               <Link
                 href="/checkout"
                 className="mt-4 block text-center py-3 rounded-xl text-sm font-bold text-white transition-colors"
-                style={{ background: "var(--cibus-accent)" }}
+                style={{ background: "var(--hubb-accent)" }}
               >
                 Checkout • Rs. {Math.round(subtotal)}
               </Link>
@@ -245,7 +245,7 @@ export default function RestaurantDetailPage() {
                     key={opt.id}
                     className="flex items-center justify-between p-3 rounded-xl cursor-pointer transition-colors"
                     style={{
-                      background: isSelected ? "var(--cibus-tint)" : "var(--bg-search)",
+                      background: isSelected ? "var(--hubb-tint)" : "var(--bg-search)",
                     }}
                   >
                     <div className="flex items-center gap-3">
@@ -259,7 +259,7 @@ export default function RestaurantDetailPage() {
                             setSelectedOptions((p) => [...p, { ...opt, isSelected: true }]);
                           }
                         }}
-                        className="w-4 h-4 accent-[var(--cibus-accent)]"
+                        className="w-4 h-4 accent-[var(--hubb-accent)]"
                       />
                       <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
                         {opt.name}
@@ -280,7 +280,7 @@ export default function RestaurantDetailPage() {
                 setCustomizingItem(null);
               }}
               className="mt-5 w-full py-3 rounded-xl text-sm font-bold text-white"
-              style={{ background: "var(--cibus-accent)" }}
+              style={{ background: "var(--hubb-accent)" }}
             >
               Add to Cart • Rs.{" "}
               {Math.round(
@@ -301,7 +301,7 @@ export default function RestaurantDetailPage() {
           <Link
             href="/checkout"
             className="flex items-center justify-between w-full py-3.5 px-6 rounded-xl text-white font-bold text-sm"
-            style={{ background: "var(--cibus-accent)" }}
+            style={{ background: "var(--hubb-accent)" }}
           >
             <span>View Cart • {itemCount} item{itemCount !== 1 ? "s" : ""}</span>
             <span>Rs. {Math.round(subtotal)}</span>

@@ -2,7 +2,7 @@ const BASE_URL = "https://api-vtadzgdqca-uc.a.run.app";
 
 function getToken(): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem("cibus_token");
+  return localStorage.getItem("hubb_token");
 }
 
 async function request<T>(
@@ -42,7 +42,7 @@ export async function signIn(email: string, password: string) {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
-  localStorage.setItem("cibus_token", data.token);
+  localStorage.setItem("hubb_token", data.token);
   return data;
 }
 
@@ -56,12 +56,12 @@ export async function signUp(
     method: "POST",
     body: JSON.stringify({ name, email, password, phone }),
   });
-  localStorage.setItem("cibus_token", data.token);
+  localStorage.setItem("hubb_token", data.token);
   return data;
 }
 
 export function signOut() {
-  localStorage.removeItem("cibus_token");
+  localStorage.removeItem("hubb_token");
 }
 
 export async function getUserProfile() {

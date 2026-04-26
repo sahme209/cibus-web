@@ -51,15 +51,15 @@ export default function AuthPage() {
         <div className="flex items-center justify-center gap-2 mb-8">
           <div
             className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-xl"
-            style={{ background: "var(--cibus-accent)" }}
+            style={{ background: "var(--hubb-accent)" }}
           >
-            C
+            H
           </div>
           <span
             className="text-2xl font-bold"
             style={{ color: "var(--text-primary)" }}
           >
-            Cibus
+            HUBB
           </span>
         </div>
 
@@ -197,7 +197,7 @@ export default function AuthPage() {
             type="submit"
             disabled={loading}
             className="w-full py-3.5 rounded-xl text-sm font-bold text-white transition-colors disabled:opacity-50"
-            style={{ background: "var(--cibus-accent)" }}
+            style={{ background: "var(--hubb-accent)" }}
           >
             {loading
               ? "Please wait..."

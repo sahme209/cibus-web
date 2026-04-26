@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --cibus-primary: #1D1D1F;
-  --cibus-accent: #06C167;
-  --cibus-accent-hover: #05A358;
-  --cibus-green: #00704A;
-  --cibus-orange: #FF6B35;
-  --cibus-yellow: #FFB347;
-  --cibus-gold: #D4AF37;
-  --cibus-cream: #FFFBF5;
-  --cibus-tint: #E8F5EE;
-  --cibus-tint-soft: #F0F9F4;
+  --hubb-primary: #1D1D1F;
+  --hubb-accent: #06C167;
+  --hubb-accent-hover: #05A358;
+  --hubb-green: #00704A;
+  --hubb-orange: #FF6B35;
+  --hubb-yellow: #FFB347;
+  --hubb-gold: #D4AF37;
+  --hubb-cream: #FFFBF5;
+  --hubb-tint: #E8F5EE;
+  --hubb-tint-soft: #F0F9F4;
 
   --bg-primary: #FFFFFF;
   --bg-secondary: #F7F8FA;
@@ -62,7 +62,7 @@
 @theme inline {
   --color-background: var(--bg-primary);
   --color-foreground: var(--text-primary);
-  --color-accent: var(--cibus-accent);
+  --color-accent: var(--hubb-accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -79,12 +79,12 @@ body {
 }
 
 ::selection {
-  background: var(--cibus-accent);
+  background: var(--hubb-accent);
   color: white;
 }
 
 input:focus, textarea:focus, select:focus, button:focus-visible {
-  outline: 2px solid var(--cibus-accent);
+  outline: 2px solid var(--hubb-accent);
   outline-offset: 2px;
 }
 

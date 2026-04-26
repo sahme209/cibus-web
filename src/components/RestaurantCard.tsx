@@ -23,7 +23,7 @@ export default function RestaurantCard({ restaurant }: { restaurant: Restaurant 
         {restaurant.isFeatured && (
           <span
             className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
-            style={{ background: "var(--cibus-accent)" }}
+            style={{ background: "var(--hubb-accent)" }}
           >
             Featured
           </span>
@@ -65,8 +65,8 @@ export default function RestaurantCard({ restaurant }: { restaurant: Restaurant 
           <span
             className="text-xs font-medium px-2 py-0.5 rounded-full"
             style={{
-              background: restaurant.deliveryFee === 0 ? "var(--cibus-tint)" : "var(--bg-search)",
-              color: restaurant.deliveryFee === 0 ? "var(--cibus-green)" : "var(--text-secondary)",
+              background: restaurant.deliveryFee === 0 ? "var(--hubb-tint)" : "var(--bg-search)",
+              color: restaurant.deliveryFee === 0 ? "var(--hubb-green)" : "var(--text-secondary)",
             }}
           >
             {restaurant.deliveryFee === 0

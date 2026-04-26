@@ -42,7 +42,7 @@ export default function FoodItemCard({
           {item.isPopular && (
             <span
               className="shrink-0 text-xs px-2 py-0.5 rounded-full font-medium"
-              style={{ background: "var(--cibus-tint)", color: "var(--cibus-green)" }}
+              style={{ background: "var(--hubb-tint)", color: "var(--hubb-green)" }}
             >
               Popular
             </span>
@@ -69,7 +69,7 @@ export default function FoodItemCard({
           {item.discountPercentage > 0 && (
             <span
               className="text-xs font-semibold"
-              style={{ color: "var(--cibus-accent)" }}
+              style={{ color: "var(--hubb-accent)" }}
             >
               {item.discountPercentage}% off
             </span>
@@ -99,8 +99,8 @@ export default function FoodItemCard({
           className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-full text-xs font-bold border-2 transition-colors disabled:opacity-50"
           style={{
             background: "var(--bg-card)",
-            borderColor: "var(--cibus-accent)",
-            color: "var(--cibus-accent)",
+            borderColor: "var(--hubb-accent)",
+            color: "var(--hubb-accent)",
           }}
         >
           {item.isAvailable ? "ADD" : "N/A"}

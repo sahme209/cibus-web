@@ -83,7 +83,7 @@ function SearchContent() {
             <button
               type="submit"
               className="px-6 py-3 rounded-full text-sm font-semibold text-white transition-colors"
-              style={{ background: "var(--cibus-accent)" }}
+              style={{ background: "var(--hubb-accent)" }}
             >
               Search
             </button>

@@ -30,7 +30,7 @@ export default function CartPage() {
           <Link
             href="/"
             className="inline-block mt-6 px-6 py-3 rounded-full text-sm font-semibold text-white"
-            style={{ background: "var(--cibus-accent)" }}
+            style={{ background: "var(--hubb-accent)" }}
           >
             Browse Restaurants
           </Link>
@@ -64,7 +64,7 @@ export default function CartPage() {
           <button
             onClick={clearCart}
             className="text-sm font-medium"
-            style={{ color: "var(--cibus-orange)" }}
+            style={{ color: "var(--hubb-orange)" }}
           >
             Clear All
           </button>
@@ -140,7 +140,7 @@ export default function CartPage() {
                 <button
                   onClick={() => updateQuantity(ci.id, ci.quantity - 1)}
                   className="w-8 h-8 flex items-center justify-center text-sm font-bold"
-                  style={{ color: "var(--cibus-accent)" }}
+                  style={{ color: "var(--hubb-accent)" }}
                 >
                   −
                 </button>
@@ -153,7 +153,7 @@ export default function CartPage() {
                 <button
                   onClick={() => updateQuantity(ci.id, ci.quantity + 1)}
                   className="w-8 h-8 flex items-center justify-center text-sm font-bold"
-                  style={{ color: "var(--cibus-accent)" }}
+                  style={{ color: "var(--hubb-accent)" }}
                 >
                   +
                 </button>
@@ -182,7 +182,7 @@ export default function CartPage() {
               style={{
                 color:
                   deliveryFee === 0
-                    ? "var(--cibus-accent)"
+                    ? "var(--hubb-accent)"
                     : "var(--text-primary)",
               }}
             >
@@ -199,8 +199,8 @@ export default function CartPage() {
             <p
               className="text-xs text-center py-2 rounded-lg font-medium"
               style={{
-                background: "var(--cibus-tint)",
-                color: "var(--cibus-green)",
+                background: "var(--hubb-tint)",
+                color: "var(--hubb-green)",
               }}
             >
               Free delivery on orders above Rs. 1,000!
@@ -221,7 +221,7 @@ export default function CartPage() {
         <Link
           href="/checkout"
           className="block text-center mt-5 py-4 rounded-2xl text-base font-bold text-white transition-colors"
-          style={{ background: "var(--cibus-accent)" }}
+          style={{ background: "var(--hubb-accent)" }}
         >
           Proceed to Checkout • Rs. {Math.round(total)}
         </Link>
