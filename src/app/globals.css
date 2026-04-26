@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+:root {
+  --cibus-primary: #1D1D1F;
+  --cibus-accent: #06C167;
+  --cibus-accent-hover: #05A358;
+  --cibus-green: #00704A;
+  --cibus-orange: #FF6B35;
+  --cibus-yellow: #FFB347;
+  --cibus-gold: #D4AF37;
+  --cibus-cream: #FFFBF5;
+  --cibus-tint: #E8F5EE;
+  --cibus-tint-soft: #F0F9F4;
+
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F7F8FA;
+  --bg-card: #FFFFFF;
+  --bg-search: #F2F3F5;
+  --bg-surface: #F0F1F3;
+
+  --text-primary: #1D1D1F;
+  --text-secondary: #5C5C5E;
+  --text-tertiary: #8E8E93;
+  --text-placeholder: #AEAEB2;
+
+  --border-default: #E5E5EA;
+  --border-subtle: #F2F2F7;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #121214;
+    --bg-secondary: #1C1C1E;
+    --bg-card: #1C1C1E;
+    --bg-search: #2C2C2E;
+    --bg-surface: #2C2C2E;
+
+    --text-primary: #FFFFFF;
+    --text-secondary: #A6A6AA;
+    --text-tertiary: #8E8E93;
+    --text-placeholder: #757578;
+
+    --border-default: #38383A;
+    --border-subtle: #2C2C2E;
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+  }
+}
+
+@theme inline {
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--text-primary);
+  --color-accent: var(--cibus-accent);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--cibus-accent);
+  color: white;
+}
+
+input:focus, textarea:focus, select:focus, button:focus-visible {
+  outline: 2px solid var(--cibus-accent);
+  outline-offset: 2px;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
