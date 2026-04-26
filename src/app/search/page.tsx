@@ -7,16 +7,17 @@ import type { Restaurant, FoodItem } from "@/lib/types";
 import * as api from "@/lib/api";
 import Link from "next/link";
 
-const TRENDING = [
-  "Biryani", "Burgers", "Pizza", "Karahi",
-  "Chinese", "BBQ", "Desserts", "Naan",
-];
-
-const QUICK_SEARCHES = [
-  { label: "Free Delivery", query: "free delivery", icon: "🚲" },
-  { label: "Under 30 min", query: "fast delivery", icon: "⚡" },
-  { label: "Top Rated", query: "top rated", icon: "⭐" },
-  { label: "New on HUBB", query: "new", icon: "✨" },
+const CATEGORIES = [
+  { name: "Biryani", emoji: "🍚" },
+  { name: "Burgers", emoji: "🍔" },
+  { name: "Pizza", emoji: "🍕" },
+  { name: "Karahi", emoji: "🥘" },
+  { name: "Chinese", emoji: "🥡" },
+  { name: "BBQ", emoji: "🍖" },
+  { name: "Desserts", emoji: "🍰" },
+  { name: "Chai", emoji: "☕" },
+  { name: "Paratha", emoji: "🫓" },
+  { name: "Seafood", emoji: "🦐" },
 ];
 
 export default function SearchPage() {
@@ -210,53 +211,41 @@ function SearchContent() {
             >
               No results for &ldquo;{query}&rdquo;
             </h3>
-            <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
+            <p className="text-sm mt-1 mb-6" style={{ color: "var(--text-secondary)" }}>
               Try a different spelling or browse by category
             </p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat.name}
+                  onClick={() => { setQuery(cat.name); doSearch(cat.name); }}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium transition-all hover:scale-105"
+                  style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)", color: "var(--text-primary)" }}
+                >
+                  <span>{cat.emoji}</span>
+                  {cat.name}
+                </button>
+              ))}
+            </div>
           </div>
         ) : (
-          /* Discovery state */
+          /* Browse state — show categories to explore */
           <div className="animate-fade-up">
-            {/* Quick searches */}
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: "var(--text-secondary)" }}>
-                Quick Searches
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                {QUICK_SEARCHES.map((qs) => (
-                  <button
-                    key={qs.label}
-                    onClick={() => { setQuery(qs.query); doSearch(qs.query); }}
-                    className="flex items-center gap-2.5 px-4 py-3.5 rounded-xl text-sm font-medium text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
-                    style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
-                  >
-                    <span className="text-lg">{qs.icon}</span>
-                    <span style={{ color: "var(--text-primary)" }}>{qs.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Trending */}
-            <div>
-              <h3 className="text-sm font-semibold mb-3" style={{ color: "var(--text-secondary)" }}>
-                Trending Now
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {TRENDING.map((term, i) => (
-                  <button
-                    key={term}
-                    onClick={() => { setQuery(term); doSearch(term); }}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all hover:scale-105"
-                    style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)", color: "var(--text-primary)" }}
-                  >
-                    <span className="text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "var(--bg-search)", color: "var(--text-tertiary)" }}>
-                      {i + 1}
-                    </span>
-                    {term}
-                  </button>
-                ))}
-              </div>
+            <h3 className="text-sm font-semibold mb-4" style={{ color: "var(--text-secondary)" }}>
+              Browse by Cuisine
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat.name}
+                  onClick={() => { setQuery(cat.name); doSearch(cat.name); }}
+                  className="flex items-center gap-3 px-4 py-4 rounded-xl text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
+                  style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+                >
+                  <span className="text-2xl">{cat.emoji}</span>
+                  <span className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>{cat.name}</span>
+                </button>
+              ))}
             </div>
           </div>
         )}

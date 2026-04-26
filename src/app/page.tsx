@@ -6,7 +6,6 @@ import PromoBanner from "@/components/PromoBanner";
 import PopularItems from "@/components/PopularItems";
 import QuickReorder from "@/components/QuickReorder";
 import FilterBar from "@/components/FilterBar";
-import HubbPlusBanner from "@/components/HubbPlusBanner";
 import type { Restaurant } from "@/lib/types";
 import * as api from "@/lib/api";
 import Link from "next/link";
@@ -113,23 +112,29 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Stats bar */}
-            <div className="flex items-center gap-6 mt-8">
-              <div>
-                <p className="text-2xl font-bold text-white">500+</p>
-                <p className="text-xs text-white/40">Restaurants</p>
+            {/* Live stats bar — only show once data is loaded */}
+            {!loading && restaurants.length > 0 && (
+              <div className="flex items-center gap-6 mt-8">
+                <div>
+                  <p className="text-2xl font-bold text-white">{restaurants.length}</p>
+                  <p className="text-xs text-white/40">Restaurants</p>
+                </div>
+                <div className="w-px h-8 bg-white/10" />
+                <div>
+                  <p className="text-2xl font-bold text-white">
+                    {Math.round(restaurants.reduce((sum, r) => sum + parseInt(r.deliveryTime) || 0, 0) / restaurants.length)} min
+                  </p>
+                  <p className="text-xs text-white/40">Avg. Delivery</p>
+                </div>
+                <div className="w-px h-8 bg-white/10" />
+                <div>
+                  <p className="text-2xl font-bold" style={{ color: "var(--hubb-accent)" }}>
+                    {(restaurants.reduce((sum, r) => sum + r.rating, 0) / restaurants.length).toFixed(1)}★
+                  </p>
+                  <p className="text-xs text-white/40">Avg. Rating</p>
+                </div>
               </div>
-              <div className="w-px h-8 bg-white/10" />
-              <div>
-                <p className="text-2xl font-bold text-white">25 min</p>
-                <p className="text-xs text-white/40">Avg. Delivery</p>
-              </div>
-              <div className="w-px h-8 bg-white/10" />
-              <div>
-                <p className="text-2xl font-bold" style={{ color: "var(--hubb-accent)" }}>4.8★</p>
-                <p className="text-xs text-white/40">Avg. Rating</p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -168,11 +173,6 @@ export default function HomePage() {
       {/* Promo Banner */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
         <PromoBanner />
-      </section>
-
-      {/* HUBB+ Banner */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
-        <HubbPlusBanner />
       </section>
 
       {/* Quick Reorder */}

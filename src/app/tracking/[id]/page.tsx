@@ -62,14 +62,20 @@ export default function TrackingPage() {
 
   if (loading) {
     return (
-      <div
-        className="min-h-screen"
-        style={{ background: "var(--bg-secondary)" }}
-      >
-        <div className="mx-auto max-w-2xl px-4 py-8">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 w-64 rounded-lg" style={{ background: "var(--bg-search)" }} />
-            <div className="h-48 rounded-2xl" style={{ background: "var(--bg-search)" }} />
+      <div className="min-h-screen" style={{ background: "var(--bg-secondary)" }}>
+        <div className="mx-auto max-w-2xl px-4 py-8 space-y-6">
+          <div className="h-8 w-56 rounded-lg skeleton-shimmer" />
+          <div className="h-4 w-32 rounded skeleton-shimmer" />
+          <div className="h-32 rounded-2xl skeleton-shimmer" />
+          <div className="rounded-2xl p-6 space-y-5" style={{ background: "var(--bg-card)" }}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex gap-4">
+                <div className="w-10 h-10 rounded-full skeleton-shimmer" />
+                <div className="flex-1 pt-2.5">
+                  <div className="h-4 w-28 rounded skeleton-shimmer" />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -78,22 +84,20 @@ export default function TrackingPage() {
 
   if (!order) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ background: "var(--bg-secondary)" }}
-      >
-        <div className="text-center">
-          <p className="text-5xl mb-4">😕</p>
-          <h2
-            className="text-lg font-bold"
-            style={{ color: "var(--text-primary)" }}
-          >
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-secondary)" }}>
+        <div className="text-center animate-fade-up">
+          <div className="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4" style={{ background: "var(--bg-search)" }}>
+            <svg className="w-10 h-10" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h2 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>
             Order not found
           </h2>
           <Link
             href="/orders"
-            className="text-sm mt-2 inline-block"
-            style={{ color: "var(--hubb-accent)" }}
+            className="inline-block mt-4 px-5 py-2.5 rounded-full text-sm font-semibold text-white"
+            style={{ background: "var(--hubb-accent)" }}
           >
             View All Orders
           </Link>
@@ -107,13 +111,10 @@ export default function TrackingPage() {
   const isDelivered = order.status === "delivered";
 
   return (
-    <div
-      className="min-h-screen"
-      style={{ background: "var(--bg-secondary)" }}
-    >
+    <div className="min-h-screen" style={{ background: "var(--bg-secondary)" }}>
       <div className="mx-auto max-w-2xl px-4 sm:px-6 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 animate-fade-up">
           <div>
             <h1
               className="text-2xl font-bold"
@@ -126,20 +127,20 @@ export default function TrackingPage() {
             </p>
           </div>
           {!isDelivered && !isCancelled && (
-            <div
-              className="w-3 h-3 rounded-full animate-pulse"
-              style={{ background: "var(--hubb-accent)" }}
-            />
+            <div className="relative flex items-center justify-center">
+              <span className="absolute w-3 h-3 rounded-full animate-ping opacity-50" style={{ background: "var(--hubb-accent)" }} />
+              <span className="w-3 h-3 rounded-full" style={{ background: "var(--hubb-accent)" }} />
+            </div>
           )}
         </div>
 
         {/* ETA Card */}
         {!isDelivered && !isCancelled && (
           <div
-            className="rounded-2xl p-6 mb-6 text-center"
+            className="rounded-2xl p-6 mb-6 text-center animate-fade-up"
             style={{ background: "var(--text-primary)" }}
           >
-            <p className="text-sm text-white/70">Estimated Delivery</p>
+            <p className="text-sm text-white/60">Estimated Delivery</p>
             <p className="text-3xl font-bold text-white mt-1">
               {order.estimatedDelivery
                 ? new Date(order.estimatedDelivery).toLocaleTimeString("en-PK", {
@@ -149,9 +150,14 @@ export default function TrackingPage() {
                 : "Calculating..."}
             </p>
             {tracking?.riderName && (
-              <p className="text-sm text-white/70 mt-2">
-                Rider: {tracking.riderName}
-              </p>
+              <div className="flex items-center justify-center gap-2 mt-3">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ background: "var(--hubb-accent)" }}>
+                  <span className="text-white">🛵</span>
+                </div>
+                <span className="text-sm text-white/70">
+                  {tracking.riderName}
+                </span>
+              </div>
             )}
           </div>
         )}
@@ -159,7 +165,7 @@ export default function TrackingPage() {
         {/* Progress Steps */}
         {!isCancelled && (
           <div
-            className="rounded-2xl p-6 mb-6"
+            className="rounded-2xl p-6 mb-6 animate-fade-up"
             style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
           >
             <div className="space-y-0">
@@ -169,17 +175,12 @@ export default function TrackingPage() {
                 const isLast = idx === STEPS.length - 1;
                 return (
                   <div key={step.status} className="flex gap-4">
-                    {/* Timeline */}
                     <div className="flex flex-col items-center">
                       <div
                         className="w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0 transition-all"
                         style={{
-                          background: isCompleted
-                            ? "var(--hubb-accent)"
-                            : "var(--bg-search)",
-                          boxShadow: isCurrent
-                            ? "0 0 0 4px var(--hubb-tint)"
-                            : "none",
+                          background: isCompleted ? "var(--hubb-accent)" : "var(--bg-search)",
+                          boxShadow: isCurrent ? "0 0 0 4px var(--hubb-tint)" : "none",
                         }}
                       >
                         {isCompleted ? (
@@ -192,24 +193,18 @@ export default function TrackingPage() {
                       </div>
                       {!isLast && (
                         <div
-                          className="w-0.5 h-8 my-1"
+                          className="w-0.5 h-8 my-1 transition-colors"
                           style={{
-                            background: isCompleted
-                              ? "var(--hubb-accent)"
-                              : "var(--border-default)",
+                            background: isCompleted ? "var(--hubb-accent)" : "var(--border-default)",
                           }}
                         />
                       )}
                     </div>
-
-                    {/* Label */}
                     <div className="pt-2.5">
                       <p
                         className="text-sm font-semibold"
                         style={{
-                          color: isCompleted
-                            ? "var(--text-primary)"
-                            : "var(--text-tertiary)",
+                          color: isCompleted ? "var(--text-primary)" : "var(--text-tertiary)",
                         }}
                       >
                         {step.label}
@@ -225,19 +220,40 @@ export default function TrackingPage() {
         {/* Cancelled banner */}
         {isCancelled && (
           <div
-            className="rounded-2xl p-6 mb-6 text-center"
+            className="rounded-2xl p-6 mb-6 text-center animate-fade-up"
             style={{ background: "#FFE5E3" }}
           >
-            <p className="text-4xl mb-2">❌</p>
+            <div className="w-14 h-14 rounded-full mx-auto flex items-center justify-center mb-3" style={{ background: "rgba(255,59,48,0.1)" }}>
+              <svg className="w-7 h-7" style={{ color: "#FF3B30" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
             <p className="font-semibold text-sm" style={{ color: "#FF3B30" }}>
               This order has been cancelled
             </p>
           </div>
         )}
 
+        {/* Delivered success */}
+        {isDelivered && (
+          <div
+            className="rounded-2xl p-6 mb-6 text-center animate-fade-up"
+            style={{ background: "var(--hubb-tint)" }}
+          >
+            <div className="w-14 h-14 rounded-full mx-auto flex items-center justify-center mb-3" style={{ background: "rgba(6,193,103,0.15)" }}>
+              <svg className="w-7 h-7" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <p className="font-semibold text-sm" style={{ color: "var(--hubb-green)" }}>
+              Your order has been delivered!
+            </p>
+          </div>
+        )}
+
         {/* Order details */}
         <div
-          className="rounded-2xl p-5"
+          className="rounded-2xl p-5 animate-fade-up"
           style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
         >
           <div className="flex items-center gap-3 mb-4">
@@ -268,10 +284,18 @@ export default function TrackingPage() {
           <div className="space-y-2">
             {order.items.map((ci, idx) => (
               <div key={idx} className="flex justify-between text-sm">
-                <span style={{ color: "var(--text-secondary)" }}>
-                  {ci.quantity}× {ci.foodItem.name}
-                </span>
-                <span style={{ color: "var(--text-primary)" }}>
+                <div className="flex items-center gap-2 min-w-0">
+                  <span
+                    className="w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-bold shrink-0"
+                    style={{ background: "var(--bg-search)", color: "var(--text-secondary)" }}
+                  >
+                    {ci.quantity}
+                  </span>
+                  <span className="truncate" style={{ color: "var(--text-secondary)" }}>
+                    {ci.foodItem.name}
+                  </span>
+                </div>
+                <span className="shrink-0 ml-2" style={{ color: "var(--text-primary)" }}>
                   Rs. {Math.round(ci.quantity * ci.foodItem.price)}
                 </span>
               </div>
@@ -279,19 +303,29 @@ export default function TrackingPage() {
           </div>
 
           <div
-            className="mt-4 pt-4 border-t flex justify-between font-bold text-sm"
-            style={{ borderColor: "var(--border-default)", color: "var(--text-primary)" }}
+            className="mt-4 pt-4 border-t space-y-1.5"
+            style={{ borderColor: "var(--border-default)" }}
           >
-            <span>Total</span>
-            <span>Rs. {Math.round(order.total)}</span>
+            {order.deliveryFee !== undefined && (
+              <div className="flex justify-between text-xs">
+                <span style={{ color: "var(--text-tertiary)" }}>Delivery</span>
+                <span style={{ color: order.deliveryFee === 0 ? "var(--hubb-accent)" : "var(--text-secondary)" }}>
+                  {order.deliveryFee === 0 ? "FREE" : `Rs. ${order.deliveryFee}`}
+                </span>
+              </div>
+            )}
+            <div className="flex justify-between font-bold text-sm pt-1.5" style={{ color: "var(--text-primary)" }}>
+              <span>Total</span>
+              <span>Rs. {Math.round(order.total)}</span>
+            </div>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex gap-3 animate-fade-up">
           <Link
             href="/orders"
-            className="flex-1 text-center py-3 rounded-xl text-sm font-semibold transition-colors"
+            className="flex-1 text-center py-3 rounded-xl text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99]"
             style={{
               background: "var(--bg-card)",
               color: "var(--text-primary)",
@@ -302,7 +336,7 @@ export default function TrackingPage() {
           </Link>
           <Link
             href="/"
-            className="flex-1 text-center py-3 rounded-xl text-sm font-semibold text-white"
+            className="flex-1 text-center py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-[1.01] active:scale-[0.99]"
             style={{ background: "var(--hubb-accent)" }}
           >
             Order Again

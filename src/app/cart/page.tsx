@@ -13,8 +13,15 @@ export default function CartPage() {
         className="min-h-screen flex items-center justify-center"
         style={{ background: "var(--bg-secondary)" }}
       >
-        <div className="text-center">
-          <p className="text-6xl mb-4">🛒</p>
+        <div className="text-center animate-fade-up">
+          <div
+            className="w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-5"
+            style={{ background: "var(--bg-search)" }}
+          >
+            <svg className="w-12 h-12" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+          </div>
           <h2
             className="text-xl font-bold"
             style={{ color: "var(--text-primary)" }}
@@ -22,14 +29,14 @@ export default function CartPage() {
             Your cart is empty
           </h2>
           <p
-            className="text-sm mt-2"
+            className="text-sm mt-2 max-w-xs mx-auto"
             style={{ color: "var(--text-secondary)" }}
           >
             Add items from a restaurant to get started
           </p>
           <Link
             href="/"
-            className="inline-block mt-6 px-6 py-3 rounded-full text-sm font-semibold text-white"
+            className="inline-block mt-6 px-6 py-3 rounded-full text-sm font-semibold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
             style={{ background: "var(--hubb-accent)" }}
           >
             Browse Restaurants
@@ -58,12 +65,12 @@ export default function CartPage() {
               Your Cart
             </h1>
             <p className="text-sm mt-0.5" style={{ color: "var(--text-secondary)" }}>
-              From {cart.restaurantName}
+              {itemCount} item{itemCount !== 1 ? "s" : ""} from {cart.restaurantName}
             </p>
           </div>
           <button
             onClick={clearCart}
-            className="text-sm font-medium"
+            className="text-sm font-medium transition-opacity hover:opacity-70"
             style={{ color: "var(--hubb-orange)" }}
           >
             Clear All
@@ -72,10 +79,11 @@ export default function CartPage() {
 
         {/* Items */}
         <div
-          className="rounded-2xl divide-y divide-[var(--border-subtle)] overflow-hidden"
+          className="rounded-2xl divide-y overflow-hidden"
           style={{
             background: "var(--bg-card)",
             boxShadow: "var(--shadow-sm)",
+            borderColor: "var(--border-subtle)",
           }}
         >
           {cart.items.map((ci) => (
@@ -84,11 +92,11 @@ export default function CartPage() {
                 <img
                   src={ci.foodItem.imageURL}
                   alt={ci.foodItem.name}
-                  className="w-16 h-16 rounded-lg object-cover shrink-0"
+                  className="w-16 h-16 rounded-xl object-cover shrink-0"
                 />
               ) : (
                 <div
-                  className="w-16 h-16 rounded-lg shrink-0 flex items-center justify-center"
+                  className="w-16 h-16 rounded-xl shrink-0 flex items-center justify-center"
                   style={{ background: "var(--bg-search)" }}
                 >
                   <span className="text-xl">🍽️</span>
@@ -103,7 +111,7 @@ export default function CartPage() {
                 </h3>
                 {ci.selectedOptions.length > 0 && (
                   <p
-                    className="text-xs line-clamp-1 mt-0.5"
+                    className="text-[11px] line-clamp-1 mt-0.5"
                     style={{ color: "var(--text-tertiary)" }}
                   >
                     {ci.selectedOptions.map((o) => o.name).join(", ")}
@@ -111,14 +119,14 @@ export default function CartPage() {
                 )}
                 {ci.specialInstructions && (
                   <p
-                    className="text-xs italic mt-0.5 line-clamp-1"
+                    className="text-[11px] italic mt-0.5 line-clamp-1"
                     style={{ color: "var(--text-tertiary)" }}
                   >
                     &ldquo;{ci.specialInstructions}&rdquo;
                   </p>
                 )}
                 <p
-                  className="text-sm font-bold mt-1"
+                  className="text-sm font-bold mt-1.5"
                   style={{ color: "var(--text-primary)" }}
                 >
                   Rs.{" "}
@@ -134,15 +142,19 @@ export default function CartPage() {
               </div>
               {/* Quantity stepper */}
               <div
-                className="flex items-center gap-0 rounded-full overflow-hidden"
-                style={{ border: "1px solid var(--border-default)" }}
+                className="flex items-center rounded-full shrink-0"
+                style={{ background: "var(--bg-search)" }}
               >
                 <button
                   onClick={() => updateQuantity(ci.id, ci.quantity - 1)}
-                  className="w-8 h-8 flex items-center justify-center text-sm font-bold"
-                  style={{ color: "var(--hubb-accent)" }}
+                  className="w-8 h-8 flex items-center justify-center text-sm font-bold rounded-full transition-colors"
+                  style={{ color: ci.quantity === 1 ? "var(--hubb-orange)" : "var(--hubb-accent)" }}
                 >
-                  −
+                  {ci.quantity === 1 ? (
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  ) : "−"}
                 </button>
                 <span
                   className="w-8 h-8 flex items-center justify-center text-sm font-bold"
@@ -152,7 +164,7 @@ export default function CartPage() {
                 </span>
                 <button
                   onClick={() => updateQuantity(ci.id, ci.quantity + 1)}
-                  className="w-8 h-8 flex items-center justify-center text-sm font-bold"
+                  className="w-8 h-8 flex items-center justify-center text-sm font-bold rounded-full"
                   style={{ color: "var(--hubb-accent)" }}
                 >
                   +
@@ -180,10 +192,7 @@ export default function CartPage() {
             <span style={{ color: "var(--text-secondary)" }}>Delivery Fee</span>
             <span
               style={{
-                color:
-                  deliveryFee === 0
-                    ? "var(--hubb-accent)"
-                    : "var(--text-primary)",
+                color: deliveryFee === 0 ? "var(--hubb-accent)" : "var(--text-primary)",
               }}
             >
               {deliveryFee === 0 ? "FREE" : `Rs. ${deliveryFee}`}
@@ -196,15 +205,15 @@ export default function CartPage() {
             </span>
           </div>
           {deliveryFee === 0 && (
-            <p
-              className="text-xs text-center py-2 rounded-lg font-medium"
-              style={{
-                background: "var(--hubb-tint)",
-                color: "var(--hubb-green)",
-              }}
+            <div
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium"
+              style={{ background: "var(--hubb-tint)", color: "var(--hubb-green)" }}
             >
+              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
               Free delivery on orders above Rs. 1,000!
-            </p>
+            </div>
           )}
           <div
             className="flex justify-between font-bold text-base pt-3 border-t"
@@ -220,7 +229,7 @@ export default function CartPage() {
 
         <Link
           href="/checkout"
-          className="block text-center mt-5 py-4 rounded-2xl text-base font-bold text-white transition-colors"
+          className="block text-center mt-5 py-4 rounded-2xl text-base font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99]"
           style={{ background: "var(--hubb-accent)" }}
         >
           Proceed to Checkout • Rs. {Math.round(total)}

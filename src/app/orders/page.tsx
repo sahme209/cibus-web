@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/store";
 import * as api from "@/lib/api";
-import type { Order, OrderStatus } from "@/lib/types";
+import type { Order } from "@/lib/types";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   placed: { label: "Placed", color: "#FF9500", bg: "#FFF4E6" },
@@ -53,17 +53,24 @@ export default function OrdersPage() {
         className="min-h-screen flex items-center justify-center"
         style={{ background: "var(--bg-secondary)" }}
       >
-        <div className="text-center">
-          <p className="text-5xl mb-4">📋</p>
-          <h2
-            className="text-lg font-bold"
-            style={{ color: "var(--text-primary)" }}
+        <div className="text-center animate-fade-up">
+          <div
+            className="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4"
+            style={{ background: "var(--bg-search)" }}
           >
+            <svg className="w-10 h-10" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+          <h2 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>
             Sign in to view orders
           </h2>
+          <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
+            Track your active and past orders
+          </p>
           <Link
             href="/auth"
-            className="inline-block mt-4 px-6 py-3 rounded-full text-sm font-semibold text-white"
+            className="inline-block mt-5 px-6 py-3 rounded-full text-sm font-semibold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
             style={{ background: "var(--hubb-accent)" }}
           >
             Sign In
@@ -99,16 +106,12 @@ export default function OrdersPage() {
               onClick={() => setTab(t)}
               className="flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all"
               style={{
-                background:
-                  tab === t ? "var(--bg-card)" : "transparent",
-                color:
-                  tab === t
-                    ? "var(--text-primary)"
-                    : "var(--text-secondary)",
+                background: tab === t ? "var(--bg-card)" : "transparent",
+                color: tab === t ? "var(--text-primary)" : "var(--text-secondary)",
                 boxShadow: tab === t ? "var(--shadow-sm)" : "none",
               }}
             >
-              {t === "active" ? `Active (${activeOrders.length})` : `Past (${pastOrders.length})`}
+              {t === "active" ? `Active${!loading ? ` (${activeOrders.length})` : ""}` : `Past${!loading ? ` (${pastOrders.length})` : ""}`}
             </button>
           ))}
         </div>
@@ -116,54 +119,51 @@ export default function OrdersPage() {
         {loading ? (
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-2xl p-5 animate-pulse space-y-3"
-                style={{ background: "var(--bg-card)" }}
-              >
-                <div className="h-4 w-48 rounded" style={{ background: "var(--bg-search)" }} />
-                <div className="h-3 w-32 rounded" style={{ background: "var(--bg-search)" }} />
+              <div key={i} className="rounded-2xl p-5 space-y-3" style={{ background: "var(--bg-card)" }}>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl skeleton-shimmer" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-40 rounded skeleton-shimmer" />
+                    <div className="h-3 w-28 rounded skeleton-shimmer" />
+                  </div>
+                  <div className="h-6 w-16 rounded-full skeleton-shimmer" />
+                </div>
               </div>
             ))}
           </div>
         ) : orders.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-3 stagger-children">
             {orders.map((order) => {
-              const cfg =
-                STATUS_CONFIG[order.status] || STATUS_CONFIG.placed;
+              const cfg = STATUS_CONFIG[order.status] || STATUS_CONFIG.placed;
               return (
                 <Link
                   key={order.id}
-                  href={
-                    tab === "active"
-                      ? `/tracking/${order.id}`
-                      : `/orders`
-                  }
-                  className="block rounded-2xl p-5 transition-all hover:-translate-y-0.5"
+                  href={tab === "active" ? `/tracking/${order.id}` : `/orders`}
+                  className="block rounded-2xl p-4 transition-all hover:-translate-y-0.5 hover:shadow-md"
                   style={{
                     background: "var(--bg-card)",
                     boxShadow: "var(--shadow-sm)",
                   }}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                       {order.restaurantImageURL ? (
                         <img
                           src={order.restaurantImageURL}
                           alt=""
-                          className="w-12 h-12 rounded-xl object-cover"
+                          className="w-12 h-12 rounded-xl object-cover shrink-0"
                         />
                       ) : (
                         <div
-                          className="w-12 h-12 rounded-xl flex items-center justify-center"
+                          className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
                           style={{ background: "var(--bg-search)" }}
                         >
                           <span className="text-lg">🍽️</span>
                         </div>
                       )}
-                      <div>
+                      <div className="min-w-0">
                         <h3
-                          className="font-semibold text-sm"
+                          className="font-semibold text-sm truncate"
                           style={{ color: "var(--text-primary)" }}
                         >
                           {order.restaurantName}
@@ -172,49 +172,64 @@ export default function OrdersPage() {
                           className="text-xs mt-0.5"
                           style={{ color: "var(--text-secondary)" }}
                         >
-                          {order.items.length} item
-                          {order.items.length !== 1 ? "s" : ""} • Rs.{" "}
-                          {Math.round(order.total)}
+                          {order.items.length} item{order.items.length !== 1 ? "s" : ""} • Rs. {Math.round(order.total)}
                         </p>
                         <p
-                          className="text-xs mt-0.5"
+                          className="text-[11px] mt-0.5"
                           style={{ color: "var(--text-tertiary)" }}
                         >
-                          {new Date(order.placedAt).toLocaleDateString(
-                            "en-PK",
-                            {
-                              day: "numeric",
-                              month: "short",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
+                          {new Date(order.placedAt).toLocaleDateString("en-PK", {
+                            day: "numeric",
+                            month: "short",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </p>
                       </div>
                     </div>
                     <span
-                      className="px-3 py-1 rounded-full text-xs font-semibold shrink-0"
+                      className="px-2.5 py-1 rounded-full text-[11px] font-bold shrink-0"
                       style={{ background: cfg.bg, color: cfg.color }}
                     >
                       {cfg.label}
                     </span>
                   </div>
+                  {tab === "active" && (
+                    <div className="mt-3 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: "var(--hubb-accent)" }} />
+                        <span className="text-xs font-medium" style={{ color: "var(--hubb-accent)" }}>
+                          {cfg.label}
+                        </span>
+                      </div>
+                      <span className="text-xs font-semibold" style={{ color: "var(--hubb-accent)" }}>
+                        Track →
+                      </span>
+                    </div>
+                  )}
                 </Link>
               );
             })}
           </div>
         ) : (
-          <div className="text-center py-20">
-            <p className="text-5xl mb-4">
-              {tab === "active" ? "🚀" : "📋"}
-            </p>
+          <div className="text-center py-16 animate-fade-up">
+            <div
+              className="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4"
+              style={{ background: "var(--bg-search)" }}
+            >
+              <svg className="w-10 h-10" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {tab === "active" ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                )}
+              </svg>
+            </div>
             <h3
               className="text-lg font-semibold"
               style={{ color: "var(--text-primary)" }}
             >
-              {tab === "active"
-                ? "No active orders"
-                : "No past orders yet"}
+              {tab === "active" ? "No active orders" : "No past orders yet"}
             </h3>
             <p
               className="text-sm mt-1"
@@ -227,7 +242,7 @@ export default function OrdersPage() {
             {tab === "active" && (
               <Link
                 href="/"
-                className="inline-block mt-4 px-6 py-3 rounded-full text-sm font-semibold text-white"
+                className="inline-block mt-5 px-6 py-3 rounded-full text-sm font-semibold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{ background: "var(--hubb-accent)" }}
               >
                 Browse Restaurants
