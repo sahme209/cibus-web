@@ -1,10 +1,23 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import RestaurantCard from "@/components/RestaurantCard";
-import type { Restaurant } from "@/lib/types";
+import type { Restaurant, FoodItem } from "@/lib/types";
 import * as api from "@/lib/api";
+import Link from "next/link";
+
+const TRENDING = [
+  "Biryani", "Burgers", "Pizza", "Karahi",
+  "Chinese", "BBQ", "Desserts", "Naan",
+];
+
+const QUICK_SEARCHES = [
+  { label: "Free Delivery", query: "free delivery", icon: "🚲" },
+  { label: "Under 30 min", query: "fast delivery", icon: "⚡" },
+  { label: "Top Rated", query: "top rated", icon: "⭐" },
+  { label: "New on HUBB", query: "new", icon: "✨" },
+];
 
 export default function SearchPage() {
   return (
@@ -19,8 +32,10 @@ function SearchContent() {
   const initialQuery = searchParams.get("q") || "";
   const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<Restaurant[]>([]);
+  const [foodResults, setFoodResults] = useState<FoodItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (initialQuery) {
@@ -28,15 +43,27 @@ function SearchContent() {
     }
   }, [initialQuery]);
 
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   async function doSearch(q: string) {
     if (!q.trim()) return;
     setLoading(true);
     setSearched(true);
     try {
-      const data = await api.searchRestaurants(q);
-      setResults(data);
+      const [restaurants, foods] = await Promise.allSettled([
+        api.searchRestaurants(q),
+        api.searchFoodItems(q),
+      ]);
+      if (restaurants.status === "fulfilled") setResults(restaurants.value);
+      if (foods.status === "fulfilled") {
+        const list = Array.isArray(foods.value) ? foods.value : [];
+        setFoodResults(list.slice(0, 6));
+      }
     } catch {
       setResults([]);
+      setFoodResults([]);
     } finally {
       setLoading(false);
     }
@@ -48,41 +75,59 @@ function SearchContent() {
       style={{ background: "var(--bg-secondary)" }}
     >
       {/* Search bar */}
-      <div style={{ background: "var(--bg-primary)", borderBottom: "1px solid var(--border-default)" }}>
-        <div className="mx-auto max-w-3xl px-4 py-6">
+      <div
+        className="sticky top-16 z-30"
+        style={{
+          background: "color-mix(in srgb, var(--bg-primary) 90%, transparent)",
+          backdropFilter: "blur(12px)",
+          borderBottom: "1px solid var(--border-default)",
+        }}
+      >
+        <div className="mx-auto max-w-3xl px-4 py-4">
           <form
             onSubmit={(e) => {
               e.preventDefault();
               doSearch(query);
             }}
-            className="flex gap-3"
+            className="relative"
           >
-            <div className="flex-1 relative">
-              <svg
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
-                style={{ color: "var(--text-tertiary)" }}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <svg
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
+              style={{ color: "var(--text-tertiary)" }}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search restaurants, cuisines, dishes..."
+              className="w-full pl-12 pr-20 py-3.5 rounded-2xl text-sm transition-shadow focus:shadow-md"
+              style={{
+                background: "var(--bg-search)",
+                color: "var(--text-primary)",
+                border: "none",
+              }}
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => { setQuery(""); setSearched(false); setResults([]); setFoodResults([]); inputRef.current?.focus(); }}
+                className="absolute right-16 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center"
+                style={{ background: "var(--bg-surface)", color: "var(--text-tertiary)" }}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search restaurants, cuisines, dishes..."
-                className="w-full pl-12 pr-4 py-3 rounded-full text-sm"
-                style={{
-                  background: "var(--bg-search)",
-                  color: "var(--text-primary)",
-                  border: "none",
-                }}
-              />
-            </div>
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
             <button
               type="submit"
-              className="px-6 py-3 rounded-full text-sm font-semibold text-white transition-colors"
+              className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:scale-105 active:scale-95"
               style={{ background: "var(--hubb-accent)" }}
             >
               Search
@@ -91,63 +136,128 @@ function SearchContent() {
         </div>
       </div>
 
-      {/* Results */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-2xl overflow-hidden animate-pulse"
-                style={{ background: "var(--bg-card)" }}
-              >
-                <div className="aspect-[16/10]" style={{ background: "var(--bg-search)" }} />
-                <div className="p-4 space-y-3">
-                  <div className="h-4 rounded-full w-3/4" style={{ background: "var(--bg-search)" }} />
-                  <div className="h-3 rounded-full w-1/2" style={{ background: "var(--bg-search)" }} />
+              <div key={i} className="rounded-2xl overflow-hidden">
+                <div className="aspect-[16/10] skeleton-shimmer" />
+                <div className="p-4 space-y-3" style={{ background: "var(--bg-card)" }}>
+                  <div className="h-4 rounded-full w-3/4 skeleton-shimmer" />
+                  <div className="h-3 rounded-full w-1/2 skeleton-shimmer" />
                 </div>
               </div>
             ))}
           </div>
-        ) : results.length > 0 ? (
-          <>
+        ) : searched && (results.length > 0 || foodResults.length > 0) ? (
+          <div className="animate-fade-up">
             <p
               className="text-sm mb-5"
               style={{ color: "var(--text-secondary)" }}
             >
-              {results.length} result{results.length !== 1 ? "s" : ""} for &ldquo;{query}&rdquo;
+              {results.length} restaurant{results.length !== 1 ? "s" : ""} found for &ldquo;{query}&rdquo;
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+            {/* Food item matches */}
+            {foodResults.length > 0 && (
+              <div className="mb-8">
+                <h3 className="text-sm font-semibold mb-3" style={{ color: "var(--text-secondary)" }}>
+                  Matching Dishes
+                </h3>
+                <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+                  {foodResults.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={`/restaurant/${item.restaurantID}`}
+                      className="shrink-0 flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:-translate-y-0.5"
+                      style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)", minWidth: 200 }}
+                    >
+                      {item.imageURL ? (
+                        <img src={item.imageURL} alt={item.name} className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg shrink-0 flex items-center justify-center" style={{ background: "var(--bg-search)" }}>
+                          <span>🍽️</span>
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold truncate" style={{ color: "var(--text-primary)" }}>{item.name}</p>
+                        <p className="text-xs truncate" style={{ color: "var(--text-tertiary)" }}>{item.restaurantName}</p>
+                        <p className="text-xs font-bold mt-0.5" style={{ color: "var(--hubb-accent)" }}>Rs. {Math.round(item.price)}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Restaurant results */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
               {results.map((r) => (
                 <RestaurantCard key={r.id} restaurant={r} />
               ))}
             </div>
-          </>
+          </div>
         ) : searched ? (
-          <div className="text-center py-20">
-            <p className="text-5xl mb-4">🔍</p>
+          <div className="text-center py-20 animate-fade-up">
+            <div className="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4" style={{ background: "var(--bg-search)" }}>
+              <svg className="w-10 h-10" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
             <h3
               className="text-lg font-semibold"
               style={{ color: "var(--text-primary)" }}
             >
-              No results found
+              No results for &ldquo;{query}&rdquo;
             </h3>
             <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-              Try a different search term
+              Try a different spelling or browse by category
             </p>
           </div>
         ) : (
-          <div className="text-center py-20">
-            <p className="text-5xl mb-4">🔍</p>
-            <h3
-              className="text-lg font-semibold"
-              style={{ color: "var(--text-primary)" }}
-            >
-              What are you craving?
-            </h3>
-            <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-              Search for restaurants, cuisines, or dishes
-            </p>
+          /* Discovery state */
+          <div className="animate-fade-up">
+            {/* Quick searches */}
+            <div className="mb-8">
+              <h3 className="text-sm font-semibold mb-3" style={{ color: "var(--text-secondary)" }}>
+                Quick Searches
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {QUICK_SEARCHES.map((qs) => (
+                  <button
+                    key={qs.label}
+                    onClick={() => { setQuery(qs.query); doSearch(qs.query); }}
+                    className="flex items-center gap-2.5 px-4 py-3.5 rounded-xl text-sm font-medium text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
+                    style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+                  >
+                    <span className="text-lg">{qs.icon}</span>
+                    <span style={{ color: "var(--text-primary)" }}>{qs.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Trending */}
+            <div>
+              <h3 className="text-sm font-semibold mb-3" style={{ color: "var(--text-secondary)" }}>
+                Trending Now
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {TRENDING.map((term, i) => (
+                  <button
+                    key={term}
+                    onClick={() => { setQuery(term); doSearch(term); }}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all hover:scale-105"
+                    style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)", color: "var(--text-primary)" }}
+                  >
+                    <span className="text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "var(--bg-search)", color: "var(--text-tertiary)" }}>
+                      {i + 1}
+                    </span>
+                    {term}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>

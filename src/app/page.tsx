@@ -6,6 +6,7 @@ import PromoBanner from "@/components/PromoBanner";
 import PopularItems from "@/components/PopularItems";
 import QuickReorder from "@/components/QuickReorder";
 import FilterBar from "@/components/FilterBar";
+import HubbPlusBanner from "@/components/HubbPlusBanner";
 import type { Restaurant } from "@/lib/types";
 import * as api from "@/lib/api";
 import Link from "next/link";
@@ -82,60 +83,79 @@ export default function HomePage() {
         className="relative overflow-hidden"
         style={{ background: "var(--hubb-primary)" }}
       >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-          <div className="max-w-2xl">
-            <h1 className="text-4xl sm:text-5xl font-bold text-white leading-tight">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+          <div className="max-w-2xl animate-fade-up">
+            <h1 className="text-3xl sm:text-5xl font-bold text-white leading-tight tracking-tight">
               Your favorite food,
               <br />
               <span style={{ color: "var(--hubb-accent)" }}>delivered fast.</span>
             </h1>
-            <p className="mt-4 text-lg text-white/70">
-              Order from the best restaurants in your city. Exclusive deals, real-time tracking, and premium quality every time.
+            <p className="mt-4 text-base sm:text-lg text-white/60 max-w-lg">
+              Order from the best restaurants in your city. Exclusive deals, real-time tracking, and premium quality.
             </p>
-            <div className="mt-8 flex gap-3">
+
+            {/* Search bar in hero */}
+            <div className="mt-7">
               <Link
                 href="/search"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-white transition-colors"
-                style={{ background: "var(--hubb-accent)" }}
+                className="flex items-center gap-3 w-full max-w-md px-5 py-3.5 rounded-full text-sm transition-all hover:shadow-xl"
+                style={{
+                  background: "rgba(255,255,255,0.12)",
+                  backdropFilter: "blur(12px)",
+                  color: "rgba(255,255,255,0.5)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-                Browse Restaurants
+                Search for restaurants or dishes...
               </Link>
+            </div>
+
+            {/* Stats bar */}
+            <div className="flex items-center gap-6 mt-8">
+              <div>
+                <p className="text-2xl font-bold text-white">500+</p>
+                <p className="text-xs text-white/40">Restaurants</p>
+              </div>
+              <div className="w-px h-8 bg-white/10" />
+              <div>
+                <p className="text-2xl font-bold text-white">25 min</p>
+                <p className="text-xs text-white/40">Avg. Delivery</p>
+              </div>
+              <div className="w-px h-8 bg-white/10" />
+              <div>
+                <p className="text-2xl font-bold" style={{ color: "var(--hubb-accent)" }}>4.8★</p>
+                <p className="text-xs text-white/40">Avg. Rating</p>
+              </div>
             </div>
           </div>
         </div>
-        {/* Decorative gradient orbs */}
-        <div
-          className="absolute -top-24 -right-24 w-72 h-72 rounded-full opacity-20 blur-3xl"
-          style={{ background: "var(--hubb-accent)" }}
-        />
-        <div
-          className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full opacity-10 blur-3xl"
-          style={{ background: "var(--hubb-accent)" }}
-        />
+
+        {/* Decorative */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-15 blur-3xl" style={{ background: "var(--hubb-accent)" }} />
+        <div className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full opacity-8 blur-3xl" style={{ background: "var(--hubb-accent)" }} />
+        <div className="absolute top-1/2 right-1/4 w-48 h-48 rounded-full opacity-5 blur-3xl animate-float" style={{ background: "var(--hubb-gold)" }} />
       </section>
 
       {/* Categories */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
-        <div
-          className="flex gap-3 overflow-x-auto hide-scrollbar py-4 px-2"
-        >
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-7 relative z-10">
+        <div className="flex gap-2.5 overflow-x-auto hide-scrollbar py-3 px-1 stagger-children">
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.name}
               href={`/search?q=${encodeURIComponent(cat.name)}`}
-              className="flex flex-col items-center gap-2 shrink-0 px-5 py-4 rounded-2xl transition-all hover:-translate-y-0.5"
+              className="flex flex-col items-center gap-1.5 shrink-0 px-4 py-3 rounded-2xl transition-all hover:-translate-y-1 hover:shadow-md"
               style={{
                 background: "var(--bg-card)",
                 boxShadow: "var(--shadow-sm)",
-                minWidth: 90,
+                minWidth: 80,
               }}
             >
               <span className="text-2xl">{cat.emoji}</span>
               <span
-                className="text-xs font-semibold"
+                className="text-[11px] font-semibold"
                 style={{ color: "var(--text-primary)" }}
               >
                 {cat.name}
@@ -146,8 +166,13 @@ export default function HomePage() {
       </section>
 
       {/* Promo Banner */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
         <PromoBanner />
+      </section>
+
+      {/* HUBB+ Banner */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
+        <HubbPlusBanner />
       </section>
 
       {/* Quick Reorder */}
@@ -172,13 +197,13 @@ export default function HomePage() {
             </h2>
             <Link
               href="/search"
-              className="text-sm font-semibold"
+              className="text-sm font-semibold transition-colors hover:opacity-80"
               style={{ color: "var(--hubb-accent)" }}
             >
               See All →
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
             {featured.slice(0, 6).map((r) => (
               <RestaurantCard key={r.id} restaurant={r} />
             ))}
@@ -193,7 +218,7 @@ export default function HomePage() {
             className="text-xl font-bold"
             style={{ color: "var(--text-primary)" }}
           >
-            {loading ? "Loading restaurants..." : "All Restaurants"}
+            {loading ? "Loading restaurants..." : `All Restaurants${filteredRestaurants.length !== restaurants.length ? ` (${filteredRestaurants.length})` : ""}`}
           </h2>
         </div>
         {!loading && restaurants.length > 0 && (
@@ -209,26 +234,32 @@ export default function HomePage() {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl overflow-hidden animate-pulse"
-                style={{ background: "var(--bg-card)" }}
+                className="rounded-2xl overflow-hidden"
               >
-                <div className="aspect-[16/10]" style={{ background: "var(--bg-search)" }} />
-                <div className="p-4 space-y-3">
-                  <div className="h-4 rounded-full w-3/4" style={{ background: "var(--bg-search)" }} />
-                  <div className="h-3 rounded-full w-1/2" style={{ background: "var(--bg-search)" }} />
+                <div className="aspect-[16/10] skeleton-shimmer" />
+                <div className="p-4 space-y-3" style={{ background: "var(--bg-card)" }}>
+                  <div className="h-4 rounded-full w-3/4 skeleton-shimmer" />
+                  <div className="h-3 rounded-full w-1/2 skeleton-shimmer" />
                 </div>
               </div>
             ))}
           </div>
         ) : filteredRestaurants.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
             {filteredRestaurants.map((r) => (
               <RestaurantCard key={r.id} restaurant={r} />
             ))}
           </div>
         ) : (
-          <div className="text-center py-20">
-            <p className="text-5xl mb-4">🍽️</p>
+          <div className="text-center py-20 animate-fade-up">
+            <div
+              className="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4"
+              style={{ background: "var(--bg-search)" }}
+            >
+              <svg className="w-10 h-10" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
             <h3
               className="text-lg font-semibold"
               style={{ color: "var(--text-primary)" }}
@@ -236,7 +267,7 @@ export default function HomePage() {
               No restaurants found
             </h3>
             <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-              We&apos;re expanding soon. Check back later!
+              Try adjusting your filters or check back later!
             </p>
           </div>
         )}
