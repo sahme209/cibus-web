@@ -243,7 +243,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       api
         .getUserProfile()
         .then((u) => setUser(u))
-        .catch(() => localStorage.removeItem("hubb_token"))
+        .catch((err) => {
+          if (err instanceof api.APIError && err.status === 401) {
+            localStorage.removeItem("hubb_token");
+          }
+        })
         .finally(() => setAuthLoading(false));
     } else {
       setAuthLoading(false);

@@ -25,7 +25,7 @@ const CATEGORIES = [
 ];
 
 export default function HomePage() {
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, loading: authLoading } = useAuth();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [featured, setFeatured] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
@@ -118,7 +118,7 @@ export default function HomePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </Link>
-              {!isLoggedIn && (
+              {!authLoading && !isLoggedIn && (
                 <Link
                   href="/auth"
                   className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-full text-sm font-semibold transition-all hover:opacity-90"

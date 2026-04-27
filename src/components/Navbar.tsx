@@ -12,7 +12,7 @@ interface NavbarProps {
 
 export default function Navbar({ onCartClick }: NavbarProps) {
   const { itemCount, subtotal } = useCart();
-  const { isLoggedIn, user, logout } = useAuth();
+  const { isLoggedIn, user, logout, loading: authLoading } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [deliveryMode, setDeliveryMode] = useState<"delivery" | "pickup">("delivery");
 
@@ -109,7 +109,9 @@ export default function Navbar({ onCartClick }: NavbarProps) {
           </button>
 
           {/* Auth */}
-          {isLoggedIn ? (
+          {authLoading ? (
+            <div className="hidden sm:block w-8 h-8 rounded-full skeleton-shimmer" />
+          ) : isLoggedIn ? (
             <div className="relative hidden sm:block">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
