@@ -135,7 +135,9 @@ export async function placeOrder(body: Record<string, any>) {
 }
 
 export async function getActiveOrders() {
-  return request<any[]>("/orders/active");
+  const res = await request<{ data: any | null }>("/orders/active");
+  if (!res.data) return [];
+  return [res.data];
 }
 
 export async function getOrderHistory(page = 1, limit = 20) {

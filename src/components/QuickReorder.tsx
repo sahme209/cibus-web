@@ -56,7 +56,7 @@ export default function QuickReorder() {
         {orders.map((order) => (
           <Link
             key={order.id}
-            href={`/restaurant/${order.restaurantID || order.items[0]?.foodItem?.restaurantID || order.id}`}
+            href={`/restaurant/${order.restaurantID || (order.items || [])[0]?.foodItem?.restaurantID || order.id}`}
             className="shrink-0 flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:-translate-y-0.5"
             style={{
               background: "var(--bg-card)",
@@ -91,7 +91,7 @@ export default function QuickReorder() {
                 className="text-xs truncate"
                 style={{ color: "var(--text-tertiary)" }}
               >
-                {order.items
+                {(order.items || [])
                   .slice(0, 2)
                   .map((i) => i.foodItem.name)
                   .join(", ")}

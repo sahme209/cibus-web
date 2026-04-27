@@ -318,13 +318,13 @@ export default function TrackingPage() {
                 {order.restaurantName}
               </h3>
               <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
-                {order.items.length} item{order.items.length !== 1 ? "s" : ""}
+                {(order.items || []).length} item{(order.items || []).length !== 1 ? "s" : ""}
               </p>
             </div>
           </div>
 
           <div className="space-y-2">
-            {order.items.map((ci, idx) => (
+            {(order.items || []).map((ci, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <div className="flex items-center gap-2 min-w-0">
                   <span

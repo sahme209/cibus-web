@@ -138,7 +138,7 @@ export default function OrdersPage() {
             {orders.map((order) => {
               const cfg = STATUS_CONFIG[order.status] || STATUS_CONFIG.placed;
               const isExpanded = expandedId === order.id;
-              const restaurantID = (order as any).restaurantID || order.items[0]?.foodItem?.restaurantID;
+              const restaurantID = (order as any).restaurantID || (order.items || [])[0]?.foodItem?.restaurantID;
 
               if (tab === "active") {
                 return (
@@ -160,7 +160,7 @@ export default function OrdersPage() {
                         <div className="min-w-0">
                           <h3 className="font-semibold text-sm truncate" style={{ color: "var(--text-primary)" }}>{order.restaurantName}</h3>
                           <p className="text-xs mt-0.5" style={{ color: "var(--text-secondary)" }}>
-                            {order.items.length} item{order.items.length !== 1 ? "s" : ""} • Rs. {Math.round(order.total)}
+                            {(order.items || []).length} item{(order.items || []).length !== 1 ? "s" : ""} • Rs. {Math.round(order.total)}
                           </p>
                           <p className="text-[11px] mt-0.5" style={{ color: "var(--text-tertiary)" }}>
                             {new Date(order.placedAt).toLocaleDateString("en-PK", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
@@ -204,7 +204,7 @@ export default function OrdersPage() {
                         <div className="min-w-0">
                           <h3 className="font-semibold text-sm truncate" style={{ color: "var(--text-primary)" }}>{order.restaurantName}</h3>
                           <p className="text-xs mt-0.5" style={{ color: "var(--text-secondary)" }}>
-                            {order.items.length} item{order.items.length !== 1 ? "s" : ""} • Rs. {Math.round(order.total)}
+                            {(order.items || []).length} item{(order.items || []).length !== 1 ? "s" : ""} • Rs. {Math.round(order.total)}
                           </p>
                           <p className="text-[11px] mt-0.5" style={{ color: "var(--text-tertiary)" }}>
                             {new Date(order.placedAt).toLocaleDateString("en-PK", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
@@ -229,7 +229,7 @@ export default function OrdersPage() {
                   {isExpanded && (
                     <div className="px-4 pb-4 animate-fade-up" style={{ borderTop: "1px solid var(--border-default)" }}>
                       <div className="pt-3 space-y-2">
-                        {order.items.map((ci, idx) => (
+                        {(order.items || []).map((ci, idx) => (
                           <div key={idx} className="flex justify-between text-sm">
                             <div className="flex items-center gap-2 min-w-0">
                               <span
