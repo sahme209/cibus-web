@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useCart } from "@/lib/store";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,6 +12,17 @@ interface CartDrawerProps {
 
 export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const { cart, subtotal, itemCount, removeItem, updateQuantity } = useCart();
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    drawerRef.current?.focus();
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open, onClose]);
 
   const deliveryFee = subtotal >= 1000 ? 0 : 99;
   const total = subtotal + deliveryFee + Math.round(subtotal * 0.05);
@@ -26,7 +38,12 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 
       {/* Drawer */}
       <div
-        className="fixed top-0 right-0 bottom-0 z-[70] w-full max-w-md transition-transform duration-300 ease-out flex flex-col"
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Shopping cart"
+        tabIndex={-1}
+        className="fixed top-0 right-0 bottom-0 z-[70] w-full max-w-md transition-transform duration-300 ease-out flex flex-col outline-none"
         style={{
           transform: open ? "translateX(0)" : "translateX(100%)",
           background: "var(--bg-primary)",
@@ -52,6 +69,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           </div>
           <button
             onClick={onClose}
+            aria-label="Close cart"
             className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
             style={{ background: "var(--bg-search)" }}
           >
@@ -119,6 +137,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                       >
                         <button
                           onClick={() => updateQuantity(ci.id, ci.quantity - 1)}
+                          aria-label={ci.quantity === 1 ? `Remove ${ci.foodItem.name} from cart` : `Decrease ${ci.foodItem.name} quantity`}
                           className="w-7 h-7 flex items-center justify-center text-sm font-bold rounded-full"
                           style={{ color: "var(--hubb-accent)" }}
                         >
@@ -136,6 +155,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                         </span>
                         <button
                           onClick={() => updateQuantity(ci.id, ci.quantity + 1)}
+                          aria-label={`Increase ${ci.foodItem.name} quantity`}
                           className="w-7 h-7 flex items-center justify-center text-sm font-bold rounded-full"
                           style={{ color: "var(--hubb-accent)" }}
                         >

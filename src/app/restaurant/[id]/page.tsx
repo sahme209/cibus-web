@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import FoodItemCard from "@/components/FoodItemCard";
@@ -23,6 +23,19 @@ export default function RestaurantDetailPage() {
   const [menuSearch, setMenuSearch] = useState("");
   const { cart, subtotal, itemCount, addItem } = useCart();
   const { showToast } = useToast();
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const closeCustomization = useCallback(() => setCustomizingItem(null), []);
+
+  useEffect(() => {
+    if (!customizingItem) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeCustomization();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    modalRef.current?.focus();
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [customizingItem, closeCustomization]);
 
   const filteredMenu = useMemo(() => {
     if (!menuSearch.trim()) return menu;
@@ -118,9 +131,9 @@ export default function RestaurantDetailPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
 
-        {/* Back button */}
         <Link
           href="/"
+          aria-label="Go back to home"
           className="absolute top-4 left-4 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition-transform hover:scale-110"
           style={{ background: "rgba(0,0,0,0.3)" }}
         >
@@ -405,6 +418,10 @@ export default function RestaurantDetailPage() {
                 </p>
               </div>
             )}
+            {/* Spacer for mobile cart bar */}
+            {itemCount > 0 && cart.restaurantID === id && (
+              <div className="lg:hidden h-24" />
+            )}
           </div>
 
           {/* Cart sidebar (desktop) */}
@@ -467,17 +484,22 @@ export default function RestaurantDetailPage() {
       {customizingItem && (
         <div
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
-          onClick={() => setCustomizingItem(null)}
+          onClick={closeCustomization}
         >
           <div className="absolute inset-0 bg-black/50 animate-fade-in" />
           <div
-            className="relative rounded-t-3xl sm:rounded-2xl p-6 w-full max-w-md sm:mx-4 animate-fade-up"
+            ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Customize ${customizingItem.name}`}
+            tabIndex={-1}
+            className="relative rounded-t-3xl sm:rounded-2xl p-6 w-full max-w-md sm:mx-4 animate-fade-up outline-none"
             style={{ background: "var(--bg-card)" }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close */}
             <button
-              onClick={() => setCustomizingItem(null)}
+              onClick={closeCustomization}
+              aria-label="Close customization"
               className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center"
               style={{ background: "var(--bg-search)" }}
             >
@@ -574,16 +596,19 @@ export default function RestaurantDetailPage() {
               <div className="flex items-center rounded-full" style={{ background: "var(--bg-search)" }}>
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-9 h-9 flex items-center justify-center text-sm font-bold rounded-full"
+                  aria-label="Decrease quantity"
+                  disabled={quantity <= 1}
+                  className="w-9 h-9 flex items-center justify-center text-sm font-bold rounded-full disabled:opacity-30"
                   style={{ color: "var(--hubb-accent)" }}
                 >
                   −
                 </button>
-                <span className="w-8 text-center text-sm font-bold" style={{ color: "var(--text-primary)" }}>
+                <span className="w-8 text-center text-sm font-bold" style={{ color: "var(--text-primary)" }} aria-live="polite">
                   {quantity}
                 </span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
+                  aria-label="Increase quantity"
                   className="w-9 h-9 flex items-center justify-center text-sm font-bold rounded-full"
                   style={{ color: "var(--hubb-accent)" }}
                 >

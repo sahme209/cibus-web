@@ -23,9 +23,11 @@ export default function RestaurantCard({ restaurant }: { restaurant: Restaurant 
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5" role="list" aria-label="Restaurant badges">
           {restaurant.isFeatured && (
             <span
+              role="listitem"
+              aria-label="Featured restaurant"
               className="px-2.5 py-1 rounded-md text-[10px] font-bold text-white tracking-wide backdrop-blur-sm"
               style={{ background: "rgba(0,112,74,0.9)" }}
             >
@@ -34,6 +36,8 @@ export default function RestaurantCard({ restaurant }: { restaurant: Restaurant 
           )}
           {restaurant.deliveryFee === 0 && (
             <span
+              role="listitem"
+              aria-label="Free delivery"
               className="px-2.5 py-1 rounded-md text-[10px] font-bold text-white backdrop-blur-sm"
               style={{ background: "rgba(0,112,74,0.9)" }}
             >
@@ -41,27 +45,27 @@ export default function RestaurantCard({ restaurant }: { restaurant: Restaurant 
             </span>
           )}
         </div>
-        {/* Rating circle — top right */}
         <div
           className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-bold backdrop-blur-sm"
           style={{
             background: restaurant.rating >= 4.5 ? "rgba(0,112,74,0.9)" : "rgba(0,0,0,0.5)",
             color: "white",
           }}
+          aria-label={`Rating ${restaurant.rating.toFixed(1)} out of 5`}
         >
           {restaurant.rating.toFixed(1)}
         </div>
-        {/* Delivery time badge — DoorDash style */}
         <div className="absolute bottom-3 left-3">
           <span
             className="px-2.5 py-1 rounded-md text-xs font-bold"
             style={{ background: "var(--bg-card)", color: "var(--text-primary)", boxShadow: "var(--shadow-sm)" }}
+            aria-label={`Delivery time ${restaurant.deliveryTime}`}
           >
             {restaurant.deliveryTime}
           </span>
         </div>
         {!restaurant.isOpen && (
-          <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-[1px]">
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-[1px]" aria-label="Restaurant currently closed">
             <span className="text-white font-bold text-sm px-4 py-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.15)" }}>
               Currently Closed
             </span>

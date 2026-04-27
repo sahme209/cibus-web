@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCart } from "@/lib/store";
 import { useAuth } from "@/lib/store";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AddressSelector from "./AddressSelector";
 
 interface NavbarProps {
@@ -15,6 +15,15 @@ export default function Navbar({ onCartClick }: NavbarProps) {
   const { isLoggedIn, user, logout, loading: authLoading } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [deliveryMode, setDeliveryMode] = useState<"delivery" | "pickup">("delivery");
+
+  useEffect(() => {
+    if (!showUserMenu) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowUserMenu(false);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [showUserMenu]);
 
   return (
     <header

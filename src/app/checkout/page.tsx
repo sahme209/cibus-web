@@ -1,12 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/store";
 import { useAuth, useAddress } from "@/lib/store";
 import { useToast } from "@/components/ToastProvider";
 import * as api from "@/lib/api";
 import Link from "next/link";
+
+function generateTimeSlots(): string[] {
+  const now = new Date();
+  const slots: string[] = [];
+  const startHour = now.getHours() + 1;
+  for (let h = Math.max(startHour, 11); h <= 23; h++) {
+    const label = h <= 12 ? `${h === 0 ? 12 : h}:00 ${h < 12 ? "AM" : "PM"}` : `${h - 12}:00 PM`;
+    slots.push(`Today ${label}`);
+  }
+  for (let h = 11; h <= 22; h++) {
+    const label = h <= 12 ? `${h}:00 ${h < 12 ? "AM" : "PM"}` : `${h - 12}:00 PM`;
+    slots.push(`Tomorrow ${label}`);
+  }
+  return slots.slice(0, 8);
+}
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -28,6 +43,8 @@ export default function CheckoutPage() {
   const [deliveryNote, setDeliveryNote] = useState("");
   const [dropoff, setDropoff] = useState<"door" | "hand">("door");
   const [scheduleDelivery, setScheduleDelivery] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
+  const timeSlots = useMemo(generateTimeSlots, []);
 
   if (!isLoggedIn) {
     return (
@@ -254,11 +271,16 @@ export default function CheckoutPage() {
             </button>
             {scheduleDelivery && (
               <div className="mt-3 flex gap-2 overflow-x-auto hide-scrollbar">
-                {["Today 7:00 PM", "Today 8:00 PM", "Today 9:00 PM", "Tomorrow 12:00 PM"].map((slot) => (
+                {timeSlots.map((slot) => (
                   <button
                     key={slot}
+                    onClick={() => setSelectedSlot(selectedSlot === slot ? null : slot)}
                     className="shrink-0 px-3.5 py-2 rounded-lg text-xs font-medium transition-all"
-                    style={{ background: "var(--bg-card)", color: "var(--text-primary)", boxShadow: "var(--shadow-sm)" }}
+                    style={{
+                      background: selectedSlot === slot ? "var(--hubb-accent)" : "var(--bg-card)",
+                      color: selectedSlot === slot ? "white" : "var(--text-primary)",
+                      boxShadow: "var(--shadow-sm)",
+                    }}
                   >
                     {slot}
                   </button>
@@ -394,14 +416,14 @@ export default function CheckoutPage() {
             </h2>
             <div className="space-y-2">
               {[
-                { value: "cash", label: "Cash on Delivery", icon: "💵" },
-                { value: "jazzcash", label: "JazzCash", icon: "📱" },
-                { value: "easypaisa", label: "Easypaisa", icon: "📱" },
-                { value: "card", label: "Credit/Debit Card", icon: "💳" },
+                { value: "cash", label: "Cash on Delivery", icon: "💵", available: true },
+                { value: "jazzcash", label: "JazzCash", icon: "📱", available: false },
+                { value: "easypaisa", label: "Easypaisa", icon: "📱", available: false },
+                { value: "card", label: "Credit/Debit Card", icon: "💳", available: false },
               ].map((pm) => (
                 <label
                   key={pm.value}
-                  className="flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors"
+                  className={`flex items-center gap-3 p-3 rounded-xl transition-colors ${pm.available ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}
                   style={{
                     background:
                       paymentMethod === pm.value
@@ -413,13 +435,19 @@ export default function CheckoutPage() {
                     type="radio"
                     name="payment"
                     checked={paymentMethod === pm.value}
-                    onChange={() => setPaymentMethod(pm.value)}
+                    onChange={() => pm.available && setPaymentMethod(pm.value)}
+                    disabled={!pm.available}
                     className="accent-[var(--hubb-accent)]"
                   />
                   <span className="text-lg">{pm.icon}</span>
-                  <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                  <span className="text-sm font-medium flex-1" style={{ color: "var(--text-primary)" }}>
                     {pm.label}
                   </span>
+                  {!pm.available && (
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "var(--bg-surface)", color: "var(--text-tertiary)" }}>
+                      Coming Soon
+                    </span>
+                  )}
                 </label>
               ))}
             </div>
