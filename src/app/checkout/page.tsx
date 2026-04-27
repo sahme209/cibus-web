@@ -26,6 +26,8 @@ export default function CheckoutPage() {
   const { refreshAddresses } = useAddress();
   const [tip, setTip] = useState(0);
   const [deliveryNote, setDeliveryNote] = useState("");
+  const [dropoff, setDropoff] = useState<"door" | "hand">("door");
+  const [scheduleDelivery, setScheduleDelivery] = useState(false);
 
   if (!isLoggedIn) {
     return (
@@ -85,33 +87,60 @@ export default function CheckoutPage() {
         className="min-h-screen flex items-center justify-center"
         style={{ background: "var(--bg-secondary)" }}
       >
-        <div className="text-center max-w-md mx-4">
-          <div
-            className="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-4xl mb-5"
-            style={{ background: "var(--hubb-tint)" }}
-          >
-            ✅
+        <div className="text-center max-w-md mx-4 animate-fade-up">
+          <div className="relative mx-auto w-28 h-28 mb-6">
+            <div
+              className="absolute inset-0 rounded-full opacity-30 blur-2xl animate-pulse"
+              style={{ background: "var(--hubb-accent)" }}
+            />
+            <div
+              className="relative w-28 h-28 rounded-full mx-auto flex items-center justify-center"
+              style={{ background: "var(--hubb-tint)" }}
+            >
+              <svg className="w-14 h-14" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
           </div>
           <h2
             className="text-2xl font-bold"
             style={{ color: "var(--text-primary)" }}
           >
-            Order Placed!
+            Order Confirmed!
           </h2>
-          <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>
-            Your order has been confirmed. Total: Rs. {Math.round(orderSuccess.total)}
+          <p className="text-sm mt-2 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+            Your order is on its way. Estimated delivery in 30-45 minutes.
           </p>
+          <div
+            className="mt-5 rounded-xl p-4 text-left"
+            style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+          >
+            <div className="flex items-center justify-between text-sm">
+              <span style={{ color: "var(--text-secondary)" }}>Order Total</span>
+              <span className="font-bold" style={{ color: "var(--text-primary)" }}>Rs. {Math.round(orderSuccess.total)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm mt-2">
+              <span style={{ color: "var(--text-secondary)" }}>Order ID</span>
+              <span className="font-mono text-xs" style={{ color: "var(--text-tertiary)" }}>#{orderSuccess.id.slice(0, 8)}</span>
+            </div>
+          </div>
           <div className="flex gap-3 mt-6 justify-center">
             <Link
               href={`/tracking/${orderSuccess.id}`}
-              className="px-6 py-3 rounded-full text-sm font-semibold text-white"
+              className="flex-1 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99]"
               style={{ background: "var(--hubb-accent)" }}
             >
-              Track Order
+              <span className="flex items-center justify-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Track Order
+              </span>
             </Link>
             <Link
               href="/"
-              className="px-6 py-3 rounded-full text-sm font-semibold"
+              className="flex-1 py-3.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99]"
               style={{
                 background: "var(--bg-card)",
                 color: "var(--text-primary)",
@@ -192,25 +221,50 @@ export default function CheckoutPage() {
         <div className="space-y-5">
           {/* Estimated Delivery */}
           <div
-            className="rounded-2xl p-4 flex items-center gap-4"
+            className="rounded-2xl p-4"
             style={{ background: "var(--hubb-tint)" }}
           >
-            <div
-              className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
-              style={{ background: "color-mix(in srgb, var(--hubb-accent) 15%, transparent)" }}
+            <div className="flex items-center gap-4">
+              <div
+                className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: "color-mix(in srgb, var(--hubb-accent) 15%, transparent)" }}
+              >
+                <svg className="w-5 h-5" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold" style={{ color: "var(--hubb-green)" }}>
+                  Estimated delivery: 30-45 min
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: "var(--text-secondary)" }}>
+                  {itemCount} item{itemCount !== 1 ? "s" : ""} from {cart.restaurantName}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setScheduleDelivery(!scheduleDelivery)}
+              className="mt-3 text-xs font-semibold flex items-center gap-1.5"
+              style={{ color: "var(--hubb-accent)" }}
             >
-              <svg className="w-5 h-5" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-            </div>
-            <div>
-              <p className="text-sm font-bold" style={{ color: "var(--hubb-green)" }}>
-                Estimated delivery: 30-45 min
-              </p>
-              <p className="text-xs mt-0.5" style={{ color: "var(--text-secondary)" }}>
-                {itemCount} item{itemCount !== 1 ? "s" : ""} from {cart.restaurantName}
-              </p>
-            </div>
+              {scheduleDelivery ? "Deliver now instead" : "Schedule for later"}
+            </button>
+            {scheduleDelivery && (
+              <div className="mt-3 flex gap-2 overflow-x-auto hide-scrollbar">
+                {["Today 7:00 PM", "Today 8:00 PM", "Today 9:00 PM", "Tomorrow 12:00 PM"].map((slot) => (
+                  <button
+                    key={slot}
+                    className="shrink-0 px-3.5 py-2 rounded-lg text-xs font-medium transition-all"
+                    style={{ background: "var(--bg-card)", color: "var(--text-primary)", boxShadow: "var(--shadow-sm)" }}
+                  >
+                    {slot}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Delivery Address */}
@@ -441,6 +495,36 @@ export default function CheckoutPage() {
                   }}
                 >
                   {amount === 0 ? "None" : `Rs. ${amount}`}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Drop-off Preference */}
+          <div
+            className="rounded-2xl p-5"
+            style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+          >
+            <h2 className="font-bold text-sm mb-3" style={{ color: "var(--text-primary)" }}>
+              Drop-off Preference
+            </h2>
+            <div className="flex gap-2">
+              {([
+                { value: "door" as const, label: "Leave at door", icon: "🚪" },
+                { value: "hand" as const, label: "Hand it to me", icon: "🤝" },
+              ]).map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setDropoff(opt.value)}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all"
+                  style={{
+                    background: dropoff === opt.value ? "var(--hubb-tint)" : "var(--bg-search)",
+                    color: dropoff === opt.value ? "var(--hubb-green)" : "var(--text-secondary)",
+                    border: dropoff === opt.value ? "1.5px solid var(--hubb-accent)" : "1.5px solid transparent",
+                  }}
+                >
+                  <span>{opt.icon}</span>
+                  {opt.label}
                 </button>
               ))}
             </div>

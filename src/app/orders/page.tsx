@@ -246,7 +246,7 @@ export default function OrdersPage() {
                           </div>
                         ))}
                       </div>
-                      <div className="flex gap-3 mt-4">
+                      <div className="flex gap-2 mt-4">
                         {restaurantID && (
                           <Link
                             href={`/restaurant/${restaurantID}`}
@@ -263,6 +263,15 @@ export default function OrdersPage() {
                         >
                           View Details
                         </Link>
+                        <button
+                          className="px-3 py-2.5 rounded-xl text-xs font-medium transition-all hover:scale-[1.01] active:scale-[0.99]"
+                          style={{ background: "var(--bg-search)", color: "var(--text-tertiary)" }}
+                          aria-label="Get help with this order"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.065 2.05-1.37 2.772-1.153.81.244 1.458 1.048 1.458 1.986 0 .857-.39 1.476-1.032 1.85-.656.384-1.293.557-1.293 1.442v.175M12 16h.01" />
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   )}

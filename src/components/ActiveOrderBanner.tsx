@@ -20,6 +20,14 @@ const STATUS_LABELS: Record<string, string> = {
   on_the_way: "On the way",
 };
 
+const STATUS_PROGRESS: Record<string, number> = {
+  placed: 10,
+  confirmed: 25,
+  preparing: 50,
+  ready_for_pickup: 70,
+  on_the_way: 85,
+};
+
 export default function ActiveOrderBanner() {
   const { isLoggedIn } = useAuth();
   const [order, setOrder] = useState<ActiveOrder | null>(null);
@@ -64,12 +72,21 @@ export default function ActiveOrderBanner() {
       })
     : null;
 
+  const progress = STATUS_PROGRESS[order.status] || 10;
+
   return (
     <Link
       href={`/tracking/${order.id}`}
-      className="block w-full"
+      className="block w-full relative overflow-hidden"
       style={{ background: "var(--hubb-primary)" }}
     >
+      {/* Progress bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ background: "rgba(255,255,255,0.1)" }}>
+        <div
+          className="h-full transition-all duration-700"
+          style={{ background: "var(--hubb-accent)", width: `${progress}%` }}
+        />
+      </div>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative flex items-center justify-center">
@@ -82,12 +99,12 @@ export default function ActiveOrderBanner() {
         </div>
         <div className="flex items-center gap-3">
           {eta && (
-            <span className="text-white/70 text-xs">
+            <span className="text-white/70 text-xs hidden sm:inline">
               ETA {eta}
             </span>
           )}
           <span
-            className="text-xs font-bold px-3 py-1 rounded-full"
+            className="text-xs font-bold px-3 py-1 rounded-full transition-all hover:scale-105"
             style={{ background: "var(--hubb-accent)", color: "white" }}
           >
             Track →

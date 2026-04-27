@@ -169,27 +169,35 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                 Add more from {cart.restaurantName}
               </Link>
             )}
-            {deliveryFee === 0 ? (
-              <div
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium"
-                style={{ background: "var(--hubb-tint)", color: "var(--hubb-green)" }}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                Free delivery on this order!
+            {/* Free delivery progress */}
+            <div className="rounded-xl p-3" style={{ background: "var(--hubb-tint)" }}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold" style={{ color: "var(--hubb-green)" }}>
+                  {deliveryFee === 0 ? (
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Free delivery unlocked!
+                    </span>
+                  ) : (
+                    `Rs. ${1000 - Math.round(subtotal)} away from free delivery`
+                  )}
+                </span>
+                <span className="text-[10px] font-medium" style={{ color: "var(--text-tertiary)" }}>
+                  Rs. {Math.round(subtotal)}/1,000
+                </span>
               </div>
-            ) : subtotal < 1000 ? (
-              <div
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium"
-                style={{ background: "var(--hubb-tint)", color: "var(--hubb-green)" }}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-                Add Rs. {1000 - Math.round(subtotal)} more for free delivery
+              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: "color-mix(in srgb, var(--hubb-accent) 15%, transparent)" }}>
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{
+                    background: "var(--hubb-accent)",
+                    width: `${Math.min(100, (subtotal / 1000) * 100)}%`,
+                  }}
+                />
               </div>
-            ) : null}
+            </div>
             <div className="flex justify-between text-sm">
               <span style={{ color: "var(--text-secondary)" }}>Subtotal</span>
               <span className="font-medium" style={{ color: "var(--text-primary)" }}>Rs. {Math.round(subtotal)}</span>

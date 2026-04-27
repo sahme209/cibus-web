@@ -129,6 +129,36 @@ export default function RestaurantDetailPage() {
           </svg>
         </Link>
 
+        {/* Share & Save buttons */}
+        <div className="absolute top-4 right-4 flex gap-2">
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({ title: restaurant.name, url: window.location.href });
+              } else {
+                navigator.clipboard.writeText(window.location.href);
+                showToast("Link copied!");
+              }
+            }}
+            className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition-transform hover:scale-110"
+            style={{ background: "rgba(0,0,0,0.3)" }}
+            aria-label="Share restaurant"
+          >
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+          </button>
+          <button
+            className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition-transform hover:scale-110"
+            style={{ background: "rgba(0,0,0,0.3)" }}
+            aria-label="Save restaurant"
+          >
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </button>
+        </div>
+
         <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
           <div className="mx-auto max-w-7xl animate-fade-up">
             {!restaurant.isOpen && (
@@ -197,10 +227,54 @@ export default function RestaurantDetailPage() {
         </div>
       </div>
 
+      {/* Restaurant Info Bar */}
+      {restaurant.description && (
+        <div
+          className="border-b"
+          style={{ background: "var(--bg-card)", borderColor: "var(--border-default)" }}
+        >
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+              {restaurant.description}
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5">
         <div className="flex gap-8">
           {/* Menu */}
           <div className="flex-1 min-w-0">
+            {/* Most Popular Section */}
+            {(() => {
+              const popularItems = menu.flatMap(cat => cat.items).filter(item => item.isPopular);
+              if (popularItems.length === 0) return null;
+              return (
+                <div className="mb-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-lg">🔥</span>
+                    <h2 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>
+                      Most Popular
+                    </h2>
+                  </div>
+                  <div className="space-y-2">
+                    {popularItems.slice(0, 4).map((item) => (
+                      <FoodItemCard
+                        key={`popular-${item.id}`}
+                        item={item}
+                        onCustomize={(it) => {
+                          setCustomizingItem(it);
+                          setSelectedOptions([]);
+                          setQuantity(1);
+                          setSpecialInstructions("");
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Menu search */}
             {menu.length > 0 && (
               <div className="relative mb-3">

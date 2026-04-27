@@ -214,6 +214,59 @@ export default function HomePage() {
         <PopularItems />
       </section>
 
+      {/* Fastest Near You */}
+      {!loading && restaurants.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">⚡</span>
+              <h2
+                className="text-xl sm:text-2xl font-extrabold tracking-tight"
+                style={{ color: "var(--text-primary)" }}
+              >
+                Fastest Near You
+              </h2>
+            </div>
+            <Link
+              href="/search"
+              className="text-sm font-semibold px-4 py-2 rounded-full transition-all hover:shadow-sm"
+              style={{ color: "var(--hubb-accent)", background: "var(--hubb-tint)" }}
+            >
+              See All
+            </Link>
+          </div>
+          <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2 stagger-children">
+            {[...restaurants]
+              .filter(r => r.isOpen)
+              .sort((a, b) => parseInt(a.deliveryTime) - parseInt(b.deliveryTime))
+              .slice(0, 6)
+              .map((r) => (
+                <Link
+                  key={`fast-${r.id}`}
+                  href={`/restaurant/${r.id}`}
+                  className="shrink-0 w-44 rounded-xl overflow-hidden transition-all hover:-translate-y-1 hover:shadow-md"
+                  style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+                >
+                  <div className="relative h-28">
+                    {r.imageURL && (
+                      <img src={r.imageURL} alt={r.name} className="w-full h-full object-cover" />
+                    )}
+                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: "var(--hubb-accent)" }}>
+                      {r.deliveryTime}
+                    </div>
+                  </div>
+                  <div className="p-2.5">
+                    <p className="text-sm font-semibold truncate" style={{ color: "var(--text-primary)" }}>{r.name}</p>
+                    <p className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
+                      {r.deliveryFee === 0 ? "Free delivery" : `Rs. ${r.deliveryFee} delivery`}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+          </div>
+        </section>
+      )}
+
       {/* Featured / Weekly Deals */}
       {featured.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10">
@@ -238,6 +291,26 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
             {featured.slice(0, 6).map((r) => (
               <RestaurantCard key={r.id} restaurant={r} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* New on HUBB */}
+      {!loading && restaurants.length > 4 && (
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10">
+          <div className="flex items-center gap-2 mb-5">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: "var(--hubb-orange)" }}>NEW</span>
+            <h2
+              className="text-xl sm:text-2xl font-extrabold tracking-tight"
+              style={{ color: "var(--text-primary)" }}
+            >
+              New on HUBB
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
+            {restaurants.slice(-3).map((r) => (
+              <RestaurantCard key={`new-${r.id}`} restaurant={r} />
             ))}
           </div>
         </section>

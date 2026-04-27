@@ -177,28 +177,61 @@ export default function TrackingPage() {
         {/* ETA Card */}
         {!isDelivered && !isCancelled && (
           <div
-            className="rounded-2xl p-6 mb-6 text-center animate-fade-up"
+            className="rounded-2xl p-6 mb-6 animate-fade-up overflow-hidden relative"
             style={{ background: "var(--text-primary)" }}
           >
-            <p className="text-sm text-white/60">Estimated Delivery</p>
-            <p className="text-3xl font-bold text-white mt-1">
-              {order.estimatedDelivery
-                ? new Date(order.estimatedDelivery).toLocaleTimeString("en-PK", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : "Calculating..."}
-            </p>
+            <div className="text-center relative z-10">
+              <p className="text-sm text-white/60">Estimated Delivery</p>
+              <p className="text-4xl font-bold text-white mt-1">
+                {order.estimatedDelivery
+                  ? new Date(order.estimatedDelivery).toLocaleTimeString("en-PK", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : "Calculating..."}
+              </p>
+              {/* Horizontal progress bar */}
+              <div className="mt-4 w-full h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.15)" }}>
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{
+                    background: "var(--hubb-accent)",
+                    width: `${Math.min(100, ((currentStep + 1) / STEPS.length) * 100)}%`,
+                  }}
+                />
+              </div>
+              <div className="flex justify-between mt-2">
+                <span className="text-[10px] text-white/40">Order Placed</span>
+                <span className="text-[10px] text-white/40">Delivered</span>
+              </div>
+            </div>
             {tracking?.riderName && (
-              <div className="flex items-center justify-center gap-2 mt-3">
-                <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ background: "var(--hubb-accent)" }}>
-                  <span className="text-white">🛵</span>
+              <div
+                className="mt-4 pt-4 flex items-center gap-3 relative z-10"
+                style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}
+              >
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0"
+                  style={{ background: "var(--hubb-accent)" }}
+                >
+                  🛵
                 </div>
-                <span className="text-sm text-white/70">
-                  {tracking.riderName}
-                </span>
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-semibold text-white">{tracking.riderName}</p>
+                  <p className="text-xs text-white/50">Your delivery rider</p>
+                </div>
+                <button
+                  className="w-9 h-9 rounded-full flex items-center justify-center"
+                  style={{ background: "rgba(255,255,255,0.15)" }}
+                  aria-label="Contact rider"
+                >
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                </button>
               </div>
             )}
+            <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-10 blur-2xl" style={{ background: "var(--hubb-accent)" }} />
           </div>
         )}
 
@@ -430,6 +463,32 @@ export default function TrackingPage() {
             <p className="text-sm font-medium" style={{ color: "var(--hubb-green)" }}>
               Thank you for your feedback!
             </p>
+          </div>
+        )}
+
+        {/* Help Button */}
+        {!isDelivered && !isCancelled && (
+          <div
+            className="rounded-2xl p-4 mt-5 flex items-center justify-between animate-fade-up"
+            style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "var(--bg-search)" }}>
+                <svg className="w-5 h-5" style={{ color: "var(--text-secondary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.065 2.05-1.37 2.772-1.153.81.244 1.458 1.048 1.458 1.986 0 .857-.39 1.476-1.032 1.85-.656.384-1.293.557-1.293 1.442v.175M12 16h.01" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Need help?</p>
+                <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>Get support with your order</p>
+              </div>
+            </div>
+            <button
+              className="px-4 py-2 rounded-full text-xs font-bold transition-all hover:scale-105"
+              style={{ background: "var(--bg-search)", color: "var(--text-primary)" }}
+            >
+              Get Help
+            </button>
           </div>
         )}
 
