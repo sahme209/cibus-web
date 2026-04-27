@@ -14,20 +14,21 @@ export default function Navbar({ onCartClick }: NavbarProps) {
   const { itemCount, subtotal } = useCart();
   const { isLoggedIn, user, logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [deliveryMode, setDeliveryMode] = useState<"delivery" | "pickup">("delivery");
 
   return (
     <header
-      className="sticky top-0 z-50 border-b backdrop-blur-xl"
+      className="sticky top-0 z-50 border-b"
       style={{
-        background: "color-mix(in srgb, var(--bg-primary) 85%, transparent)",
+        background: "var(--bg-primary)",
         borderColor: "var(--border-default)",
       }}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <div
-            className="flex h-9 w-9 items-center justify-center rounded-lg font-bold text-white text-lg"
+            className="flex h-9 w-9 items-center justify-center rounded-xl font-bold text-white text-lg"
             style={{ background: "var(--hubb-accent)" }}
           >
             H
@@ -37,13 +38,8 @@ export default function Navbar({ onCartClick }: NavbarProps) {
           </span>
         </Link>
 
-        {/* Address selector */}
-        <div className="hidden lg:block ml-4">
-          <AddressSelector />
-        </div>
-
-        {/* Search */}
-        <div className="hidden flex-1 max-w-lg mx-6 sm:block">
+        {/* Search — DoorDash style */}
+        <div className="hidden flex-1 max-w-xl mx-4 sm:block">
           <Link
             href="/search"
             className="flex items-center gap-2 w-full px-4 py-2.5 rounded-full text-sm transition-all hover:shadow-md"
@@ -55,13 +51,39 @@ export default function Navbar({ onCartClick }: NavbarProps) {
             <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            Search restaurants, cuisines, dishes...
+            Search &quot;DashMart&quot;
           </Link>
         </div>
 
+        {/* Address selector */}
+        <div className="hidden lg:block">
+          <AddressSelector />
+        </div>
+
+        {/* Delivery / Pickup toggle */}
+        <div
+          className="hidden md:flex items-center rounded-full p-0.5"
+          style={{ background: "var(--bg-search)" }}
+        >
+          {(["delivery", "pickup"] as const).map((m) => (
+            <button
+              key={m}
+              onClick={() => setDeliveryMode(m)}
+              className="px-4 py-1.5 rounded-full text-xs font-semibold transition-all capitalize"
+              style={{
+                background: deliveryMode === m ? "var(--bg-card)" : "transparent",
+                color: deliveryMode === m ? "var(--text-primary)" : "var(--text-tertiary)",
+                boxShadow: deliveryMode === m ? "var(--shadow-sm)" : "none",
+              }}
+            >
+              {m}
+            </button>
+          ))}
+        </div>
+
         {/* Right actions */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Cart button — opens drawer on desktop, navigates on mobile */}
+        <div className="flex items-center gap-2">
+          {/* Cart button */}
           <button
             onClick={onCartClick}
             className="relative flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full text-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
@@ -100,61 +122,76 @@ export default function Navbar({ onCartClick }: NavbarProps) {
                 >
                   {user?.name?.charAt(0)?.toUpperCase() || "U"}
                 </div>
-                <span className="hidden md:inline">{user?.name?.split(" ")[0]}</span>
+                <span className="hidden md:inline max-w-[80px] truncate">{user?.name?.split(" ")[0]}</span>
               </button>
               {showUserMenu && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
                   <div
-                    className="absolute right-0 top-12 w-48 rounded-xl py-2 z-50 animate-fade-in"
+                    className="absolute right-0 top-12 w-56 rounded-xl py-2 z-50 animate-fade-in"
                     style={{
                       background: "var(--bg-card)",
                       boxShadow: "var(--shadow-lg)",
                       border: "1px solid var(--border-default)",
                     }}
                   >
-                    <div className="px-4 py-2 border-b" style={{ borderColor: "var(--border-subtle)" }}>
-                      <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>{user?.name}</p>
-                      <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>{user?.email}</p>
+                    <div className="px-4 py-3 border-b" style={{ borderColor: "var(--border-subtle)" }}>
+                      <p className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{user?.name}</p>
+                      <Link href="/profile" className="text-xs hover:underline" style={{ color: "var(--hubb-accent)" }} onClick={() => setShowUserMenu(false)}>
+                        View Profile
+                      </Link>
                     </div>
-                    <Link
-                      href="/profile"
-                      className="block px-4 py-2.5 text-sm hover:opacity-70"
-                      style={{ color: "var(--text-primary)" }}
-                      onClick={() => setShowUserMenu(false)}
-                    >
-                      My Account
-                    </Link>
-                    <Link
-                      href="/orders"
-                      className="block px-4 py-2.5 text-sm hover:opacity-70"
-                      style={{ color: "var(--text-primary)" }}
-                      onClick={() => setShowUserMenu(false)}
-                    >
-                      My Orders
-                    </Link>
-                    <button
-                      onClick={() => { logout(); setShowUserMenu(false); }}
-                      className="w-full text-left px-4 py-2.5 text-sm hover:opacity-70"
-                      style={{ color: "var(--hubb-orange)" }}
-                    >
-                      Sign Out
-                    </button>
+                    {[
+                      { label: "Home", href: "/", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
+                      { label: "Orders", href: "/orders", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
+                      { label: "Account", href: "/profile", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
+                    ].map((item) => (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm hover:opacity-70 transition-opacity"
+                        style={{ color: "var(--text-primary)" }}
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <svg className="w-4 h-4" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={item.icon} />
+                        </svg>
+                        {item.label}
+                      </Link>
+                    ))}
+                    <div className="border-t mt-1 pt-1" style={{ borderColor: "var(--border-subtle)" }}>
+                      <button
+                        onClick={() => { logout(); setShowUserMenu(false); }}
+                        className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm hover:opacity-70 transition-opacity"
+                        style={{ color: "var(--hubb-orange)" }}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Sign Out
+                      </button>
+                    </div>
                   </div>
                 </>
               )}
             </div>
           ) : (
-            <Link
-              href="/auth"
-              className="hidden sm:inline-block px-5 py-2 rounded-full text-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
-              style={{
-                background: "var(--text-primary)",
-                color: "var(--bg-primary)",
-              }}
-            >
-              Sign In
-            </Link>
+            <div className="hidden sm:flex items-center gap-2">
+              <Link
+                href="/auth"
+                className="px-5 py-2 rounded-full text-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
+                style={{ color: "var(--hubb-accent)" }}
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/auth"
+                className="px-5 py-2 rounded-full text-sm font-semibold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+                style={{ background: "var(--hubb-accent)" }}
+              >
+                Sign Up
+              </Link>
+            </div>
           )}
         </div>
       </div>

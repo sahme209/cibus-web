@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import RestaurantCard from "@/components/RestaurantCard";
 import PromoBanner from "@/components/PromoBanner";
 import PopularItems from "@/components/PopularItems";
 import QuickReorder from "@/components/QuickReorder";
 import FilterBar from "@/components/FilterBar";
+import { useAuth } from "@/lib/store";
 import type { Restaurant } from "@/lib/types";
 import * as api from "@/lib/api";
-import Link from "next/link";
 
 const CATEGORIES = [
   { name: "Biryani", emoji: "🍚" },
@@ -24,6 +25,7 @@ const CATEGORIES = [
 ];
 
 export default function HomePage() {
+  const { isLoggedIn, user } = useAuth();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [featured, setFeatured] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,90 +79,87 @@ export default function HomePage() {
 
   return (
     <div style={{ background: "var(--bg-secondary)" }}>
-      {/* Hero */}
+      {/* Hero — Starbucks-green DoorDash-inspired */}
       <section
         className="relative overflow-hidden"
-        style={{ background: "var(--hubb-primary)" }}
+        style={{ background: "var(--hubb-hero)" }}
       >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="max-w-2xl animate-fade-up">
-            <h1 className="text-3xl sm:text-5xl font-bold text-white leading-tight tracking-tight">
-              Your favorite food,
+            {isLoggedIn && user?.name ? (
+              <p className="text-base font-medium text-white/70 mb-2">
+                Welcome back, {user.name.split(" ")[0]}
+              </p>
+            ) : null}
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-white leading-tight tracking-tight">
+              Rs. 0 delivery fee
               <br />
-              <span style={{ color: "var(--hubb-accent)" }}>delivered fast.</span>
+              on your first order
             </h1>
-            <p className="mt-4 text-base sm:text-lg text-white/60 max-w-lg">
-              Order from the best restaurants in your city. Exclusive deals, real-time tracking, and premium quality.
+            <p className="mt-3 text-sm sm:text-base text-white/60">
+              Other fees apply. Available at participating stores.
             </p>
 
-            {/* Search bar in hero */}
-            <div className="mt-7">
+            <div className="mt-7 flex flex-col sm:flex-row gap-3">
               <Link
                 href="/search"
-                className="flex items-center gap-3 w-full max-w-md px-5 py-3.5 rounded-full text-sm transition-all hover:shadow-xl"
+                className="flex items-center gap-3 flex-1 max-w-md px-5 py-3.5 rounded-full text-sm font-medium transition-all hover:shadow-xl"
                 style={{
-                  background: "rgba(255,255,255,0.12)",
-                  backdropFilter: "blur(12px)",
-                  color: "rgba(255,255,255,0.5)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: "white",
+                  color: "var(--text-secondary)",
                 }}
               >
-                <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <svg className="w-5 h-5 shrink-0" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                Search for restaurants or dishes...
+                Enter delivery address
+                <svg className="w-5 h-5 ml-auto shrink-0" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
               </Link>
+              {!isLoggedIn && (
+                <Link
+                  href="/auth"
+                  className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-full text-sm font-semibold transition-all hover:opacity-90"
+                  style={{
+                    background: "rgba(255,255,255,0.15)",
+                    color: "white",
+                    border: "1px solid rgba(255,255,255,0.3)",
+                  }}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Sign in for saved address
+                </Link>
+              )}
             </div>
-
-            {/* Live stats bar — only show once data is loaded */}
-            {!loading && restaurants.length > 0 && (
-              <div className="flex items-center gap-6 mt-8">
-                <div>
-                  <p className="text-2xl font-bold text-white">{restaurants.length}</p>
-                  <p className="text-xs text-white/40">Restaurants</p>
-                </div>
-                <div className="w-px h-8 bg-white/10" />
-                <div>
-                  <p className="text-2xl font-bold text-white">
-                    {Math.round(restaurants.reduce((sum, r) => sum + parseInt(r.deliveryTime) || 0, 0) / restaurants.length)} min
-                  </p>
-                  <p className="text-xs text-white/40">Avg. Delivery</p>
-                </div>
-                <div className="w-px h-8 bg-white/10" />
-                <div>
-                  <p className="text-2xl font-bold" style={{ color: "var(--hubb-accent)" }}>
-                    {(restaurants.reduce((sum, r) => sum + r.rating, 0) / restaurants.length).toFixed(1)}★
-                  </p>
-                  <p className="text-xs text-white/40">Avg. Rating</p>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Decorative */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-15 blur-3xl" style={{ background: "var(--hubb-accent)" }} />
-        <div className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full opacity-8 blur-3xl" style={{ background: "var(--hubb-accent)" }} />
-        <div className="absolute top-1/2 right-1/4 w-48 h-48 rounded-full opacity-5 blur-3xl animate-float" style={{ background: "var(--hubb-gold)" }} />
+        {/* Decorative circles */}
+        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full opacity-20 blur-3xl" style={{ background: "#00A86B" }} />
+        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full opacity-10 blur-3xl" style={{ background: "#FFD700" }} />
       </section>
 
-      {/* Categories */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-7 relative z-10">
-        <div className="flex gap-2.5 overflow-x-auto hide-scrollbar py-3 px-1 stagger-children">
+      {/* Category pills — DoorDash-style horizontal scroll */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-6 relative z-10">
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar py-2 px-0.5 stagger-children">
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.name}
               href={`/search?q=${encodeURIComponent(cat.name)}`}
-              className="flex flex-col items-center gap-1.5 shrink-0 px-4 py-3 rounded-2xl transition-all hover:-translate-y-1 hover:shadow-md"
+              className="flex items-center gap-2 shrink-0 px-4 py-2.5 rounded-full transition-all hover:shadow-md hover:-translate-y-0.5"
               style={{
                 background: "var(--bg-card)",
                 boxShadow: "var(--shadow-sm)",
-                minWidth: 80,
+                border: "1px solid var(--border-default)",
               }}
             >
-              <span className="text-2xl">{cat.emoji}</span>
+              <span className="text-lg">{cat.emoji}</span>
               <span
-                className="text-[11px] font-semibold"
+                className="text-sm font-semibold whitespace-nowrap"
                 style={{ color: "var(--text-primary)" }}
               >
                 {cat.name}
@@ -170,7 +169,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Promo Banner */}
+      {/* Promo Banners */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
         <PromoBanner />
       </section>
@@ -185,22 +184,25 @@ export default function HomePage() {
         <PopularItems />
       </section>
 
-      {/* Featured */}
+      {/* Featured / Weekly Deals */}
       {featured.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10">
           <div className="flex items-center justify-between mb-5">
             <h2
-              className="text-xl font-bold"
+              className="text-xl sm:text-2xl font-extrabold tracking-tight"
               style={{ color: "var(--text-primary)" }}
             >
               Featured Restaurants
             </h2>
             <Link
               href="/search"
-              className="text-sm font-semibold transition-colors hover:opacity-80"
-              style={{ color: "var(--hubb-accent)" }}
+              className="text-sm font-semibold px-4 py-2 rounded-full transition-all hover:shadow-sm"
+              style={{
+                color: "var(--hubb-accent)",
+                background: "var(--hubb-tint)",
+              }}
             >
-              See All →
+              See All
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
@@ -215,7 +217,7 @@ export default function HomePage() {
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 pb-16">
         <div className="flex items-center justify-between mb-2">
           <h2
-            className="text-xl font-bold"
+            className="text-xl sm:text-2xl font-extrabold tracking-tight"
             style={{ color: "var(--text-primary)" }}
           >
             {loading ? "Loading restaurants..." : `All Restaurants${filteredRestaurants.length !== restaurants.length ? ` (${filteredRestaurants.length})` : ""}`}
@@ -232,10 +234,7 @@ export default function HomePage() {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-2xl overflow-hidden"
-              >
+              <div key={i} className="rounded-2xl overflow-hidden">
                 <div className="aspect-[16/10] skeleton-shimmer" />
                 <div className="p-4 space-y-3" style={{ background: "var(--bg-card)" }}>
                   <div className="h-4 rounded-full w-3/4 skeleton-shimmer" />
@@ -260,10 +259,7 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            <h3
-              className="text-lg font-semibold"
-              style={{ color: "var(--text-primary)" }}
-            >
+            <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
               No restaurants found
             </h3>
             <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>

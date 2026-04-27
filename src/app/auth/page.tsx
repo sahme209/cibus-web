@@ -109,6 +109,10 @@ export default function AuthPage() {
           </span>
         </div>
 
+        <p className="text-center text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
+          Sign in to access your credits and discounts
+        </p>
+
         {/* Tabs */}
         <div
           className="flex rounded-xl p-1 mb-6"

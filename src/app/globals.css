@@ -2,15 +2,16 @@
 
 :root {
   --hubb-primary: #1D1D1F;
-  --hubb-accent: #06C167;
-  --hubb-accent-hover: #05A358;
+  --hubb-accent: #00704A;
+  --hubb-accent-hover: #005C3C;
   --hubb-green: #00704A;
-  --hubb-orange: #FF6B35;
+  --hubb-orange: #FF3008;
   --hubb-yellow: #FFB347;
   --hubb-gold: #D4AF37;
   --hubb-cream: #FFFBF5;
-  --hubb-tint: #E8F5EE;
+  --hubb-tint: #E6F2ED;
   --hubb-tint-soft: #F0F9F4;
+  --hubb-hero: #00704A;
   --hubb-error-bg: #FEE2E2;
   --hubb-error: #DC2626;
 
@@ -66,8 +67,9 @@
     --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
     --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
 
-    --hubb-tint: #0D2918;
-    --hubb-tint-soft: #0A1F13;
+    --hubb-tint: #0A2A1A;
+    --hubb-tint-soft: #081F14;
+    --hubb-hero: #004D33;
     --hubb-error-bg: #2D1215;
     --hubb-error: #EF4444;
 
