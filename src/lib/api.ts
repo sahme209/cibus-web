@@ -22,10 +22,6 @@ async function request<T>(
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
 
   if (!res.ok) {
-    if (res.status === 401 && typeof window !== "undefined") {
-      localStorage.removeItem("hubb_token");
-      window.dispatchEvent(new Event("hubb:auth-expired"));
-    }
     const body = await res.json().catch(() => ({}));
     throw new APIError(res.status, body.message || res.statusText);
   }
@@ -44,12 +40,15 @@ export class APIError extends Error {
 // --- Auth ---
 
 export async function signIn(email: string, password: string) {
-  const data = await request<{ token: string; user: any }>("/auth/sign-in", {
+  const res = await request<{
+    success: boolean;
+    data: { access_token: string; refresh_token: string; user: any };
+  }>("/auth/sign-in", {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
-  localStorage.setItem("hubb_token", data.token);
-  return data;
+  localStorage.setItem("hubb_token", res.data.access_token);
+  return { token: res.data.access_token, user: res.data.user };
 }
 
 export async function signUp(
@@ -58,12 +57,15 @@ export async function signUp(
   password: string,
   phone: string
 ) {
-  const data = await request<{ token: string; user: any }>("/auth/sign-up", {
+  const res = await request<{
+    success: boolean;
+    data: { access_token: string; refresh_token: string; user: any };
+  }>("/auth/sign-up", {
     method: "POST",
     body: JSON.stringify({ name, email, password, phone }),
   });
-  localStorage.setItem("hubb_token", data.token);
-  return data;
+  localStorage.setItem("hubb_token", res.data.access_token);
+  return { token: res.data.access_token, user: res.data.user };
 }
 
 export function signOut() {
