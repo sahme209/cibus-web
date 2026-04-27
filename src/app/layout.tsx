@@ -68,6 +68,32 @@ export const viewport: Viewport = {
   ],
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FoodDeliveryService",
+  name: "HUBB",
+  url: "https://gethubb.com",
+  logo: "https://gethubb.com/icon-512.png",
+  description:
+    "Order food delivery from the best restaurants near you. Fast delivery, exclusive deals, and premium quality.",
+  areaServed: [
+    { "@type": "City", name: "Islamabad" },
+    { "@type": "City", name: "Lahore" },
+    { "@type": "City", name: "Karachi" },
+  ],
+  sameAs: [
+    "https://instagram.com/gethubb",
+    "https://twitter.com/gethubb",
+    "https://facebook.com/gethubb",
+    "https://tiktok.com/@gethubb",
+  ],
+  potentialAction: {
+    "@type": "SearchAction",
+    target: "https://gethubb.com/search?q={search_term_string}",
+    "query-input": "required name=search_term_string",
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -78,6 +104,12 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <AppShell>{children}</AppShell>
       </body>
