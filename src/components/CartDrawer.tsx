@@ -156,7 +156,20 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             className="px-5 py-4 border-t space-y-3"
             style={{ borderColor: "var(--border-default)" }}
           >
-            {deliveryFee === 0 && (
+            {cart.restaurantID && (
+              <Link
+                href={`/restaurant/${cart.restaurantID}`}
+                onClick={onClose}
+                className="flex items-center justify-center gap-1.5 py-2 text-xs font-semibold transition-opacity hover:opacity-70"
+                style={{ color: "var(--hubb-accent)" }}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Add more from {cart.restaurantName}
+              </Link>
+            )}
+            {deliveryFee === 0 ? (
               <div
                 className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium"
                 style={{ background: "var(--hubb-tint)", color: "var(--hubb-green)" }}
@@ -166,7 +179,17 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                 </svg>
                 Free delivery on this order!
               </div>
-            )}
+            ) : subtotal < 1000 ? (
+              <div
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium"
+                style={{ background: "var(--hubb-tint)", color: "var(--hubb-green)" }}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+                Add Rs. {1000 - Math.round(subtotal)} more for free delivery
+              </div>
+            ) : null}
             <div className="flex justify-between text-sm">
               <span style={{ color: "var(--text-secondary)" }}>Subtotal</span>
               <span className="font-medium" style={{ color: "var(--text-primary)" }}>Rs. {Math.round(subtotal)}</span>

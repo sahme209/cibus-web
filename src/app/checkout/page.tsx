@@ -24,6 +24,8 @@ export default function CheckoutPage() {
   const [newAddr, setNewAddr] = useState({ label: "", street: "", city: "" });
   const [addingAddr, setAddingAddr] = useState(false);
   const { refreshAddresses } = useAddress();
+  const [tip, setTip] = useState(0);
+  const [deliveryNote, setDeliveryNote] = useState("");
 
   if (!isLoggedIn) {
     return (
@@ -126,7 +128,7 @@ export default function CheckoutPage() {
 
   const deliveryFee = subtotal >= 1000 ? 0 : 99;
   const serviceFee = Math.round(subtotal * 0.05);
-  const total = subtotal + deliveryFee + serviceFee - discount;
+  const total = subtotal + deliveryFee + serviceFee + tip - discount;
 
   async function applyPromo() {
     if (!promoCode.trim()) return;
@@ -161,6 +163,8 @@ export default function CheckoutPage() {
         serviceFee,
         discount,
         total,
+        tip: tip || undefined,
+        deliveryNote: deliveryNote.trim() || undefined,
       };
       const order = await api.placeOrder(orderBody);
       setOrderSuccess({ id: order.id || order.orderId, total });
@@ -186,6 +190,29 @@ export default function CheckoutPage() {
         </h1>
 
         <div className="space-y-5">
+          {/* Estimated Delivery */}
+          <div
+            className="rounded-2xl p-4 flex items-center gap-4"
+            style={{ background: "var(--hubb-tint)" }}
+          >
+            <div
+              className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
+              style={{ background: "color-mix(in srgb, var(--hubb-accent) 15%, transparent)" }}
+            >
+              <svg className="w-5 h-5" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-bold" style={{ color: "var(--hubb-green)" }}>
+                Estimated delivery: 30-45 min
+              </p>
+              <p className="text-xs mt-0.5" style={{ color: "var(--text-secondary)" }}>
+                {itemCount} item{itemCount !== 1 ? "s" : ""} from {cart.restaurantName}
+              </p>
+            </div>
+          </div>
+
           {/* Delivery Address */}
           <div
             className="rounded-2xl p-5"
@@ -391,6 +418,60 @@ export default function CheckoutPage() {
             )}
           </div>
 
+          {/* Delivery Tip */}
+          <div
+            className="rounded-2xl p-5"
+            style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+          >
+            <h2 className="font-bold text-sm mb-1" style={{ color: "var(--text-primary)" }}>
+              Tip Your Rider
+            </h2>
+            <p className="text-xs mb-3" style={{ color: "var(--text-tertiary)" }}>
+              100% of the tip goes to your delivery rider
+            </p>
+            <div className="flex gap-2">
+              {[0, 50, 100, 150, 200].map((amount) => (
+                <button
+                  key={amount}
+                  onClick={() => setTip(amount)}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                  style={{
+                    background: tip === amount ? "var(--hubb-accent)" : "var(--bg-search)",
+                    color: tip === amount ? "white" : "var(--text-secondary)",
+                  }}
+                >
+                  {amount === 0 ? "None" : `Rs. ${amount}`}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Delivery Instructions */}
+          <div
+            className="rounded-2xl p-5"
+            style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+          >
+            <h2 className="font-bold text-sm mb-3" style={{ color: "var(--text-primary)" }}>
+              Delivery Instructions
+            </h2>
+            <textarea
+              value={deliveryNote}
+              onChange={(e) => setDeliveryNote(e.target.value)}
+              placeholder="Gate code, building directions, leave at door..."
+              rows={2}
+              maxLength={200}
+              className="w-full px-4 py-2.5 rounded-xl text-sm resize-none"
+              style={{
+                background: "var(--bg-search)",
+                color: "var(--text-primary)",
+                border: "none",
+              }}
+            />
+            <p className="text-[11px] mt-1 text-right" style={{ color: "var(--text-tertiary)" }}>
+              {deliveryNote.length}/200
+            </p>
+          </div>
+
           {/* Order Summary */}
           <div
             className="rounded-2xl p-5 space-y-3"
@@ -445,6 +526,12 @@ export default function CheckoutPage() {
                   Rs. {serviceFee}
                 </span>
               </div>
+              {tip > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span style={{ color: "var(--text-secondary)" }}>Rider Tip</span>
+                  <span style={{ color: "var(--text-primary)" }}>Rs. {tip}</span>
+                </div>
+              )}
               {discount > 0 && (
                 <div className="flex justify-between text-sm">
                   <span style={{ color: "var(--hubb-accent)" }}>Discount</span>

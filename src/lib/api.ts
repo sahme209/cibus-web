@@ -73,6 +73,13 @@ export async function getUserProfile() {
   return request<any>("/users/me");
 }
 
+export async function updateProfile(body: { name?: string; phone?: string }) {
+  return request<any>("/users/me", {
+    method: "PUT",
+    body: JSON.stringify(body),
+  });
+}
+
 // --- Restaurants ---
 
 export async function getRestaurants(

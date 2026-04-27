@@ -72,6 +72,7 @@ interface AuthContextType {
     phone: string
   ) => Promise<void>;
   logout: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -81,6 +82,7 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   signup: async () => {},
   logout: () => {},
+  refreshUser: async () => {},
 });
 
 export function useAuth() {
@@ -272,6 +274,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    try {
+      const u = await api.getUserProfile();
+      setUser(u);
+    } catch {
+      // silent
+    }
+  }, []);
+
   // Addresses
   const [addresses, setAddresses] = useState<DeliveryAddress[]>([]);
   const [selectedAddress, setSelectedAddress] =
@@ -303,6 +314,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         login,
         signup,
         logout,
+        refreshUser,
       }}
     >
       <CartContext.Provider

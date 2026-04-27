@@ -8,7 +8,7 @@ import * as api from "@/lib/api";
 import type { DeliveryAddress } from "@/lib/types";
 
 export default function ProfilePage() {
-  const { isLoggedIn, user, logout } = useAuth();
+  const { isLoggedIn, user, logout, refreshUser } = useAuth();
   const { addresses, refreshAddresses } = useAddress();
   const { showToast } = useToast();
   const [showAddAddress, setShowAddAddress] = useState(false);
@@ -21,6 +21,10 @@ export default function ProfilePage() {
   });
   const [addingAddress, setAddingAddress] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
+  const [saving, setSaving] = useState(false);
 
   if (!isLoggedIn) {
     return (
@@ -105,27 +109,97 @@ export default function ProfilePage() {
           className="rounded-2xl p-5 mb-5 animate-fade-up"
           style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
         >
-          <div className="flex items-center gap-4">
-            <div
-              className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white shrink-0"
-              style={{ background: "var(--hubb-accent)" }}
-            >
-              {user?.name?.charAt(0)?.toUpperCase() || "U"}
+          {editing ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 mb-1">
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold text-white shrink-0"
+                  style={{ background: "var(--hubb-accent)" }}
+                >
+                  {editName?.charAt(0)?.toUpperCase() || "U"}
+                </div>
+                <h2 className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>Edit Profile</h2>
+              </div>
+              <input
+                type="text"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                placeholder="Full name"
+                className="w-full px-4 py-2.5 rounded-xl text-sm"
+                style={{ background: "var(--bg-search)", color: "var(--text-primary)", border: "none" }}
+              />
+              <input
+                type="tel"
+                value={editPhone}
+                onChange={(e) => setEditPhone(e.target.value)}
+                placeholder="Phone number"
+                className="w-full px-4 py-2.5 rounded-xl text-sm"
+                style={{ background: "var(--bg-search)", color: "var(--text-primary)", border: "none" }}
+              />
+              <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>{user?.email}</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={async () => {
+                    if (!editName.trim()) { showToast("Name is required", "error"); return; }
+                    setSaving(true);
+                    try {
+                      await api.updateProfile({ name: editName.trim(), phone: editPhone.trim() || undefined });
+                      await refreshUser();
+                      setEditing(false);
+                      showToast("Profile updated");
+                    } catch (err: any) {
+                      showToast(err.message || "Failed to update profile", "error");
+                    } finally {
+                      setSaving(false);
+                    }
+                  }}
+                  disabled={saving}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-50"
+                  style={{ background: "var(--hubb-accent)" }}
+                >
+                  {saving ? "Saving..." : "Save"}
+                </button>
+                <button
+                  onClick={() => setEditing(false)}
+                  className="px-5 py-2.5 rounded-xl text-sm font-semibold"
+                  style={{ background: "var(--bg-search)", color: "var(--text-secondary)" }}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
-            <div className="min-w-0">
-              <h2 className="text-lg font-bold truncate" style={{ color: "var(--text-primary)" }}>
-                {user?.name || "User"}
-              </h2>
-              <p className="text-sm truncate" style={{ color: "var(--text-secondary)" }}>
-                {user?.email}
-              </p>
-              {user?.phone && (
-                <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
-                  {user.phone}
+          ) : (
+            <div className="flex items-center gap-4">
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white shrink-0"
+                style={{ background: "var(--hubb-accent)" }}
+              >
+                {user?.name?.charAt(0)?.toUpperCase() || "U"}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-lg font-bold truncate" style={{ color: "var(--text-primary)" }}>
+                  {user?.name || "User"}
+                </h2>
+                <p className="text-sm truncate" style={{ color: "var(--text-secondary)" }}>
+                  {user?.email}
                 </p>
-              )}
+                {user?.phone && (
+                  <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
+                    {user.phone}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={() => { setEditName(user?.name || ""); setEditPhone(user?.phone || ""); setEditing(true); }}
+                className="p-2.5 rounded-xl transition-colors hover:opacity-70 shrink-0"
+                style={{ background: "var(--bg-search)" }}
+              >
+                <svg className="w-4 h-4" style={{ color: "var(--text-secondary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Quick Links */}

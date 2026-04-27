@@ -69,13 +69,24 @@ export default function CartPage() {
               {itemCount} item{itemCount !== 1 ? "s" : ""} from {cart.restaurantName}
             </p>
           </div>
-          <button
-            onClick={clearCart}
-            className="text-sm font-medium transition-opacity hover:opacity-70"
-            style={{ color: "var(--hubb-orange)" }}
-          >
-            Clear All
-          </button>
+          <div className="flex items-center gap-3">
+            {cart.restaurantID && (
+              <Link
+                href={`/restaurant/${cart.restaurantID}`}
+                className="text-sm font-semibold transition-opacity hover:opacity-70"
+                style={{ color: "var(--hubb-accent)" }}
+              >
+                + Add Items
+              </Link>
+            )}
+            <button
+              onClick={clearCart}
+              className="text-sm font-medium transition-opacity hover:opacity-70"
+              style={{ color: "var(--hubb-orange)" }}
+            >
+              Clear All
+            </button>
+          </div>
         </div>
 
         {/* Items */}
