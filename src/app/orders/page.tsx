@@ -1,19 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/lib/store";
 import * as api from "@/lib/api";
 import type { Order } from "@/lib/types";
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  placed: { label: "Placed", color: "#FF9500", bg: "#FFF4E6" },
-  confirmed: { label: "Confirmed", color: "#06C167", bg: "#E8F5EE" },
-  preparing: { label: "Preparing", color: "#FF6B35", bg: "#FFF0EB" },
-  ready_for_pickup: { label: "Ready", color: "#5856D6", bg: "#EEEEFC" },
-  on_the_way: { label: "On the Way", color: "#06C167", bg: "#E8F5EE" },
-  delivered: { label: "Delivered", color: "#34C759", bg: "#E8F9ED" },
-  cancelled: { label: "Cancelled", color: "#FF3B30", bg: "#FFE5E3" },
+const STATUS_CONFIG: Record<string, { label: string; colorVar: string; bgVar: string }> = {
+  placed: { label: "Placed", colorVar: "var(--status-placed)", bgVar: "var(--status-placed-bg)" },
+  confirmed: { label: "Confirmed", colorVar: "var(--hubb-accent)", bgVar: "var(--hubb-tint)" },
+  preparing: { label: "Preparing", colorVar: "var(--status-preparing)", bgVar: "var(--status-preparing-bg)" },
+  ready_for_pickup: { label: "Ready", colorVar: "var(--status-ready)", bgVar: "var(--status-ready-bg)" },
+  on_the_way: { label: "On the Way", colorVar: "var(--hubb-accent)", bgVar: "var(--hubb-tint)" },
+  delivered: { label: "Delivered", colorVar: "var(--hubb-green)", bgVar: "var(--hubb-tint)" },
+  cancelled: { label: "Cancelled", colorVar: "var(--hubb-error)", bgVar: "var(--hubb-error-bg)" },
 };
 
 export default function OrdersPage() {
@@ -80,6 +81,7 @@ export default function OrdersPage() {
     );
   }
 
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const orders = tab === "active" ? activeOrders : pastOrders;
 
   return (
@@ -135,79 +137,136 @@ export default function OrdersPage() {
           <div className="space-y-3 stagger-children">
             {orders.map((order) => {
               const cfg = STATUS_CONFIG[order.status] || STATUS_CONFIG.placed;
-              return (
-                <Link
-                  key={order.id}
-                  href={tab === "active" ? `/tracking/${order.id}` : `/orders`}
-                  className="block rounded-2xl p-4 transition-all hover:-translate-y-0.5 hover:shadow-md"
-                  style={{
-                    background: "var(--bg-card)",
-                    boxShadow: "var(--shadow-sm)",
-                  }}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      {order.restaurantImageURL ? (
-                        <img
-                          src={order.restaurantImageURL}
-                          alt=""
-                          className="w-12 h-12 rounded-xl object-cover shrink-0"
-                        />
-                      ) : (
-                        <div
-                          className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                          style={{ background: "var(--bg-search)" }}
-                        >
-                          <span className="text-lg">🍽️</span>
+              const isExpanded = expandedId === order.id;
+              const restaurantID = (order as any).restaurantID || order.items[0]?.foodItem?.restaurantID;
+
+              if (tab === "active") {
+                return (
+                  <Link
+                    key={order.id}
+                    href={`/tracking/${order.id}`}
+                    className="block rounded-2xl p-4 transition-all hover:-translate-y-0.5 hover:shadow-md"
+                    style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        {order.restaurantImageURL ? (
+                          <Image src={order.restaurantImageURL} alt="" width={48} height={48} className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: "var(--bg-search)" }}>
+                            <span className="text-lg">🍽️</span>
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <h3 className="font-semibold text-sm truncate" style={{ color: "var(--text-primary)" }}>{order.restaurantName}</h3>
+                          <p className="text-xs mt-0.5" style={{ color: "var(--text-secondary)" }}>
+                            {order.items.length} item{order.items.length !== 1 ? "s" : ""} • Rs. {Math.round(order.total)}
+                          </p>
+                          <p className="text-[11px] mt-0.5" style={{ color: "var(--text-tertiary)" }}>
+                            {new Date(order.placedAt).toLocaleDateString("en-PK", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                          </p>
                         </div>
-                      )}
-                      <div className="min-w-0">
-                        <h3
-                          className="font-semibold text-sm truncate"
-                          style={{ color: "var(--text-primary)" }}
-                        >
-                          {order.restaurantName}
-                        </h3>
-                        <p
-                          className="text-xs mt-0.5"
-                          style={{ color: "var(--text-secondary)" }}
-                        >
-                          {order.items.length} item{order.items.length !== 1 ? "s" : ""} • Rs. {Math.round(order.total)}
-                        </p>
-                        <p
-                          className="text-[11px] mt-0.5"
-                          style={{ color: "var(--text-tertiary)" }}
-                        >
-                          {new Date(order.placedAt).toLocaleDateString("en-PK", {
-                            day: "numeric",
-                            month: "short",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </p>
                       </div>
+                      <span className="px-2.5 py-1 rounded-full text-[11px] font-bold shrink-0" style={{ background: cfg.bgVar, color: cfg.colorVar }}>
+                        {cfg.label}
+                      </span>
                     </div>
-                    <span
-                      className="px-2.5 py-1 rounded-full text-[11px] font-bold shrink-0"
-                      style={{ background: cfg.bg, color: cfg.color }}
-                    >
-                      {cfg.label}
-                    </span>
-                  </div>
-                  {tab === "active" && (
                     <div className="mt-3 flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: "var(--hubb-accent)" }} />
-                        <span className="text-xs font-medium" style={{ color: "var(--hubb-accent)" }}>
+                        <span className="text-xs font-medium" style={{ color: "var(--hubb-accent)" }}>{cfg.label}</span>
+                      </div>
+                      <span className="text-xs font-semibold" style={{ color: "var(--hubb-accent)" }}>Track →</span>
+                    </div>
+                  </Link>
+                );
+              }
+
+              return (
+                <div
+                  key={order.id}
+                  className="rounded-2xl overflow-hidden transition-all"
+                  style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+                >
+                  <button
+                    onClick={() => setExpandedId(isExpanded ? null : order.id)}
+                    className="w-full p-4 text-left transition-all hover:opacity-90"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        {order.restaurantImageURL ? (
+                          <Image src={order.restaurantImageURL} alt="" width={48} height={48} className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: "var(--bg-search)" }}>
+                            <span className="text-lg">🍽️</span>
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <h3 className="font-semibold text-sm truncate" style={{ color: "var(--text-primary)" }}>{order.restaurantName}</h3>
+                          <p className="text-xs mt-0.5" style={{ color: "var(--text-secondary)" }}>
+                            {order.items.length} item{order.items.length !== 1 ? "s" : ""} • Rs. {Math.round(order.total)}
+                          </p>
+                          <p className="text-[11px] mt-0.5" style={{ color: "var(--text-tertiary)" }}>
+                            {new Date(order.placedAt).toLocaleDateString("en-PK", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="px-2.5 py-1 rounded-full text-[11px] font-bold" style={{ background: cfg.bgVar, color: cfg.colorVar }}>
                           {cfg.label}
                         </span>
+                        <svg
+                          className="w-4 h-4 transition-transform"
+                          style={{ color: "var(--text-tertiary)", transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)" }}
+                          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
                       </div>
-                      <span className="text-xs font-semibold" style={{ color: "var(--hubb-accent)" }}>
-                        Track →
-                      </span>
+                    </div>
+                  </button>
+
+                  {isExpanded && (
+                    <div className="px-4 pb-4 animate-fade-up" style={{ borderTop: "1px solid var(--border-default)" }}>
+                      <div className="pt-3 space-y-2">
+                        {order.items.map((ci, idx) => (
+                          <div key={idx} className="flex justify-between text-sm">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span
+                                className="w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-bold shrink-0"
+                                style={{ background: "var(--bg-search)", color: "var(--text-secondary)" }}
+                              >
+                                {ci.quantity}
+                              </span>
+                              <span className="truncate" style={{ color: "var(--text-secondary)" }}>{ci.foodItem.name}</span>
+                            </div>
+                            <span className="shrink-0 ml-2" style={{ color: "var(--text-primary)" }}>
+                              Rs. {Math.round(ci.quantity * ci.foodItem.price)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex gap-3 mt-4">
+                        {restaurantID && (
+                          <Link
+                            href={`/restaurant/${restaurantID}`}
+                            className="flex-1 text-center py-2.5 rounded-xl text-xs font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99]"
+                            style={{ background: "var(--hubb-accent)" }}
+                          >
+                            Reorder
+                          </Link>
+                        )}
+                        <Link
+                          href={`/tracking/${order.id}`}
+                          className="flex-1 text-center py-2.5 rounded-xl text-xs font-semibold transition-all hover:scale-[1.01] active:scale-[0.99]"
+                          style={{ background: "var(--bg-search)", color: "var(--text-primary)" }}
+                        >
+                          View Details
+                        </Link>
+                      </div>
                     </div>
                   )}
-                </Link>
+                </div>
               );
             })}
           </div>

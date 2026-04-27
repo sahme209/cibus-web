@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { useToast } from "@/components/ToastProvider";
 import * as api from "@/lib/api";
@@ -260,14 +261,14 @@ export default function TrackingPage() {
         {isCancelled && (
           <div
             className="rounded-2xl p-6 mb-6 text-center animate-fade-up"
-            style={{ background: "#FFE5E3" }}
+            style={{ background: "var(--hubb-error-bg)" }}
           >
-            <div className="w-14 h-14 rounded-full mx-auto flex items-center justify-center mb-3" style={{ background: "rgba(255,59,48,0.1)" }}>
-              <svg className="w-7 h-7" style={{ color: "#FF3B30" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-14 h-14 rounded-full mx-auto flex items-center justify-center mb-3" style={{ background: "color-mix(in srgb, var(--hubb-error) 10%, transparent)" }}>
+              <svg className="w-7 h-7" style={{ color: "var(--hubb-error)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <p className="font-semibold text-sm" style={{ color: "#FF3B30" }}>
+            <p className="font-semibold text-sm" style={{ color: "var(--hubb-error)" }}>
               This order has been cancelled
             </p>
           </div>
@@ -297,9 +298,11 @@ export default function TrackingPage() {
         >
           <div className="flex items-center gap-3 mb-4">
             {order.restaurantImageURL ? (
-              <img
+              <Image
                 src={order.restaurantImageURL}
                 alt=""
+                width={48}
+                height={48}
                 className="w-12 h-12 rounded-xl object-cover"
               />
             ) : (

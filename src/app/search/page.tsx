@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 import RestaurantCard from "@/components/RestaurantCard";
 import type { Restaurant, FoodItem } from "@/lib/types";
 import * as api from "@/lib/api";
@@ -174,7 +175,7 @@ function SearchContent() {
                       style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)", minWidth: 200 }}
                     >
                       {item.imageURL ? (
-                        <img src={item.imageURL} alt={item.name} className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                        <Image src={item.imageURL} alt={item.name} width={48} height={48} className="w-12 h-12 rounded-lg object-cover shrink-0" />
                       ) : (
                         <div className="w-12 h-12 rounded-lg shrink-0 flex items-center justify-center" style={{ background: "var(--bg-search)" }}>
                           <span>🍽️</span>

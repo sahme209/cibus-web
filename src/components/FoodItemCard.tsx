@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { FoodItem } from "@/lib/types";
 import { useCart } from "@/lib/store";
 import { useToast } from "./ToastProvider";
@@ -83,9 +84,11 @@ export default function FoodItemCard({
       {/* Image + Add */}
       <div className="relative shrink-0 w-28">
         {item.imageURL ? (
-          <img
+          <Image
             src={item.imageURL}
             alt={item.name}
+            width={112}
+            height={96}
             className="w-28 h-24 rounded-xl object-cover"
           />
         ) : (

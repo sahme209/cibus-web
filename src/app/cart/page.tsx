@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCart } from "@/lib/store";
 import Link from "next/link";
 
@@ -89,9 +90,11 @@ export default function CartPage() {
           {cart.items.map((ci) => (
             <div key={ci.id} className="p-4 flex items-center gap-4">
               {ci.foodItem.imageURL ? (
-                <img
+                <Image
                   src={ci.foodItem.imageURL}
                   alt={ci.foodItem.name}
+                  width={64}
+                  height={64}
                   className="w-16 h-16 rounded-xl object-cover shrink-0"
                 />
               ) : (

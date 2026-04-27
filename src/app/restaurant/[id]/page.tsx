@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 import FoodItemCard from "@/components/FoodItemCard";
 import { useCart } from "@/lib/store";
 import { useToast } from "@/components/ToastProvider";
@@ -18,8 +19,25 @@ export default function RestaurantDetailPage() {
   const [customizingItem, setCustomizingItem] = useState<FoodItem | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<CustomizationOption[]>([]);
   const [quantity, setQuantity] = useState(1);
+  const [specialInstructions, setSpecialInstructions] = useState("");
+  const [menuSearch, setMenuSearch] = useState("");
   const { cart, subtotal, itemCount, addItem } = useCart();
   const { showToast } = useToast();
+
+  const filteredMenu = useMemo(() => {
+    if (!menuSearch.trim()) return menu;
+    const q = menuSearch.toLowerCase();
+    return menu
+      .map((cat) => ({
+        ...cat,
+        items: cat.items.filter(
+          (item) =>
+            item.name.toLowerCase().includes(q) ||
+            item.description?.toLowerCase().includes(q)
+        ),
+      }))
+      .filter((cat) => cat.items.length > 0);
+  }, [menu, menuSearch]);
 
   useEffect(() => {
     if (!id) return;
@@ -90,10 +108,13 @@ export default function RestaurantDetailPage() {
     <div className="min-h-screen" style={{ background: "var(--bg-secondary)" }}>
       {/* Hero */}
       <div className="relative h-56 sm:h-72 lg:h-80 overflow-hidden">
-        <img
+        <Image
           src={restaurant.imageURL}
           alt={restaurant.name}
-          className="w-full h-full object-cover"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
 
@@ -180,8 +201,46 @@ export default function RestaurantDetailPage() {
         <div className="flex gap-8">
           {/* Menu */}
           <div className="flex-1 min-w-0">
-            {/* Category tabs */}
+            {/* Menu search */}
             {menu.length > 0 && (
+              <div className="relative mb-3">
+                <svg
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4"
+                  style={{ color: "var(--text-tertiary)" }}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  type="text"
+                  value={menuSearch}
+                  onChange={(e) => setMenuSearch(e.target.value)}
+                  placeholder="Search this menu..."
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm"
+                  style={{
+                    background: "var(--bg-search)",
+                    color: "var(--text-primary)",
+                    border: "none",
+                  }}
+                />
+                {menuSearch && (
+                  <button
+                    onClick={() => setMenuSearch("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full flex items-center justify-center"
+                    style={{ background: "var(--bg-surface)", color: "var(--text-tertiary)" }}
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Category tabs */}
+            {filteredMenu.length > 0 && !menuSearch && (
               <div
                 className="flex gap-2 overflow-x-auto hide-scrollbar pb-4 sticky top-16 z-10 pt-3 -mx-4 px-4"
                 style={{
@@ -219,7 +278,7 @@ export default function RestaurantDetailPage() {
 
             {/* Sections */}
             <div className="space-y-6 mt-3">
-              {menu.map((cat) => (
+              {filteredMenu.map((cat) => (
                 <div key={cat.id} id={`section-${cat.id}`}>
                   <h2
                     className="text-lg font-bold mb-3"
@@ -236,6 +295,7 @@ export default function RestaurantDetailPage() {
                           setCustomizingItem(it);
                           setSelectedOptions([]);
                           setQuantity(1);
+                          setSpecialInstructions("");
                         }}
                       />
                     ))}
@@ -243,6 +303,21 @@ export default function RestaurantDetailPage() {
                 </div>
               ))}
             </div>
+
+            {menuSearch && filteredMenu.length === 0 && (
+              <div className="text-center py-12 animate-fade-up">
+                <p className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>
+                  No items match &ldquo;{menuSearch}&rdquo;
+                </p>
+                <button
+                  onClick={() => setMenuSearch("")}
+                  className="mt-2 text-sm font-semibold"
+                  style={{ color: "var(--hubb-accent)" }}
+                >
+                  Clear search
+                </button>
+              </div>
+            )}
 
             {menu.length === 0 && (
               <div className="text-center py-20 animate-fade-up">
@@ -338,11 +413,15 @@ export default function RestaurantDetailPage() {
             </button>
 
             {customizingItem.imageURL && (
-              <img
-                src={customizingItem.imageURL}
-                alt={customizingItem.name}
-                className="w-full h-40 object-cover rounded-xl mb-4"
-              />
+              <div className="relative w-full h-40 rounded-xl overflow-hidden mb-4">
+                <Image
+                  src={customizingItem.imageURL}
+                  alt={customizingItem.name}
+                  fill
+                  sizes="400px"
+                  className="object-cover"
+                />
+              </div>
             )}
 
             <h3 className="font-bold text-lg pr-10" style={{ color: "var(--text-primary)" }}>
@@ -400,6 +479,21 @@ export default function RestaurantDetailPage() {
               </>
             )}
 
+            {/* Special Instructions */}
+            <div className="mb-4">
+              <p className="text-xs font-semibold mb-2" style={{ color: "var(--text-tertiary)" }}>
+                SPECIAL INSTRUCTIONS
+              </p>
+              <textarea
+                value={specialInstructions}
+                onChange={(e) => setSpecialInstructions(e.target.value)}
+                placeholder="e.g. No onions, extra spicy..."
+                rows={2}
+                className="w-full px-3 py-2.5 rounded-xl text-sm resize-none"
+                style={{ background: "var(--bg-search)", color: "var(--text-primary)", border: "none" }}
+              />
+            </div>
+
             {/* Quantity */}
             <div className="flex items-center justify-between mb-5">
               <span className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>Quantity</span>
@@ -426,7 +520,7 @@ export default function RestaurantDetailPage() {
 
             <button
               onClick={() => {
-                addItem(customizingItem, quantity, selectedOptions, "");
+                addItem(customizingItem, quantity, selectedOptions, specialInstructions);
                 showToast(`${customizingItem.name} added to cart`);
                 setCustomizingItem(null);
               }}

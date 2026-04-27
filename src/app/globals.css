@@ -14,6 +14,13 @@
   --hubb-error-bg: #FEE2E2;
   --hubb-error: #DC2626;
 
+  --status-placed: #FF9500;
+  --status-placed-bg: #FFF4E6;
+  --status-preparing: #FF6B35;
+  --status-preparing-bg: #FFF0EB;
+  --status-ready: #5856D6;
+  --status-ready-bg: #EEEEFC;
+
   --bg-primary: #FFFFFF;
   --bg-secondary: #F7F8FA;
   --bg-card: #FFFFFF;
@@ -63,6 +70,13 @@
     --hubb-tint-soft: #0A1F13;
     --hubb-error-bg: #2D1215;
     --hubb-error: #EF4444;
+
+    --status-placed: #FFB347;
+    --status-placed-bg: #2D2010;
+    --status-preparing: #FF8F60;
+    --status-preparing-bg: #2D1A10;
+    --status-ready: #7A78E6;
+    --status-ready-bg: #1C1C30;
   }
 }
 
