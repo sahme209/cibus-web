@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import RestaurantCard from "@/components/RestaurantCard";
 import PromoBanner from "@/components/PromoBanner";
 import PopularItems from "@/components/PopularItems";
@@ -191,8 +192,8 @@ export default function HomePage() {
             {[...restaurants].filter(r => r.isOpen).sort((a, b) => parseInt(a.deliveryTime) - parseInt(b.deliveryTime)).slice(0, 6).map((r) => (
               <Link key={`fast-${r.id}`} href={`/restaurant/${r.id}`} className="shrink-0 w-44 rounded-xl overflow-hidden transition-all hover:-translate-y-1 hover:shadow-md" style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}>
                 <div className="relative h-28">
-                  {r.imageURL && <img src={r.imageURL} alt={r.name} className="w-full h-full object-cover" />}
-                  <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: "var(--hubb-accent)" }}>{r.deliveryTime}</div>
+                  {r.imageURL && <Image src={r.imageURL} alt={r.name} fill sizes="176px" className="object-cover" />}
+                  <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold text-white z-[1]" style={{ background: "var(--hubb-accent)" }}>{r.deliveryTime}</div>
                 </div>
                 <div className="p-2.5">
                   <p className="text-sm font-semibold truncate" style={{ color: "var(--text-primary)" }}>{r.name}</p>

@@ -192,6 +192,7 @@ export default function CartPage() {
               >
                 <button
                   onClick={() => updateQuantity(ci.id, ci.quantity - 1)}
+                  aria-label={ci.quantity === 1 ? `Remove ${ci.foodItem.name}` : `Decrease ${ci.foodItem.name} quantity`}
                   className="w-8 h-8 flex items-center justify-center text-sm font-bold rounded-full transition-colors"
                   style={{ color: ci.quantity === 1 ? "var(--hubb-orange)" : "var(--hubb-accent)" }}
                 >
@@ -204,11 +205,13 @@ export default function CartPage() {
                 <span
                   className="w-8 h-8 flex items-center justify-center text-sm font-bold"
                   style={{ color: "var(--text-primary)" }}
+                  aria-live="polite"
                 >
                   {ci.quantity}
                 </span>
                 <button
                   onClick={() => updateQuantity(ci.id, ci.quantity + 1)}
+                  aria-label={`Increase ${ci.foodItem.name} quantity`}
                   className="w-8 h-8 flex items-center justify-center text-sm font-bold rounded-full"
                   style={{ color: "var(--hubb-accent)" }}
                 >
