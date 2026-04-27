@@ -62,25 +62,36 @@ export default function MobileNav() {
     <nav
       className="sm:hidden fixed bottom-0 left-0 right-0 z-50 border-t safe-area-bottom"
       style={{
-        background: "var(--bg-primary)",
+        background: "color-mix(in srgb, var(--bg-primary) 92%, transparent)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
         borderColor: "var(--border-default)",
       }}
+      aria-label="Main navigation"
     >
       <div className="flex items-center justify-around h-16">
         {tabs.map((tab) => {
-          const active = pathname === tab.href;
+          const active = pathname === tab.href || (tab.href !== "/" && pathname.startsWith(tab.href));
           return (
             <Link
               key={tab.label}
               href={tab.href}
-              className="flex flex-col items-center gap-0.5 relative"
+              className="flex flex-col items-center gap-0.5 relative py-1 px-3"
               style={{ color: active ? "var(--hubb-accent)" : "var(--text-tertiary)" }}
+              aria-label={tab.label}
+              aria-current={active ? "page" : undefined}
             >
+              {active && (
+                <span
+                  className="absolute -top-1 left-1/2 -translate-x-1/2 w-5 h-[3px] rounded-full"
+                  style={{ background: "var(--hubb-accent)" }}
+                />
+              )}
               <div className="relative">
                 {tab.icon(active)}
                 {tab.badge && (
                   <span
-                    className="absolute -top-1.5 -right-2 w-4.5 h-4.5 min-w-[18px] rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+                    className="absolute -top-1.5 -right-2 min-w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold text-white px-1"
                     style={{ background: "var(--hubb-accent)" }}
                   >
                     {tab.badge}

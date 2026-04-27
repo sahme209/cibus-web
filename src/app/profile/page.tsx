@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useAuth, useAddress } from "@/lib/store";
 import { useToast } from "@/components/ToastProvider";
 import * as api from "@/lib/api";
-import type { DeliveryAddress } from "@/lib/types";
 
 export default function ProfilePage() {
   const { isLoggedIn, user, logout, refreshUser } = useAuth();
@@ -193,6 +192,7 @@ export default function ProfilePage() {
                 onClick={() => { setEditName(user?.name || ""); setEditPhone(user?.phone || ""); setEditing(true); }}
                 className="p-2.5 rounded-xl transition-colors hover:opacity-70 shrink-0"
                 style={{ background: "var(--bg-search)" }}
+                aria-label="Edit profile"
               >
                 <svg className="w-4 h-4" style={{ color: "var(--text-secondary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -202,29 +202,70 @@ export default function ProfilePage() {
           )}
         </div>
 
+        {/* HUBB+ Membership Teaser */}
+        <div
+          className="rounded-2xl p-5 mb-5 animate-fade-up relative overflow-hidden"
+          style={{ background: "linear-gradient(135deg, var(--hubb-accent), #005C3C)", boxShadow: "var(--shadow-md)" }}
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-20 blur-2xl" style={{ background: "#FFD700" }} />
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-lg font-black text-white">HUBB+</span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: "rgba(255,255,255,0.2)" }}>
+                COMING SOON
+              </span>
+            </div>
+            <p className="text-sm text-white/80 mb-3">
+              Rs. 0 delivery fees, exclusive deals, and priority support. Join the waitlist!
+            </p>
+            <div className="flex items-center gap-4 text-xs text-white/60">
+              <span className="flex items-center gap-1">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                Free delivery
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                5% cashback
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                VIP support
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* Quick Links */}
         <div
           className="rounded-2xl overflow-hidden divide-y mb-5 animate-fade-up"
           style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)", borderColor: "var(--border-subtle)" }}
         >
           {[
-            { label: "My Orders", href: "/orders", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
-            { label: "Browse Restaurants", href: "/", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" },
-            { label: "View Cart", href: "/cart", icon: "M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" },
+            { label: "My Orders", href: "/orders", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2", subtitle: "Track active and past orders" },
+            { label: "Saved Restaurants", href: "/", icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z", subtitle: "Your favorite places" },
+            { label: "Payment Methods", href: "/profile", icon: "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z", subtitle: "Manage cards and wallets" },
+            { label: "Help & Support", href: "/profile", icon: "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z", subtitle: "FAQs, contact, and feedback" },
           ].map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className="flex items-center gap-3 px-5 py-4 transition-colors hover:opacity-80"
+              className="flex items-center gap-3.5 px-5 py-4 transition-colors hover:opacity-80"
               style={{ borderColor: "var(--border-subtle)" }}
             >
-              <svg className="w-5 h-5 shrink-0" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={link.icon} />
-              </svg>
-              <span className="text-sm font-medium flex-1" style={{ color: "var(--text-primary)" }}>
-                {link.label}
-              </span>
-              <svg className="w-4 h-4" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: "var(--bg-search)" }}>
+                <svg className="w-5 h-5" style={{ color: "var(--text-secondary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={link.icon} />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="text-sm font-semibold block" style={{ color: "var(--text-primary)" }}>
+                  {link.label}
+                </span>
+                <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                  {link.subtitle}
+                </span>
+              </div>
+              <svg className="w-4 h-4 shrink-0" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
@@ -251,7 +292,7 @@ export default function ProfilePage() {
 
           {showAddAddress && (
             <div
-              className="rounded-xl p-4 mb-4 space-y-3"
+              className="rounded-xl p-4 mb-4 space-y-3 animate-fade-up"
               style={{ background: "var(--bg-search)" }}
             >
               <input
@@ -297,9 +338,11 @@ export default function ProfilePage() {
                   className="flex items-center gap-3 p-3 rounded-xl"
                   style={{ background: "var(--bg-search)" }}
                 >
-                  <svg className="w-4 h-4 shrink-0" style={{ color: "var(--hubb-accent)" }} fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
-                  </svg>
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: "var(--hubb-tint)" }}>
+                    <svg className="w-4 h-4" style={{ color: "var(--hubb-accent)" }} fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
+                    </svg>
+                  </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate" style={{ color: "var(--text-primary)" }}>
                       {addr.label}
@@ -312,6 +355,7 @@ export default function ProfilePage() {
                     onClick={() => handleDeleteAddress(addr.id)}
                     disabled={deletingId === addr.id}
                     className="p-2 rounded-lg transition-colors hover:opacity-70 disabled:opacity-40"
+                    aria-label="Delete address"
                   >
                     <svg className="w-4 h-4" style={{ color: "var(--hubb-orange)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -326,6 +370,68 @@ export default function ProfilePage() {
             </p>
           )}
         </div>
+
+        {/* Preferences */}
+        <div
+          className="rounded-2xl overflow-hidden divide-y mb-5 animate-fade-up"
+          style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)", borderColor: "var(--border-subtle)" }}
+        >
+          <div className="px-5 py-3">
+            <h2 className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>Preferences</h2>
+          </div>
+          {[
+            { label: "Push Notifications", description: "Order updates, promos, and deals" },
+            { label: "Email Updates", description: "Weekly deals and restaurant picks" },
+            { label: "SMS Alerts", description: "Delivery and order status texts" },
+          ].map((pref) => (
+            <div
+              key={pref.label}
+              className="flex items-center justify-between px-5 py-3.5"
+              style={{ borderColor: "var(--border-subtle)" }}
+            >
+              <div>
+                <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{pref.label}</p>
+                <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>{pref.description}</p>
+              </div>
+              <div
+                className="w-11 h-6 rounded-full relative cursor-pointer transition-colors"
+                style={{ background: "var(--hubb-accent)" }}
+              >
+                <div
+                  className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Legal */}
+        <div
+          className="rounded-2xl overflow-hidden divide-y mb-5 animate-fade-up"
+          style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)", borderColor: "var(--border-subtle)" }}
+        >
+          {[
+            { label: "Terms of Service", href: "/terms" },
+            { label: "Privacy Policy", href: "/privacy" },
+          ].map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className="flex items-center justify-between px-5 py-3.5 transition-colors hover:opacity-80"
+              style={{ borderColor: "var(--border-subtle)" }}
+            >
+              <span className="text-sm" style={{ color: "var(--text-secondary)" }}>{link.label}</span>
+              <svg className="w-4 h-4" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          ))}
+        </div>
+
+        {/* App version */}
+        <p className="text-center text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>
+          HUBB v1.0.0
+        </p>
 
         {/* Sign Out */}
         <button

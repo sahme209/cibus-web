@@ -20,9 +20,12 @@ export default function Navbar({ onCartClick }: NavbarProps) {
     <header
       className="sticky top-0 z-50 border-b"
       style={{
-        background: "var(--bg-primary)",
+        background: "color-mix(in srgb, var(--bg-primary) 92%, transparent)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
         borderColor: "var(--border-default)",
       }}
+      role="banner"
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
@@ -86,6 +89,7 @@ export default function Navbar({ onCartClick }: NavbarProps) {
           {/* Cart button */}
           <button
             onClick={onCartClick}
+            aria-label={itemCount > 0 ? `Cart with ${itemCount} items` : "Cart"}
             className="relative flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full text-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
             style={{
               background: itemCount > 0 ? "var(--hubb-accent)" : "var(--bg-surface)",

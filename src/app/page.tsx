@@ -174,6 +174,36 @@ export default function HomePage() {
         <PromoBanner />
       </section>
 
+      {/* HUBB+ Membership Teaser */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
+        <div
+          className="rounded-2xl p-5 sm:p-6 relative overflow-hidden animate-fade-up"
+          style={{ background: "linear-gradient(135deg, var(--hubb-accent), #005C3C)", boxShadow: "var(--shadow-md)" }}
+        >
+          <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-20 blur-3xl" style={{ background: "#FFD700" }} />
+          <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-lg font-black text-white">HUBB+</span>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold" style={{ background: "rgba(255,215,0,0.3)", color: "#FFD700" }}>
+                  SAVE MORE
+                </span>
+              </div>
+              <p className="text-sm text-white/80 max-w-md">
+                Rs. 0 delivery on every order, 5% cashback, and exclusive member deals. Your first month free.
+              </p>
+            </div>
+            <Link
+              href="/profile"
+              className="shrink-0 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-105 active:scale-95"
+              style={{ background: "white", color: "var(--hubb-accent)" }}
+            >
+              Learn More
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Quick Reorder */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
         <QuickReorder />

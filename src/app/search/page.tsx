@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState, useRef } from "react";
+import { Suspense, useEffect, useState, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import RestaurantCard from "@/components/RestaurantCard";
@@ -21,6 +21,39 @@ const CATEGORIES = [
   { name: "Seafood", emoji: "🦐" },
 ];
 
+const TRENDING = [
+  "Chicken Biryani",
+  "Cheese Burger",
+  "Pepperoni Pizza",
+  "Butter Chicken Karahi",
+  "Chocolate Cake",
+  "Chicken Shawarma",
+];
+
+const RECENT_KEY = "hubb_recent_searches";
+const MAX_RECENT = 8;
+
+function getRecentSearches(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(localStorage.getItem(RECENT_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function saveRecentSearch(q: string) {
+  const trimmed = q.trim();
+  if (!trimmed) return;
+  const recent = getRecentSearches().filter((s) => s !== trimmed);
+  recent.unshift(trimmed);
+  localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, MAX_RECENT)));
+}
+
+function clearRecentSearches() {
+  localStorage.removeItem(RECENT_KEY);
+}
+
 export default function SearchPage() {
   return (
     <Suspense fallback={<div className="min-h-screen" style={{ background: "var(--bg-secondary)" }} />}>
@@ -37,7 +70,14 @@ function SearchContent() {
   const [foodResults, setFoodResults] = useState<FoodItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [inputFocused, setInputFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    setRecentSearches(getRecentSearches());
+  }, []);
 
   useEffect(() => {
     if (initialQuery) {
@@ -49,10 +89,12 @@ function SearchContent() {
     inputRef.current?.focus();
   }, []);
 
-  async function doSearch(q: string) {
+  const doSearch = useCallback(async (q: string) => {
     if (!q.trim()) return;
     setLoading(true);
     setSearched(true);
+    saveRecentSearch(q);
+    setRecentSearches(getRecentSearches());
     try {
       const [restaurants, foods] = await Promise.allSettled([
         api.searchRestaurants(q),
@@ -69,7 +111,21 @@ function SearchContent() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
+
+  const handleInputChange = (value: string) => {
+    setQuery(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (value.trim().length >= 2) {
+      debounceRef.current = setTimeout(() => doSearch(value), 400);
+    } else if (!value.trim()) {
+      setSearched(false);
+      setResults([]);
+      setFoodResults([]);
+    }
+  };
+
+  const showSuggestions = inputFocused && !searched && query.length === 0;
 
   return (
     <div
@@ -90,6 +146,7 @@ function SearchContent() {
             onSubmit={(e) => {
               e.preventDefault();
               doSearch(query);
+              inputRef.current?.blur();
             }}
             className="relative"
           >
@@ -106,7 +163,9 @@ function SearchContent() {
               ref={inputRef}
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => handleInputChange(e.target.value)}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setTimeout(() => setInputFocused(false), 200)}
               placeholder="Search restaurants, cuisines, dishes..."
               className="w-full pl-12 pr-20 py-3.5 rounded-2xl text-sm transition-shadow focus:shadow-md"
               style={{
@@ -114,13 +173,21 @@ function SearchContent() {
                 color: "var(--text-primary)",
                 border: "none",
               }}
+              aria-label="Search restaurants and dishes"
             />
             {query && (
               <button
                 type="button"
-                onClick={() => { setQuery(""); setSearched(false); setResults([]); setFoodResults([]); inputRef.current?.focus(); }}
+                onClick={() => {
+                  setQuery("");
+                  setSearched(false);
+                  setResults([]);
+                  setFoodResults([]);
+                  inputRef.current?.focus();
+                }}
                 className="absolute right-16 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center"
                 style={{ background: "var(--bg-surface)", color: "var(--text-tertiary)" }}
+                aria-label="Clear search"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
@@ -139,6 +206,67 @@ function SearchContent() {
       </div>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+        {/* Suggestions dropdown when focused and no search */}
+        {showSuggestions && (recentSearches.length > 0 || TRENDING.length > 0) && (
+          <div className="mb-6 animate-fade-up">
+            {recentSearches.length > 0 && (
+              <div className="mb-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-semibold" style={{ color: "var(--text-secondary)" }}>
+                    Recent Searches
+                  </h3>
+                  <button
+                    onClick={() => {
+                      clearRecentSearches();
+                      setRecentSearches([]);
+                    }}
+                    className="text-xs font-medium transition-opacity hover:opacity-70"
+                    style={{ color: "var(--hubb-accent)" }}
+                  >
+                    Clear All
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {recentSearches.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => { setQuery(s); doSearch(s); }}
+                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium transition-all hover:scale-105"
+                      style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)", color: "var(--text-primary)" }}
+                    >
+                      <svg className="w-3.5 h-3.5 shrink-0" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div>
+              <h3 className="text-sm font-semibold mb-3" style={{ color: "var(--text-secondary)" }}>
+                Trending Now
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {TRENDING.map((t, i) => (
+                  <button
+                    key={t}
+                    onClick={() => { setQuery(t); doSearch(t); }}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium transition-all hover:scale-105"
+                    style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)", color: "var(--text-primary)" }}
+                  >
+                    <span className="text-xs font-bold" style={{ color: "var(--hubb-accent)" }}>
+                      {i + 1}
+                    </span>
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -229,7 +357,7 @@ function SearchContent() {
               ))}
             </div>
           </div>
-        ) : (
+        ) : !showSuggestions ? (
           /* Browse state — show categories to explore */
           <div className="animate-fade-up">
             <h3 className="text-sm font-semibold mb-4" style={{ color: "var(--text-secondary)" }}>
@@ -249,7 +377,7 @@ function SearchContent() {
               ))}
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
