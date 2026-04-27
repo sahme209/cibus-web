@@ -429,29 +429,32 @@ function LandingPage() {
                 </Link>
               </div>
               <div className="flex-1 max-w-lg w-full">
-                <div
-                  className="aspect-[4/3] rounded-2xl flex items-center justify-center"
-                  style={{ background: i === 0 ? "linear-gradient(135deg, var(--hubb-tint), var(--bg-search))" : "linear-gradient(135deg, var(--hubb-accent), #005C3C)" }}
-                >
-                  {i === 0 ? (
-                    <div className="text-center">
-                      <div className="flex justify-center gap-3 mb-4">
-                        {["🍚", "🍔", "🍕", "🥘"].map((e) => (
-                          <span key={e} className="text-4xl animate-float" style={{ animationDelay: `${Math.random() * 2}s` }}>{e}</span>
-                        ))}
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+                  <Image
+                    src={i === 0
+                      ? "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80"
+                      : "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80"
+                    }
+                    alt={i === 0 ? "Delicious food spread" : "HUBB+ premium delivery"}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 512px"
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0" style={{ background: i === 0 ? "linear-gradient(to top, rgba(0,0,0,0.5), transparent)" : "linear-gradient(to top, rgba(0,112,74,0.8), rgba(0,112,74,0.3))" }} />
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    {i === 0 ? (
+                      <p className="text-lg font-bold text-white">500+ restaurants near you</p>
+                    ) : (
+                      <div className="text-white">
+                        <span className="text-2xl font-black">HUBB+</span>
+                        <div className="flex gap-4 mt-2 text-sm text-white/90">
+                          <span>Rs. 0 delivery</span>
+                          <span>5% cashback</span>
+                          <span>Member deals</span>
+                        </div>
                       </div>
-                      <p className="text-sm font-semibold" style={{ color: "var(--text-secondary)" }}>500+ restaurants near you</p>
-                    </div>
-                  ) : (
-                    <div className="text-center text-white">
-                      <span className="text-3xl font-black">HUBB+</span>
-                      <div className="flex flex-col gap-1 mt-3 text-sm text-white/80">
-                        <span>Rs. 0 delivery</span>
-                        <span>5% cashback</span>
-                        <span>Member deals</span>
-                      </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -493,15 +496,18 @@ function LandingPage() {
 
           {/* Rider CTA */}
           <div className="flex flex-col md:flex-row items-center gap-8 mb-12">
-            <div
-              className="flex-1 aspect-[4/3] max-w-lg w-full rounded-2xl flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, var(--hubb-primary), #2D2D30)" }}
-            >
-              <div className="text-center text-white">
-                <svg className="w-16 h-16 mx-auto mb-3 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
-                </svg>
-                <p className="text-lg font-bold">Earn on your schedule</p>
+            <div className="flex-1 aspect-[4/3] max-w-lg w-full rounded-2xl overflow-hidden relative">
+              <Image
+                src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80"
+                alt="Delivery rider on motorcycle"
+                fill
+                sizes="(max-width: 768px) 100vw, 512px"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6">
+                <p className="text-xl font-bold text-white">Earn on your schedule</p>
+                <p className="text-sm text-white/70 mt-1">Flexible hours, daily payouts</p>
               </div>
             </div>
             <div className="flex-1 max-w-lg">
@@ -521,15 +527,18 @@ function LandingPage() {
 
           {/* Business CTA */}
           <div className="flex flex-col md:flex-row-reverse items-center gap-8">
-            <div
-              className="flex-1 aspect-[4/3] max-w-lg w-full rounded-2xl flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, var(--hubb-accent), #005C3C)" }}
-            >
-              <div className="text-center text-white">
-                <svg className="w-16 h-16 mx-auto mb-3 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-                <p className="text-lg font-bold">Grow your revenue</p>
+            <div className="flex-1 aspect-[4/3] max-w-lg w-full rounded-2xl overflow-hidden relative">
+              <Image
+                src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80"
+                alt="Restaurant interior"
+                fill
+                sizes="(max-width: 768px) 100vw, 512px"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6">
+                <p className="text-xl font-bold text-white">Grow your revenue</p>
+                <p className="text-sm text-white/70 mt-1">Reach thousands of new customers</p>
               </div>
             </div>
             <div className="flex-1 max-w-lg">
