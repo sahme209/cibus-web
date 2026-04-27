@@ -2,24 +2,21 @@ import Link from "next/link";
 
 const FOOTER_LINKS = {
   "Get to Know Us": [
-    { label: "About HUBB", href: "/" },
-    { label: "Careers", href: "/" },
-    { label: "Engineering Blog", href: "/" },
-    { label: "Company Blog", href: "/" },
-    { label: "Gift Cards", href: "/" },
+    { label: "About HUBB", href: "/about" },
+    { label: "Careers", href: "/careers" },
+    { label: "Help & Support", href: "/help" },
   ],
   "Let Us Help You": [
     { label: "Account Details", href: "/profile" },
     { label: "Order History", href: "/orders" },
-    { label: "Help & Support", href: "/profile" },
-    { label: "Accessibility", href: "/terms" },
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms of Service", href: "/terms" },
   ],
   "Doing Business": [
     { label: "Become a Rider", href: "/partner/riders" },
     { label: "HUBB for Merchants", href: "/partner/merchants" },
     { label: "Restaurant Partners", href: "/partner/restaurants" },
-    { label: "Promotions", href: "/" },
-    { label: "Advertise", href: "/" },
+    { label: "Advertise", href: "mailto:ads@hubb.pk?subject=Advertising%20Inquiry" },
   ],
 };
 
@@ -138,8 +135,7 @@ export default function Footer() {
             {[
               { label: "Privacy Policy", href: "/privacy" },
               { label: "Terms of Service", href: "/terms" },
-              { label: "Accessibility", href: "/terms" },
-              { label: "Do Not Sell My Info", href: "/privacy" },
+              { label: "Help", href: "/help" },
             ].map((item) => (
               <Link
                 key={item.label}
