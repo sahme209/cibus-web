@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useAddress, useAuth } from "@/lib/store";
 
 export default function AddressSelector() {
@@ -94,6 +95,17 @@ export default function AddressSelector() {
                 )}
               </button>
             ))}
+            <Link
+              href="/checkout"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-colors hover:opacity-80 border-t"
+              style={{ color: "var(--hubb-accent)", borderColor: "var(--border-subtle)" }}
+            >
+              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Add new address
+            </Link>
           </div>
         </>
       )}

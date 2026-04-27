@@ -89,7 +89,15 @@ export default function PopularItems() {
                 >
                   {item.restaurantName}
                 </p>
-                <div className="flex items-center justify-between mt-2">
+                {item.rating > 0 && (
+                  <div className="flex items-center gap-1 mt-1">
+                    <span className="text-[10px]" style={{ color: "var(--hubb-gold)" }}>★</span>
+                    <span className="text-[10px] font-medium" style={{ color: "var(--text-tertiary)" }}>
+                      {item.rating.toFixed(1)}
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between mt-1.5">
                   <div className="flex items-center gap-1">
                     <span
                       className="text-sm font-bold"
@@ -108,8 +116,9 @@ export default function PopularItems() {
                   </div>
                   <button
                     onClick={() => { addItem(item, 1, [], ""); showToast(`${item.name} added to cart`); }}
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold transition-transform hover:scale-110 active:scale-95"
                     style={{ background: "var(--hubb-accent)" }}
+                    aria-label={`Add ${item.name} to cart`}
                   >
                     +
                   </button>

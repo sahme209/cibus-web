@@ -15,22 +15,45 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "HUBB — Food Delivery",
-    template: "%s | HUBB",
+    default: "HUBB — Food Delivery | Order Online",
+    template: "%s | HUBB Food Delivery",
   },
   description:
-    "Order food online from your favorite restaurants. Fast delivery, exclusive deals, and premium quality.",
-  keywords: ["food delivery", "HUBB", "restaurants", "order food online", "Pakistan"],
+    "Order food delivery from the best restaurants near you. Rs. 0 delivery on your first order. Fast delivery, exclusive deals, and premium quality. Download the HUBB app today.",
+  keywords: ["food delivery", "HUBB", "restaurants", "order food online", "Pakistan", "Islamabad", "Lahore", "Karachi", "delivery app", "biryani", "pizza", "burgers"],
+  metadataBase: new URL("https://gethubb.com"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "HUBB — Food Delivery",
-    description: "Order food online from your favorite restaurants. Fast delivery, exclusive deals, and premium quality.",
+    title: "HUBB — Food Delivery | Order Online",
+    description: "Order food delivery from the best restaurants near you. Rs. 0 delivery on your first order.",
     type: "website",
     siteName: "HUBB",
+    locale: "en_PK",
   },
   twitter: {
     card: "summary_large_image",
     title: "HUBB — Food Delivery",
-    description: "Order food online from your favorite restaurants.",
+    description: "Order food delivery from the best restaurants near you. Fast delivery, exclusive deals.",
+    creator: "@gethubb",
+  },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "HUBB",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

@@ -120,6 +120,20 @@ export default function FilterBar({ onSortChange, onFilterChange }: FilterBarPro
           </button>
         );
       })}
+
+      {/* Clear all filters */}
+      {Object.values(activeFilters).some(Boolean) && (
+        <button
+          onClick={() => {
+            setActiveFilters({});
+            onFilterChange?.({});
+          }}
+          className="shrink-0 px-3 py-2 rounded-full text-xs font-semibold transition-all"
+          style={{ color: "var(--hubb-orange)" }}
+        >
+          Clear all
+        </button>
+      )}
     </div>
   );
 }

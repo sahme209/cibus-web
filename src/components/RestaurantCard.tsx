@@ -26,20 +26,30 @@ export default function RestaurantCard({ restaurant }: { restaurant: Restaurant 
         <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
           {restaurant.isFeatured && (
             <span
-              className="px-2.5 py-1 rounded-md text-[10px] font-bold text-white tracking-wide"
-              style={{ background: "var(--hubb-accent)" }}
+              className="px-2.5 py-1 rounded-md text-[10px] font-bold text-white tracking-wide backdrop-blur-sm"
+              style={{ background: "rgba(0,112,74,0.9)" }}
             >
               FEATURED
             </span>
           )}
           {restaurant.deliveryFee === 0 && (
             <span
-              className="px-2.5 py-1 rounded-md text-[10px] font-bold text-white"
-              style={{ background: "var(--hubb-accent)" }}
+              className="px-2.5 py-1 rounded-md text-[10px] font-bold text-white backdrop-blur-sm"
+              style={{ background: "rgba(0,112,74,0.9)" }}
             >
               Rs. 0 delivery
             </span>
           )}
+        </div>
+        {/* Rating circle — top right */}
+        <div
+          className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-bold backdrop-blur-sm"
+          style={{
+            background: restaurant.rating >= 4.5 ? "rgba(0,112,74,0.9)" : "rgba(0,0,0,0.5)",
+            color: "white",
+          }}
+        >
+          {restaurant.rating.toFixed(1)}
         </div>
         {/* Delivery time badge — DoorDash style */}
         <div className="absolute bottom-3 left-3">
@@ -61,23 +71,12 @@ export default function RestaurantCard({ restaurant }: { restaurant: Restaurant 
 
       {/* Details — DoorDash-style */}
       <div className="p-3.5">
-        <div className="flex items-start justify-between gap-2">
-          <h3
-            className="font-bold text-[15px] line-clamp-1"
-            style={{ color: "var(--text-primary)" }}
-          >
-            {restaurant.name}
-          </h3>
-          <div
-            className="flex items-center justify-center shrink-0 w-8 h-8 rounded-full text-xs font-bold"
-            style={{
-              background: restaurant.rating >= 4.5 ? "var(--hubb-tint)" : "var(--bg-search)",
-              color: restaurant.rating >= 4.5 ? "var(--hubb-green)" : "var(--text-primary)",
-            }}
-          >
-            {restaurant.rating.toFixed(1)}
-          </div>
-        </div>
+        <h3
+          className="font-bold text-[15px] line-clamp-1"
+          style={{ color: "var(--text-primary)" }}
+        >
+          {restaurant.name}
+        </h3>
         <p
           className="text-sm mt-1 flex items-center gap-1.5 flex-wrap"
           style={{ color: "var(--text-secondary)" }}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { StoreProvider, useCart } from "@/lib/store";
 import { ToastProvider } from "./ToastProvider";
 import Navbar from "./Navbar";
@@ -58,12 +58,51 @@ function RestaurantSwitchModal() {
   );
 }
 
+function OfflineBanner() {
+  const [offline, setOffline] = useState(false);
+
+  useEffect(() => {
+    function goOffline() { setOffline(true); }
+    function goOnline() { setOffline(false); }
+    window.addEventListener("offline", goOffline);
+    window.addEventListener("online", goOnline);
+    setOffline(!navigator.onLine);
+    return () => {
+      window.removeEventListener("offline", goOffline);
+      window.removeEventListener("online", goOnline);
+    };
+  }, []);
+
+  if (!offline) return null;
+
+  return (
+    <div
+      className="w-full py-2.5 text-center text-sm font-medium text-white flex items-center justify-center gap-2"
+      style={{ background: "var(--hubb-orange)" }}
+    >
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728m-3.536-3.536a4 4 0 010-5.656M6.343 6.343a8 8 0 000 11.314" />
+      </svg>
+      You&apos;re offline. Check your connection.
+    </div>
+  );
+}
+
 function ShellContent({ children, cartOpen, setCartOpen }: { children: ReactNode; cartOpen: boolean; setCartOpen: (v: boolean) => void }) {
   return (
     <>
+      {/* Skip to content — keyboard accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[999] focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-bold focus:text-white"
+        style={{ background: "var(--hubb-accent)" }}
+      >
+        Skip to content
+      </a>
+      <OfflineBanner />
       <ActiveOrderBanner />
       <Navbar onCartClick={() => setCartOpen(true)} />
-      <main className="flex-1 pb-16 sm:pb-0">{children}</main>
+      <main id="main-content" className="flex-1 pb-16 sm:pb-0">{children}</main>
       <div className="hidden sm:block">
         <Footer />
       </div>

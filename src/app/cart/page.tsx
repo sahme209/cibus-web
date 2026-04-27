@@ -14,32 +14,29 @@ export default function CartPage() {
         className="min-h-screen flex items-center justify-center"
         style={{ background: "var(--bg-secondary)" }}
       >
-        <div className="text-center animate-fade-up">
-          <div
-            className="w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-5"
-            style={{ background: "var(--bg-search)" }}
-          >
-            <svg className="w-12 h-12" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-            </svg>
+        <div className="text-center animate-fade-up mx-4 max-w-sm">
+          <div className="relative mx-auto w-28 h-28 mb-6">
+            <div className="absolute inset-0 rounded-full opacity-15 blur-2xl" style={{ background: "var(--hubb-accent)" }} />
+            <div className="relative w-28 h-28 rounded-full mx-auto flex items-center justify-center" style={{ background: "var(--bg-search)" }}>
+              <svg className="w-14 h-14" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+              </svg>
+            </div>
           </div>
-          <h2
-            className="text-xl font-bold"
-            style={{ color: "var(--text-primary)" }}
-          >
+          <h2 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>
             Your cart is empty
           </h2>
-          <p
-            className="text-sm mt-2 max-w-xs mx-auto"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            Add items from a restaurant to get started
+          <p className="text-sm mt-2 max-w-xs mx-auto leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+            Looks like you haven&apos;t added anything yet. Start exploring restaurants to find something you love.
           </p>
           <Link
             href="/"
-            className="inline-block mt-6 px-6 py-3 rounded-full text-sm font-semibold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-full text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
             style={{ background: "var(--hubb-accent)" }}
           >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
             Browse Restaurants
           </Link>
         </div>
@@ -86,6 +83,40 @@ export default function CartPage() {
             >
               Clear All
             </button>
+          </div>
+        </div>
+
+        {/* Estimated delivery + free delivery progress */}
+        <div className="flex gap-3 mb-5">
+          <div
+            className="flex-1 rounded-xl p-3.5 flex items-center gap-3"
+            style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+          >
+            <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ background: "var(--hubb-tint)" }}>
+              <svg className="w-4.5 h-4.5" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>30-45 min</p>
+              <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>Est. delivery</p>
+            </div>
+          </div>
+          <div
+            className="flex-1 rounded-xl p-3.5"
+            style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+          >
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-semibold" style={{ color: deliveryFee === 0 ? "var(--hubb-green)" : "var(--text-secondary)" }}>
+                {deliveryFee === 0 ? "Free delivery!" : `Rs. ${1000 - Math.round(subtotal)} to free delivery`}
+              </span>
+            </div>
+            <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: "var(--bg-search)" }}>
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{ background: "var(--hubb-accent)", width: `${Math.min(100, (subtotal / 1000) * 100)}%` }}
+              />
+            </div>
           </div>
         </div>
 
