@@ -1,5 +1,6 @@
 const BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://api-vtadzgdqca-uc.a.run.app";
+  process.env.NEXT_PUBLIC_API_URL ||
+  (typeof window !== "undefined" ? "/api/proxy" : "https://api-vtadzgdqca-uc.a.run.app");
 
 function getToken(): string | null {
   if (typeof window === "undefined") return null;
