@@ -33,6 +33,10 @@ export default function HomePage() {
   const [filters, setFilters] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
+    if (!isLoggedIn && !authLoading) {
+      setLoading(false);
+      return;
+    }
     async function load() {
       try {
         const [all, feat] = await Promise.allSettled([
@@ -48,7 +52,7 @@ export default function HomePage() {
       }
     }
     load();
-  }, []);
+  }, [isLoggedIn, authLoading]);
 
   const filteredRestaurants = useMemo(() => {
     let list = [...restaurants];
@@ -77,9 +81,13 @@ export default function HomePage() {
     return list;
   }, [restaurants, sortBy, filters]);
 
+  if (!authLoading && !isLoggedIn) {
+    return <LandingPage />;
+  }
+
   return (
     <div style={{ background: "var(--bg-secondary)" }}>
-      {/* Hero — Starbucks-green DoorDash-inspired */}
+      {/* Hero */}
       <section
         className="relative overflow-hidden"
         style={{ background: "var(--hubb-hero)" }}
@@ -99,15 +107,11 @@ export default function HomePage() {
             <p className="mt-3 text-sm sm:text-base text-white/60">
               Other fees apply. Available at participating stores.
             </p>
-
-            <div className="mt-7 flex flex-col sm:flex-row gap-3">
+            <div className="mt-7">
               <Link
                 href="/search"
-                className="flex items-center gap-3 flex-1 max-w-md px-5 py-3.5 rounded-full text-sm font-medium transition-all hover:shadow-xl"
-                style={{
-                  background: "white",
-                  color: "var(--text-secondary)",
-                }}
+                className="flex items-center gap-3 max-w-md px-5 py-3.5 rounded-full text-sm font-medium transition-all hover:shadow-xl"
+                style={{ background: "white", color: "var(--text-secondary)" }}
               >
                 <svg className="w-5 h-5 shrink-0" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -118,32 +122,14 @@ export default function HomePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </Link>
-              {!authLoading && !isLoggedIn && (
-                <Link
-                  href="/auth"
-                  className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-full text-sm font-semibold transition-all hover:opacity-90"
-                  style={{
-                    background: "rgba(255,255,255,0.15)",
-                    color: "white",
-                    border: "1px solid rgba(255,255,255,0.3)",
-                  }}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  Sign in for saved address
-                </Link>
-              )}
             </div>
           </div>
         </div>
-
-        {/* Decorative circles */}
         <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full opacity-20 blur-3xl" style={{ background: "#00A86B" }} />
         <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full opacity-10 blur-3xl" style={{ background: "#FFD700" }} />
       </section>
 
-      {/* Category pills — DoorDash-style horizontal scroll */}
+      {/* Category pills */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-6 relative z-10">
         <div className="flex gap-2 overflow-x-auto hide-scrollbar py-2 px-0.5 stagger-children">
           {CATEGORIES.map((cat) => (
@@ -151,30 +137,20 @@ export default function HomePage() {
               key={cat.name}
               href={`/search?q=${encodeURIComponent(cat.name)}`}
               className="flex items-center gap-2 shrink-0 px-4 py-2.5 rounded-full transition-all hover:shadow-md hover:-translate-y-0.5"
-              style={{
-                background: "var(--bg-card)",
-                boxShadow: "var(--shadow-sm)",
-                border: "1px solid var(--border-default)",
-              }}
+              style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)", border: "1px solid var(--border-default)" }}
             >
               <span className="text-lg">{cat.emoji}</span>
-              <span
-                className="text-sm font-semibold whitespace-nowrap"
-                style={{ color: "var(--text-primary)" }}
-              >
-                {cat.name}
-              </span>
+              <span className="text-sm font-semibold whitespace-nowrap" style={{ color: "var(--text-primary)" }}>{cat.name}</span>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Promo Banners */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
         <PromoBanner />
       </section>
 
-      {/* HUBB+ Membership Teaser */}
+      {/* HUBB+ */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
         <div
           className="rounded-2xl p-5 sm:p-6 relative overflow-hidden animate-fade-up"
@@ -185,34 +161,21 @@ export default function HomePage() {
             <div>
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="text-lg font-black text-white">HUBB+</span>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold" style={{ background: "rgba(255,215,0,0.3)", color: "#FFD700" }}>
-                  SAVE MORE
-                </span>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold" style={{ background: "rgba(255,215,0,0.3)", color: "#FFD700" }}>SAVE MORE</span>
               </div>
               <p className="text-sm text-white/80 max-w-md">
                 Rs. 0 delivery on every order, 5% cashback, and exclusive member deals. Your first month free.
               </p>
             </div>
-            <Link
-              href="/profile"
-              className="shrink-0 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-105 active:scale-95"
-              style={{ background: "white", color: "var(--hubb-accent)" }}
-            >
+            <Link href="/profile" className="shrink-0 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-105 active:scale-95" style={{ background: "white", color: "var(--hubb-accent)" }}>
               Learn More
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Quick Reorder */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
-        <QuickReorder />
-      </section>
-
-      {/* Popular Items */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
-        <PopularItems />
-      </section>
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8"><QuickReorder /></section>
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8"><PopularItems /></section>
 
       {/* Fastest Near You */}
       {!loading && restaurants.length > 0 && (
@@ -220,78 +183,36 @@ export default function HomePage() {
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
               <span className="text-xl">⚡</span>
-              <h2
-                className="text-xl sm:text-2xl font-extrabold tracking-tight"
-                style={{ color: "var(--text-primary)" }}
-              >
-                Fastest Near You
-              </h2>
+              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight" style={{ color: "var(--text-primary)" }}>Fastest Near You</h2>
             </div>
-            <Link
-              href="/search"
-              className="text-sm font-semibold px-4 py-2 rounded-full transition-all hover:shadow-sm"
-              style={{ color: "var(--hubb-accent)", background: "var(--hubb-tint)" }}
-            >
-              See All
-            </Link>
+            <Link href="/search" className="text-sm font-semibold px-4 py-2 rounded-full transition-all hover:shadow-sm" style={{ color: "var(--hubb-accent)", background: "var(--hubb-tint)" }}>See All</Link>
           </div>
           <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2 stagger-children">
-            {[...restaurants]
-              .filter(r => r.isOpen)
-              .sort((a, b) => parseInt(a.deliveryTime) - parseInt(b.deliveryTime))
-              .slice(0, 6)
-              .map((r) => (
-                <Link
-                  key={`fast-${r.id}`}
-                  href={`/restaurant/${r.id}`}
-                  className="shrink-0 w-44 rounded-xl overflow-hidden transition-all hover:-translate-y-1 hover:shadow-md"
-                  style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
-                >
-                  <div className="relative h-28">
-                    {r.imageURL && (
-                      <img src={r.imageURL} alt={r.name} className="w-full h-full object-cover" />
-                    )}
-                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: "var(--hubb-accent)" }}>
-                      {r.deliveryTime}
-                    </div>
-                  </div>
-                  <div className="p-2.5">
-                    <p className="text-sm font-semibold truncate" style={{ color: "var(--text-primary)" }}>{r.name}</p>
-                    <p className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
-                      {r.deliveryFee === 0 ? "Free delivery" : `Rs. ${r.deliveryFee} delivery`}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+            {[...restaurants].filter(r => r.isOpen).sort((a, b) => parseInt(a.deliveryTime) - parseInt(b.deliveryTime)).slice(0, 6).map((r) => (
+              <Link key={`fast-${r.id}`} href={`/restaurant/${r.id}`} className="shrink-0 w-44 rounded-xl overflow-hidden transition-all hover:-translate-y-1 hover:shadow-md" style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}>
+                <div className="relative h-28">
+                  {r.imageURL && <img src={r.imageURL} alt={r.name} className="w-full h-full object-cover" />}
+                  <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: "var(--hubb-accent)" }}>{r.deliveryTime}</div>
+                </div>
+                <div className="p-2.5">
+                  <p className="text-sm font-semibold truncate" style={{ color: "var(--text-primary)" }}>{r.name}</p>
+                  <p className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>{r.deliveryFee === 0 ? "Free delivery" : `Rs. ${r.deliveryFee} delivery`}</p>
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
       )}
 
-      {/* Featured / Weekly Deals */}
+      {/* Featured */}
       {featured.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10">
           <div className="flex items-center justify-between mb-5">
-            <h2
-              className="text-xl sm:text-2xl font-extrabold tracking-tight"
-              style={{ color: "var(--text-primary)" }}
-            >
-              Featured Restaurants
-            </h2>
-            <Link
-              href="/search"
-              className="text-sm font-semibold px-4 py-2 rounded-full transition-all hover:shadow-sm"
-              style={{
-                color: "var(--hubb-accent)",
-                background: "var(--hubb-tint)",
-              }}
-            >
-              See All
-            </Link>
+            <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight" style={{ color: "var(--text-primary)" }}>Featured Restaurants</h2>
+            <Link href="/search" className="text-sm font-semibold px-4 py-2 rounded-full transition-all hover:shadow-sm" style={{ color: "var(--hubb-accent)", background: "var(--hubb-tint)" }}>See All</Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
-            {featured.slice(0, 6).map((r) => (
-              <RestaurantCard key={r.id} restaurant={r} />
-            ))}
+            {featured.slice(0, 6).map((r) => <RestaurantCard key={r.id} restaurant={r} />)}
           </div>
         </section>
       )}
@@ -301,132 +222,23 @@ export default function HomePage() {
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10">
           <div className="flex items-center gap-2 mb-5">
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: "var(--hubb-orange)" }}>NEW</span>
-            <h2
-              className="text-xl sm:text-2xl font-extrabold tracking-tight"
-              style={{ color: "var(--text-primary)" }}
-            >
-              New on HUBB
-            </h2>
+            <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight" style={{ color: "var(--text-primary)" }}>New on HUBB</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
-            {restaurants.slice(-3).map((r) => (
-              <RestaurantCard key={`new-${r.id}`} restaurant={r} />
-            ))}
+            {restaurants.slice(-3).map((r) => <RestaurantCard key={`new-${r.id}`} restaurant={r} />)}
           </div>
         </section>
       )}
-
-      {/* How HUBB Works */}
-      {!loading && (
-        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12">
-          <h2
-            className="text-xl sm:text-2xl font-extrabold tracking-tight text-center mb-8"
-            style={{ color: "var(--text-primary)" }}
-          >
-            How HUBB Works
-          </h2>
-          <div className="grid sm:grid-cols-3 gap-6">
-            {[
-              {
-                step: "1",
-                title: "Choose what you want",
-                desc: "Browse restaurants, search for dishes, or explore curated collections.",
-                icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
-              },
-              {
-                step: "2",
-                title: "Place your order",
-                desc: "Add items to your cart, apply any promo codes, and check out securely.",
-                icon: "M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z",
-              },
-              {
-                step: "3",
-                title: "Enjoy your delivery",
-                desc: "Track your order in real time. A HUBB rider delivers it straight to your door.",
-                icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z",
-              },
-            ].map((s) => (
-              <div key={s.step} className="text-center">
-                <div
-                  className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-3"
-                  style={{ background: "var(--hubb-tint)" }}
-                >
-                  <svg className="w-7 h-7" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={s.icon} />
-                  </svg>
-                </div>
-                <span className="text-xs font-bold" style={{ color: "var(--hubb-accent)" }}>STEP {s.step}</span>
-                <h3 className="text-base font-bold mt-1" style={{ color: "var(--text-primary)" }}>{s.title}</h3>
-                <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Get the app CTA */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12">
-        <div
-          className="rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 relative overflow-hidden"
-          style={{ background: "linear-gradient(135deg, var(--hubb-primary), #2D2D30)" }}
-        >
-          <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full opacity-10 blur-3xl" style={{ background: "var(--hubb-accent)" }} />
-          <div className="relative flex-1">
-            <h3 className="text-lg sm:text-xl font-bold text-white mb-2">
-              Get the HUBB app
-            </h3>
-            <p className="text-sm text-white/60 mb-4">
-              Order faster with the app. Get exclusive deals and real-time tracking.
-            </p>
-            <div className="flex gap-3">
-              <a
-                href="#"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-white transition-all hover:scale-105"
-                style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)" }}
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-                </svg>
-                App Store
-              </a>
-              <a
-                href="#"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-white transition-all hover:scale-105"
-                style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)" }}
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-1.38l2.458 1.42c.63.364.63 1.14 0 1.506l-2.14 1.237-2.535-2.535 2.217-1.628zM5.864 2.658L16.8 8.991l-2.302 2.302-8.635-8.635z" />
-                </svg>
-                Google Play
-              </a>
-            </div>
-          </div>
-          <div
-            className="w-32 h-32 rounded-2xl flex items-center justify-center shrink-0"
-            style={{ background: "var(--hubb-accent)" }}
-          >
-            <span className="text-4xl font-black text-white">H</span>
-          </div>
-        </div>
-      </section>
 
       {/* All Restaurants */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 pb-16">
         <div className="flex items-center justify-between mb-2">
-          <h2
-            className="text-xl sm:text-2xl font-extrabold tracking-tight"
-            style={{ color: "var(--text-primary)" }}
-          >
+          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight" style={{ color: "var(--text-primary)" }}>
             {loading ? "Loading restaurants..." : `All Restaurants${filteredRestaurants.length !== restaurants.length ? ` (${filteredRestaurants.length})` : ""}`}
           </h2>
         </div>
         {!loading && restaurants.length > 0 && (
-          <div className="mb-5">
-            <FilterBar
-              onSortChange={setSortBy}
-              onFilterChange={setFilters}
-            />
-          </div>
+          <div className="mb-5"><FilterBar onSortChange={setSortBy} onFilterChange={setFilters} /></div>
         )}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -442,28 +254,371 @@ export default function HomePage() {
           </div>
         ) : filteredRestaurants.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
-            {filteredRestaurants.map((r) => (
-              <RestaurantCard key={r.id} restaurant={r} />
-            ))}
+            {filteredRestaurants.map((r) => <RestaurantCard key={r.id} restaurant={r} />)}
           </div>
         ) : (
           <div className="text-center py-20 animate-fade-up">
-            <div
-              className="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4"
-              style={{ background: "var(--bg-search)" }}
-            >
+            <div className="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4" style={{ background: "var(--bg-search)" }}>
               <svg className="w-10 h-10" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
-              No restaurants found
-            </h3>
-            <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-              Try adjusting your filters or check back later!
-            </p>
+            <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>No restaurants found</h3>
+            <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>Try adjusting your filters or check back later!</p>
           </div>
         )}
+      </section>
+    </div>
+  );
+}
+
+/* ─── Logged-out marketing landing page ─── */
+
+const PARTNER_CARDS = [
+  {
+    icon: "M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0",
+    title: "Become a Rider",
+    desc: "As a delivery rider, make money and work on your own schedule. Sign up in minutes.",
+    cta: "Start earning",
+    href: "/partner/riders",
+  },
+  {
+    icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
+    title: "Become a Partner",
+    desc: "Attract new customers and grow your sales. 0% commissions for your first 30 days.",
+    cta: "Sign up for HUBB",
+    href: "/partner/restaurants",
+  },
+  {
+    icon: "M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z",
+    title: "Get the best HUBB experience",
+    desc: "Experience the best your neighborhood has to offer, all in one app.",
+    cta: "Get the app",
+    href: "#get-app",
+  },
+];
+
+const VALUE_SECTIONS = [
+  {
+    title: "Everything you crave, delivered.",
+    subtitle: "Your favorite local restaurants",
+    desc: "Get biryani from the place you love, or try the new burger joint everyone's talking about — delivered straight to your door.",
+    cta: "Find restaurants",
+    href: "/search",
+    bg: "var(--bg-primary)",
+  },
+  {
+    title: "HUBB+ is delivery for less",
+    subtitle: "Members save on every order",
+    desc: "Members get Rs. 0 delivery fee on HUBB+ orders, 5% cashback on pickup orders, and so much more. Plus, it's free for 30 days.",
+    cta: "Get HUBB+",
+    href: "/auth",
+    bg: "var(--bg-secondary)",
+  },
+];
+
+const TOP_CITIES = ["Islamabad", "Lahore", "Karachi", "Rawalpindi", "Faisalabad", "Peshawar", "Multan", "Quetta"];
+
+const TOP_CUISINES = ["Biryani", "Burgers", "Pizza", "Karahi", "Chinese", "BBQ", "Desserts", "Shawarma", "Nihari", "Haleem", "Paratha Rolls", "Seekh Kebab"];
+
+const TOP_CHAINS = ["KFC", "McDonald's", "Pizza Hut", "Domino's", "Hardee's", "Subway", "Burger King", "OPTP"];
+
+function LandingPage() {
+  const [neighborhoodTab, setNeighborhoodTab] = useState<"cities" | "cuisines" | "chains">("cities");
+
+  return (
+    <div style={{ background: "var(--bg-secondary)" }}>
+      {/* Hero */}
+      <section className="relative overflow-hidden" style={{ background: "var(--hubb-hero)" }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
+          <div className="max-w-2xl mx-auto animate-fade-up">
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg" style={{ background: "rgba(255,255,255,0.2)" }}>H</div>
+              <span className="text-xl font-bold text-white">HUBB</span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-white leading-tight tracking-tight">
+              Rs. 0 delivery fee
+              <br />
+              on your first order
+            </h1>
+            <p className="mt-3 text-sm text-white/50">Other fees apply. Available at participating stores.</p>
+
+            <div className="mt-8 flex flex-col items-center gap-3 max-w-md mx-auto">
+              <Link
+                href="/search"
+                className="flex items-center gap-3 w-full px-5 py-4 rounded-full text-sm font-medium transition-all hover:shadow-xl"
+                style={{ background: "white", color: "var(--text-secondary)" }}
+              >
+                <svg className="w-5 h-5 shrink-0" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Enter delivery address
+                <span
+                  className="ml-auto w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                  style={{ background: "var(--hubb-accent)" }}
+                >
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </span>
+              </Link>
+              <Link
+                href="/auth"
+                className="flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-semibold transition-all hover:opacity-90"
+                style={{ background: "rgba(255,255,255,0.12)", color: "white", border: "1px solid rgba(255,255,255,0.25)" }}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Sign in for saved address
+              </Link>
+            </div>
+          </div>
+        </div>
+        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full opacity-20 blur-3xl" style={{ background: "#00A86B" }} />
+        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full opacity-10 blur-3xl" style={{ background: "#FFD700" }} />
+      </section>
+
+      {/* 3 Partner CTA cards */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+        <div className="grid sm:grid-cols-3 gap-5">
+          {PARTNER_CARDS.map((card) => (
+            <Link
+              key={card.title}
+              href={card.href}
+              className="rounded-2xl p-6 text-center transition-all hover:-translate-y-1"
+              style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-md)" }}
+            >
+              <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4" style={{ background: "var(--hubb-tint)" }}>
+                <svg className="w-7 h-7" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={card.icon} />
+                </svg>
+              </div>
+              <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>{card.title}</h3>
+              <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{card.desc}</p>
+              <span className="text-sm font-bold inline-flex items-center gap-1" style={{ color: "var(--hubb-accent)" }}>
+                {card.cta}
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Value prop sections — alternating layout */}
+      {VALUE_SECTIONS.map((section, i) => (
+        <section key={section.title} style={{ background: section.bg }}>
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+            <div className={`flex flex-col ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} items-center gap-10`}>
+              <div className="flex-1 max-w-lg">
+                <h2 className="text-2xl sm:text-3xl font-bold leading-tight" style={{ color: "var(--text-primary)" }}>
+                  {section.title}
+                </h2>
+                <p className="text-sm font-semibold mt-3" style={{ color: "var(--text-primary)" }}>{section.subtitle}</p>
+                <p className="text-sm mt-2 leading-relaxed" style={{ color: "var(--text-secondary)" }}>{section.desc}</p>
+                <Link
+                  href={section.href}
+                  className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-full text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  style={{ background: "var(--hubb-accent)" }}
+                >
+                  {section.cta}
+                </Link>
+              </div>
+              <div className="flex-1 max-w-lg w-full">
+                <div
+                  className="aspect-[4/3] rounded-2xl flex items-center justify-center"
+                  style={{ background: i === 0 ? "linear-gradient(135deg, var(--hubb-tint), var(--bg-search))" : "linear-gradient(135deg, var(--hubb-accent), #005C3C)" }}
+                >
+                  {i === 0 ? (
+                    <div className="text-center">
+                      <div className="flex justify-center gap-3 mb-4">
+                        {["🍚", "🍔", "🍕", "🥘"].map((e) => (
+                          <span key={e} className="text-4xl animate-float" style={{ animationDelay: `${Math.random() * 2}s` }}>{e}</span>
+                        ))}
+                      </div>
+                      <p className="text-sm font-semibold" style={{ color: "var(--text-secondary)" }}>500+ restaurants near you</p>
+                    </div>
+                  ) : (
+                    <div className="text-center text-white">
+                      <span className="text-3xl font-black">HUBB+</span>
+                      <div className="flex flex-col gap-1 mt-3 text-sm text-white/80">
+                        <span>Rs. 0 delivery</span>
+                        <span>5% cashback</span>
+                        <span>Member deals</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      ))}
+
+      {/* Category browsing grid */}
+      <section style={{ background: "var(--bg-primary)" }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3" style={{ color: "var(--text-primary)" }}>
+            What are you craving?
+          </h2>
+          <p className="text-sm text-center mb-8" style={{ color: "var(--text-secondary)" }}>
+            Browse by cuisine to find exactly what you want
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            {CATEGORIES.map((cat) => (
+              <Link
+                key={cat.name}
+                href={`/search?q=${encodeURIComponent(cat.name)}`}
+                className="flex items-center gap-3 px-5 py-4 rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-md"
+                style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+              >
+                <span className="text-2xl">{cat.emoji}</span>
+                <span className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>{cat.name}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Opportunity section — Riders + Businesses */}
+      <section style={{ background: "var(--bg-secondary)" }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-12" style={{ color: "var(--text-primary)" }}>
+            Unlocking opportunity for riders and businesses
+          </h2>
+
+          {/* Rider CTA */}
+          <div className="flex flex-col md:flex-row items-center gap-8 mb-12">
+            <div
+              className="flex-1 aspect-[4/3] max-w-lg w-full rounded-2xl flex items-center justify-center"
+              style={{ background: "linear-gradient(135deg, var(--hubb-primary), #2D2D30)" }}
+            >
+              <div className="text-center text-white">
+                <svg className="w-16 h-16 mx-auto mb-3 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                </svg>
+                <p className="text-lg font-bold">Earn on your schedule</p>
+              </div>
+            </div>
+            <div className="flex-1 max-w-lg">
+              <h3 className="text-xl sm:text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Sign up to ride and get paid</h3>
+              <p className="text-sm mt-3 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                Deliver with the #1 Food and Delivery App in Pakistan. As a delivery rider, you&apos;ll make money and work on your own schedule. Sign up in minutes.
+              </p>
+              <Link
+                href="/partner/riders"
+                className="inline-flex items-center gap-2 mt-5 px-6 py-3 rounded-full text-sm font-bold text-white transition-all hover:scale-[1.02]"
+                style={{ background: "var(--hubb-accent)" }}
+              >
+                Become a Rider
+              </Link>
+            </div>
+          </div>
+
+          {/* Business CTA */}
+          <div className="flex flex-col md:flex-row-reverse items-center gap-8">
+            <div
+              className="flex-1 aspect-[4/3] max-w-lg w-full rounded-2xl flex items-center justify-center"
+              style={{ background: "linear-gradient(135deg, var(--hubb-accent), #005C3C)" }}
+            >
+              <div className="text-center text-white">
+                <svg className="w-16 h-16 mx-auto mb-3 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                <p className="text-lg font-bold">Grow your revenue</p>
+              </div>
+            </div>
+            <div className="flex-1 max-w-lg">
+              <h3 className="text-xl sm:text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Grow your business with HUBB</h3>
+              <p className="text-sm mt-3 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                Businesses large and small partner with HUBB to reach new customers, increase order volume, and drive more sales.
+              </p>
+              <Link
+                href="/partner/restaurants"
+                className="inline-flex items-center gap-2 mt-5 px-6 py-3 rounded-full text-sm font-bold text-white transition-all hover:scale-[1.02]"
+                style={{ background: "var(--hubb-accent)" }}
+              >
+                Become a Partner
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Get more from your neighborhood */}
+      <section style={{ background: "var(--bg-primary)" }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8" style={{ color: "var(--text-primary)" }}>
+            Get more from your neighborhood
+          </h2>
+
+          {/* Tabs */}
+          <div className="flex justify-center mb-8" style={{ borderBottom: "1px solid var(--border-default)" }}>
+            {([
+              { key: "cities" as const, label: "Top Cities" },
+              { key: "cuisines" as const, label: "Top Cuisines" },
+              { key: "chains" as const, label: "Top Chains" },
+            ]).map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setNeighborhoodTab(tab.key)}
+                className="px-6 py-3 text-sm font-semibold transition-colors relative"
+                style={{
+                  color: neighborhoodTab === tab.key ? "var(--text-primary)" : "var(--text-tertiary)",
+                }}
+              >
+                {tab.label}
+                {neighborhoodTab === tab.key && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full" style={{ background: "var(--text-primary)" }} />
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3">
+            {(neighborhoodTab === "cities" ? TOP_CITIES : neighborhoodTab === "cuisines" ? TOP_CUISINES : TOP_CHAINS).map((item) => (
+              <Link
+                key={item}
+                href={`/search?q=${encodeURIComponent(item)}`}
+                className="text-sm py-1 transition-colors hover:underline"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                {item}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Get the app CTA */}
+      <section id="get-app" className="scroll-mt-20 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+        <div
+          className="rounded-2xl p-8 sm:p-12 flex flex-col sm:flex-row items-center gap-8 relative overflow-hidden"
+          style={{ background: "linear-gradient(135deg, var(--hubb-primary), #2D2D30)" }}
+        >
+          <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full opacity-10 blur-3xl" style={{ background: "var(--hubb-accent)" }} />
+          <div className="relative flex-1">
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Get the HUBB app</h3>
+            <p className="text-sm text-white/60 mb-6">Order faster with the app. Get exclusive deals and real-time tracking on every order.</p>
+            <div className="flex gap-3">
+              <a href="#" className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)" }}>
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                App Store
+              </a>
+              <a href="#" className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)" }}>
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-1.38l2.458 1.42c.63.364.63 1.14 0 1.506l-2.14 1.237-2.535-2.535 2.217-1.628zM5.864 2.658L16.8 8.991l-2.302 2.302-8.635-8.635z" /></svg>
+                Google Play
+              </a>
+            </div>
+          </div>
+          <div className="w-32 h-32 rounded-2xl flex items-center justify-center shrink-0" style={{ background: "var(--hubb-accent)" }}>
+            <span className="text-4xl font-black text-white">H</span>
+          </div>
+        </div>
       </section>
     </div>
   );
