@@ -102,8 +102,8 @@ body {
 }
 
 ::selection {
-  background: var(--hubb-accent);
-  color: white;
+  background: color-mix(in srgb, var(--hubb-accent) 25%, transparent);
+  color: var(--text-primary);
 }
 
 input:focus, textarea:focus, select:focus, button:focus-visible {
@@ -321,12 +321,6 @@ html {
 }
 .animate-count-pop {
   animation: count-pop 0.25s ease-out forwards;
-}
-
-/* Selection highlight */
-::selection {
-  background: color-mix(in srgb, var(--hubb-accent) 25%, transparent);
-  color: var(--text-primary);
 }
 
 /* Custom scrollbar for desktop */

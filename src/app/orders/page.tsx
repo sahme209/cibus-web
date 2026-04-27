@@ -23,6 +23,7 @@ export default function OrdersPage() {
   const [pastOrders, setPastOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"active" | "past">("active");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -81,7 +82,6 @@ export default function OrdersPage() {
     );
   }
 
-  const [expandedId, setExpandedId] = useState<string | null>(null);
   const orders = tab === "active" ? activeOrders : pastOrders;
 
   return (

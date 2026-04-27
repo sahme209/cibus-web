@@ -421,11 +421,13 @@ export default function TrackingPage() {
             <h3 className="font-bold text-sm mb-3" style={{ color: "var(--text-primary)" }}>
               How was your order?
             </h3>
-            <div className="flex gap-2 mb-3">
+            <div className="flex gap-2 mb-3" role="radiogroup" aria-label="Order rating">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
                   onClick={() => setRating(star)}
+                  aria-label={`Rate ${star} star${star !== 1 ? "s" : ""}`}
+                  aria-pressed={star <= rating}
                   className="text-2xl transition-transform hover:scale-110"
                   style={{ opacity: star <= rating ? 1 : 0.25 }}
                 >
@@ -483,12 +485,13 @@ export default function TrackingPage() {
                 <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>Get support with your order</p>
               </div>
             </div>
-            <button
+            <a
+              href={`mailto:support@hubb.pk?subject=${encodeURIComponent(`Help with order #${order.id.slice(0, 8)}`)}`}
               className="px-4 py-2 rounded-full text-xs font-bold transition-all hover:scale-105"
               style={{ background: "var(--bg-search)", color: "var(--text-primary)" }}
             >
               Get Help
-            </button>
+            </a>
           </div>
         )}
 
