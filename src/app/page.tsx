@@ -534,7 +534,7 @@ function LandingPage() {
                   style={{ background: gradients[i % gradients.length], boxShadow: "var(--shadow-sm)" }}
                 >
                   <span className="text-4xl">{cat.emoji}</span>
-                  <span className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{cat.name}</span>
+                  <span className="text-sm font-bold" style={{ color: "#1D1D1F" }}>{cat.name}</span>
                 </Link>
               );
             })}
