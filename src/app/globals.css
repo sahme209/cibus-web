@@ -362,7 +362,9 @@ html {
   100% { transform: translateX(-50%); }
 }
 .animate-ticker {
-  animation: ticker 20s linear infinite;
+  display: inline-block;
+  animation: ticker 25s linear infinite;
+  will-change: transform;
 }
 
 /* Glow effect on hover */

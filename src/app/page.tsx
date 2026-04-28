@@ -404,9 +404,9 @@ function LandingPage() {
 
         {/* Animated food emoji ticker */}
         <div className="relative overflow-hidden py-4" style={{ background: "rgba(0,0,0,0.15)" }}>
-          <div className="animate-ticker whitespace-nowrap flex items-center gap-6">
-            {[...Array(2)].map((_, setIndex) => (
-              <span key={setIndex} className="inline-flex items-center gap-6 text-2xl">
+          <div className="animate-ticker whitespace-nowrap">
+            {[0, 1].map((setIndex) => (
+              <span key={setIndex} className="inline-flex items-center gap-8 text-2xl mx-4">
                 <span>🍚</span><span>🍔</span><span>🍕</span><span>🥘</span><span>🥡</span><span>🍖</span><span>🍰</span><span>☕</span><span>🫓</span><span>🦐</span>
                 <span>🍛</span><span>🥙</span><span>🧁</span><span>🍗</span><span>🥗</span><span>🌮</span><span>🍜</span><span>🥟</span><span>🍲</span><span>🧆</span>
               </span>
