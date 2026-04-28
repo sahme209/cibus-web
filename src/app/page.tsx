@@ -275,54 +275,17 @@ export default function HomePage() {
 
 /* ─── Logged-out marketing landing page ─── */
 
-const PARTNER_CARDS = [
-  {
-    icon: "M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0",
-    title: "Become a Rider",
-    desc: "As a delivery rider, make money and work on your own schedule. Sign up in minutes.",
-    cta: "Start earning",
-    href: "/partner/riders",
-  },
-  {
-    icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
-    title: "Become a Partner",
-    desc: "Attract new customers and grow your sales. 0% commissions for your first 30 days.",
-    cta: "Sign up for HUBB",
-    href: "/partner/restaurants",
-  },
-  {
-    icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
-    title: "Start a Home Kitchen",
-    desc: "Cook from home and earn. Zero setup cost, flexible hours, customers at your doorstep.",
-    cta: "Start cooking",
-    href: "/partner/home-kitchen",
-  },
-  {
-    icon: "M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z",
-    title: "Get the best HUBB experience",
-    desc: "Experience the best your neighborhood has to offer, all in one app.",
-    cta: "Get the app",
-    href: "#get-app",
-  },
-];
-
-const VALUE_SECTIONS = [
-  {
-    title: "Everything you crave, delivered.",
-    subtitle: "Your favorite local restaurants",
-    desc: "Get biryani from the place you love, or try the new burger joint everyone's talking about — delivered straight to your door.",
-    cta: "Find restaurants",
-    href: "/search",
-    bg: "var(--bg-primary)",
-  },
-  {
-    title: "HUBB+ is delivery for less",
-    subtitle: "Members save on every order",
-    desc: "Members get Rs. 0 delivery fee on HUBB+ orders, 5% cashback on pickup orders, and so much more. Plus, it's free for 30 days.",
-    cta: "Get HUBB+",
-    href: "/auth",
-    bg: "var(--bg-secondary)",
-  },
+const CUISINE_CARDS = [
+  { name: "Biryani", emoji: "🍚", img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&q=80" },
+  { name: "Burgers", emoji: "🍔", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80" },
+  { name: "Pizza", emoji: "🍕", img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80" },
+  { name: "Karahi", emoji: "🥘", img: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80" },
+  { name: "Chinese", emoji: "🥡", img: "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=400&q=80" },
+  { name: "BBQ", emoji: "🍖", img: "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&q=80" },
+  { name: "Desserts", emoji: "🍰", img: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&q=80" },
+  { name: "Chai", emoji: "☕", img: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=80" },
+  { name: "Paratha", emoji: "🫓", img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80" },
+  { name: "Seafood", emoji: "🦐", img: "https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?w=400&q=80" },
 ];
 
 const POPULAR_AREAS = ["F-6", "F-7", "F-8", "F-10", "F-11", "G-6", "G-8", "G-9", "G-11", "I-8", "I-9", "I-10", "Blue Area", "DHA"];
@@ -338,55 +301,49 @@ function LandingPage() {
     <div style={{ background: "var(--bg-secondary)" }}>
       {/* Hero — DoorDash-style with food imagery */}
       <section className="relative overflow-hidden">
-        {/* Background food image */}
         <Image
           src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920&q=80"
           alt=""
           fill
           priority
           sizes="100vw"
-          className="object-cover"
+          className="object-cover scale-105"
         />
-        {/* Color overlay */}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(0,93,62,0.92), rgba(0,70,47,0.88))" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(0,80,54,0.85), rgba(0,60,40,0.78))" }} />
 
-        {/* Floating food photos — left side */}
-        <div className="absolute top-12 left-4 sm:left-8 lg:left-16 hidden md:block">
-          <div className="relative w-40 lg:w-52 h-40 lg:h-52 rounded-2xl overflow-hidden rotate-[-6deg] shadow-2xl">
+        {/* Floating food photos — left */}
+        <div className="absolute top-8 left-6 lg:left-12 hidden lg:flex flex-col gap-4">
+          <div className="relative w-44 h-44 xl:w-52 xl:h-52 rounded-3xl overflow-hidden rotate-[-5deg] shadow-2xl ring-4 ring-white/10">
             <Image src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&q=80" alt="Biryani" fill sizes="220px" className="object-cover" />
           </div>
-          <div className="relative w-32 lg:w-40 h-32 lg:h-40 rounded-2xl overflow-hidden rotate-[4deg] shadow-2xl mt-[-20px] ml-16 lg:ml-20">
+          <div className="relative w-36 h-36 xl:w-44 xl:h-44 rounded-3xl overflow-hidden rotate-[3deg] shadow-2xl ring-4 ring-white/10 ml-12">
             <Image src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80" alt="Burger" fill sizes="180px" className="object-cover" />
           </div>
         </div>
 
-        {/* Floating food photos — right side */}
-        <div className="absolute top-16 right-4 sm:right-8 lg:right-16 hidden md:block">
-          <div className="relative w-36 lg:w-48 h-36 lg:h-48 rounded-2xl overflow-hidden rotate-[6deg] shadow-2xl">
+        {/* Floating food photos — right */}
+        <div className="absolute top-12 right-6 lg:right-12 hidden lg:flex flex-col gap-4">
+          <div className="relative w-40 h-40 xl:w-48 xl:h-48 rounded-3xl overflow-hidden rotate-[5deg] shadow-2xl ring-4 ring-white/10">
             <Image src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80" alt="Pizza" fill sizes="200px" className="object-cover" />
           </div>
-          <div className="relative w-32 lg:w-40 h-32 lg:h-40 rounded-2xl overflow-hidden rotate-[-3deg] shadow-2xl mt-[-16px] mr-16 lg:mr-20">
+          <div className="relative w-36 h-36 xl:w-44 xl:h-44 rounded-3xl overflow-hidden rotate-[-4deg] shadow-2xl ring-4 ring-white/10 mr-10">
             <Image src="https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&q=80" alt="Dessert" fill sizes="180px" className="object-cover" />
           </div>
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32 text-center">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28 text-center">
           <div className="max-w-2xl mx-auto animate-fade-up">
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-lg" style={{ background: "rgba(255,255,255,0.2)", backdropFilter: "blur(8px)" }}>H</div>
-              <span className="text-xl font-bold text-white">HUBB</span>
-            </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight drop-shadow-lg">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.08] tracking-tight drop-shadow-lg">
               Rs. 0 delivery fee
               <br />
               <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white/90">on your first order</span>
             </h1>
-            <p className="mt-3 text-sm text-white/50">Other fees apply</p>
+            <p className="mt-2 text-xs sm:text-sm text-white/45">Other fees apply</p>
 
-            <div className="mt-8 flex flex-col items-center gap-3 max-w-lg mx-auto">
+            <div className="mt-7 flex flex-col items-center gap-3 max-w-md mx-auto">
               <Link
                 href="/search"
-                className="flex items-center gap-3 w-full px-6 py-4 rounded-full text-base font-medium transition-all hover:shadow-2xl"
+                className="flex items-center gap-3 w-full px-5 py-3.5 sm:py-4 rounded-full text-sm sm:text-base font-medium transition-all hover:shadow-2xl"
                 style={{ background: "white", color: "#333", boxShadow: "0 8px 32px rgba(0,0,0,0.2)" }}
               >
                 <svg className="w-5 h-5 shrink-0" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -394,10 +351,7 @@ function LandingPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 Enter delivery address
-                <span
-                  className="ml-auto w-9 h-9 rounded-full flex items-center justify-center shrink-0"
-                  style={{ background: "var(--hubb-accent)" }}
-                >
+                <span className="ml-auto w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shrink-0" style={{ background: "var(--hubb-accent)" }}>
                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
@@ -414,240 +368,197 @@ function LandingPage() {
                 Sign in for saved address
               </Link>
             </div>
-
-            {/* Social proof */}
-            <div className="mt-8 flex items-center justify-center gap-3">
-              <div className="flex -space-x-2">
-                {["bg-emerald-500", "bg-amber-500", "bg-sky-500", "bg-rose-500"].map((color, i) => (
-                  <div key={i} className={`w-7 h-7 rounded-full ${color} border-2 border-white/20 flex items-center justify-center text-[9px] font-bold text-white`}>
-                    {["A", "S", "F", "N"][i]}
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-white/60 font-medium">
-                Trusted by <span className="text-white font-bold">10,000+</span> customers in Islamabad
-              </p>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* Partner CTA cards */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {PARTNER_CARDS.map((card) => (
-            <div
-              key={card.title}
-              className="rounded-2xl p-[1px] transition-all hover:-translate-y-1 hover-glow"
-              style={{ background: "var(--bg-card)" }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg, #00A86B, #FFD700)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "var(--bg-card)"; }}
-            >
-              <Link
-                href={card.href}
-                className="block rounded-2xl p-6 text-center h-full"
-                style={{ background: "var(--bg-card)" }}
-              >
-                <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4" style={{ background: "var(--hubb-tint)" }}>
-                  <svg className="w-7 h-7" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={card.icon} />
-                  </svg>
-                </div>
-                <h3 className="text-base font-bold mb-2" style={{ color: "var(--text-primary)" }}>{card.title}</h3>
-                <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{card.desc}</p>
-                <span className="text-sm font-bold inline-flex items-center gap-1" style={{ color: "var(--hubb-accent)" }}>
-                  {card.cta}
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </span>
-              </Link>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Value prop sections — alternating layout */}
-      {VALUE_SECTIONS.map((section, i) => (
-        <section key={section.title} style={{ background: section.bg }}>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-            <div className={`flex flex-col ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} items-center gap-10`}>
-              <div className="flex-1 max-w-lg">
-                <h2 className="text-2xl sm:text-3xl font-bold leading-tight" style={{ color: "var(--text-primary)" }}>
-                  {section.title}
-                </h2>
-                <p className="text-sm font-semibold mt-3" style={{ color: "var(--text-primary)" }}>{section.subtitle}</p>
-                <p className="text-sm mt-2 leading-relaxed" style={{ color: "var(--text-secondary)" }}>{section.desc}</p>
-                <Link
-                  href={section.href}
-                  className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-full text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
-                  style={{ background: "var(--hubb-accent)" }}
-                >
-                  {section.cta}
-                </Link>
-              </div>
-              <div className="flex-1 max-w-lg w-full">
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-                  <Image
-                    src={i === 0
-                      ? "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80"
-                      : "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80"
-                    }
-                    alt={i === 0 ? "Delicious food spread" : "HUBB+ premium delivery"}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 512px"
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0" style={{ background: i === 0 ? "linear-gradient(to top, rgba(0,0,0,0.5), transparent)" : "linear-gradient(to top, rgba(0,112,74,0.8), rgba(0,112,74,0.3))" }} />
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    {i === 0 ? (
-                      <p className="text-lg font-bold text-white">500+ restaurants near you</p>
-                    ) : (
-                      <div className="text-white">
-                        <span className="text-2xl font-black">HUBB+</span>
-                        <div className="flex gap-4 mt-2 text-sm text-white/90">
-                          <span>Rs. 0 delivery</span>
-                          <span>5% cashback</span>
-                          <span>Member deals</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      ))}
-
-      {/* Category browsing grid */}
+      {/* Stats bar */}
       <section style={{ background: "var(--bg-primary)" }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3" style={{ color: "var(--text-primary)" }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center gap-6 sm:gap-12 py-6 sm:py-8 flex-wrap" style={{ borderBottom: "1px solid var(--border-default)" }}>
+            {[
+              { value: "500+", label: "Restaurants" },
+              { value: "10K+", label: "Happy Customers" },
+              { value: "30 min", label: "Avg. Delivery" },
+              { value: "4.8", label: "App Rating" },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center px-2">
+                <p className="text-2xl sm:text-3xl font-extrabold tracking-tight" style={{ color: "var(--hubb-accent)" }}>{stat.value}</p>
+                <p className="text-xs sm:text-sm font-medium mt-0.5" style={{ color: "var(--text-tertiary)" }}>{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section style={{ background: "var(--bg-primary)" }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-center tracking-tight" style={{ color: "var(--text-primary)" }}>
+            How HUBB works
+          </h2>
+          <p className="text-sm text-center mt-2 mb-10" style={{ color: "var(--text-secondary)" }}>Get food delivered in 3 simple steps</p>
+          <div className="grid sm:grid-cols-3 gap-8 sm:gap-6">
+            {[
+              { step: "1", title: "Choose what you want", desc: "Browse restaurants and menus. Add items to your cart.", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z", color: "#00704A" },
+              { step: "2", title: "Place your order", desc: "Pay securely with cash or card. Track in real time.", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2", color: "#FF3008" },
+              { step: "3", title: "Get it delivered", desc: "A rider picks up your food and delivers it to your door.", icon: "M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0", color: "#FFB347" },
+            ].map((item) => (
+              <div key={item.step} className="text-center">
+                <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4" style={{ background: `${item.color}15` }}>
+                  <svg className="w-7 h-7" style={{ color: item.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={item.icon} />
+                  </svg>
+                </div>
+                <div className="text-xs font-bold mb-1.5 px-2.5 py-0.5 rounded-full inline-block" style={{ background: `${item.color}15`, color: item.color }}>Step {item.step}</div>
+                <h3 className="text-lg font-bold mt-1" style={{ color: "var(--text-primary)" }}>{item.title}</h3>
+                <p className="text-sm mt-1.5 max-w-xs mx-auto" style={{ color: "var(--text-secondary)" }}>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Category browsing grid — with food photos */}
+      <section style={{ background: "var(--bg-secondary)" }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-center tracking-tight mb-2" style={{ color: "var(--text-primary)" }}>
             What are you craving?
           </h2>
           <p className="text-sm text-center mb-8" style={{ color: "var(--text-secondary)" }}>
             Browse by cuisine to find exactly what you want
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-            {CATEGORIES.map((cat, i) => {
-              const gradients = [
-                "linear-gradient(135deg, #E6F2ED, #D1EDE0)", // green tint
-                "linear-gradient(135deg, #FFF4E6, #FFE8CC)", // warm orange
-                "linear-gradient(135deg, #FEE2E2, #FECACA)", // soft red
-                "linear-gradient(135deg, #FEF3C7, #FDE68A)", // golden
-                "linear-gradient(135deg, #E0F2FE, #BAE6FD)", // sky blue
-                "linear-gradient(135deg, #F3E8FF, #E9D5FF)", // purple
-                "linear-gradient(135deg, #FCE7F3, #FBCFE8)", // pink
-                "linear-gradient(135deg, #ECFDF5, #A7F3D0)", // mint
-                "linear-gradient(135deg, #FFF7ED, #FED7AA)", // peach
-                "linear-gradient(135deg, #F0F9FF, #BFDBFE)", // light blue
-              ];
-              return (
-                <Link
-                  key={cat.name}
-                  href={`/search?q=${encodeURIComponent(cat.name)}`}
-                  className="flex flex-col items-center gap-2 px-5 py-6 rounded-2xl transition-all duration-300 hover:scale-105 hover-glow"
-                  style={{ background: gradients[i % gradients.length], boxShadow: "var(--shadow-sm)" }}
-                >
-                  <span className="text-4xl">{cat.emoji}</span>
-                  <span className="text-sm font-bold" style={{ color: "#1D1D1F" }}>{cat.name}</span>
-                </Link>
-              );
-            })}
+            {CUISINE_CARDS.map((cat) => (
+              <Link
+                key={cat.name}
+                href={`/search?q=${encodeURIComponent(cat.name)}`}
+                className="group relative rounded-2xl overflow-hidden aspect-[4/3] card-hover"
+                style={{ boxShadow: "var(--shadow-sm)" }}
+              >
+                <Image src={cat.img} alt={cat.name} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw" className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                  <span className="text-2xl block mb-0.5">{cat.emoji}</span>
+                  <span className="text-sm sm:text-base font-bold text-white drop-shadow-md">{cat.name}</span>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Opportunity section — Riders + Businesses */}
-      <section style={{ background: "var(--bg-secondary)" }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-12" style={{ color: "var(--text-primary)" }}>
-            Unlocking opportunity across Islamabad
-          </h2>
-
-          {/* Rider CTA */}
-          <div className="flex flex-col md:flex-row items-center gap-8 mb-12">
-            <div className="flex-1 aspect-[4/3] max-w-lg w-full rounded-2xl overflow-hidden relative">
-              <Image
-                src="https://images.unsplash.com/photo-1526367790999-0150786686a2?w=800&q=80"
-                alt="Delivery rider on motorcycle"
-                fill
-                sizes="(max-width: 768px) 100vw, 512px"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6">
-                <p className="text-xl font-bold text-white">Earn on your schedule</p>
-                <p className="text-sm text-white/70 mt-1">Flexible hours, daily payouts</p>
+      {/* HUBB+ Membership banner */}
+      <section style={{ background: "var(--bg-primary)" }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+          <div className="rounded-3xl overflow-hidden relative" style={{ background: "linear-gradient(135deg, #00704A, #004D33)" }}>
+            <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full opacity-15 blur-3xl" style={{ background: "#00A86B" }} />
+            <div className="absolute -bottom-16 left-1/4 w-56 h-56 rounded-full opacity-10 blur-3xl" style={{ background: "#FFD700" }} />
+            <div className="relative flex flex-col md:flex-row items-center gap-8 p-8 sm:p-12">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-2xl sm:text-3xl font-black text-white">HUBB+</span>
+                  <span className="px-3 py-1 rounded-full text-xs font-bold" style={{ background: "rgba(255,215,0,0.3)", color: "#FFD700" }}>SAVE MORE</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-white leading-tight">Delivery for less, every single order</h3>
+                <div className="flex flex-wrap gap-6 mt-5">
+                  {[
+                    { val: "Rs. 0", sub: "Delivery fee" },
+                    { val: "5%", sub: "Cashback" },
+                    { val: "30 days", sub: "Free trial" },
+                  ].map((p) => (
+                    <div key={p.sub}>
+                      <p className="text-2xl font-extrabold text-white">{p.val}</p>
+                      <p className="text-xs text-white/60">{p.sub}</p>
+                    </div>
+                  ))}
+                </div>
+                <Link
+                  href="/auth"
+                  className="inline-flex items-center gap-2 mt-6 px-7 py-3.5 rounded-full text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  style={{ background: "white", color: "#00704A" }}
+                >
+                  Try HUBB+ free
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                </Link>
               </div>
-            </div>
-            <div className="flex-1 max-w-lg">
-              <h3 className="text-xl sm:text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Sign up to ride and get paid</h3>
-              <p className="text-sm mt-3 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                Deliver with Islamabad&apos;s fastest-growing food delivery app. As a delivery rider, you&apos;ll make money and work on your own schedule. Sign up in minutes.
-              </p>
-              <Link
-                href="/partner/riders"
-                className="inline-flex items-center gap-2 mt-5 px-6 py-3 rounded-full text-sm font-bold text-white transition-all hover:scale-[1.02]"
-                style={{ background: "var(--hubb-accent)" }}
-              >
-                Become a Rider
-              </Link>
+              <div className="flex-1 max-w-sm w-full">
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80" alt="Premium food delivery" fill sizes="400px" className="object-cover" />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,112,74,0.6), transparent)" }} />
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Business CTA */}
-          <div className="flex flex-col md:flex-row-reverse items-center gap-8">
-            <div className="flex-1 aspect-[4/3] max-w-lg w-full rounded-2xl overflow-hidden relative">
-              <Image
-                src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80"
-                alt="Restaurant interior"
-                fill
-                sizes="(max-width: 768px) 100vw, 512px"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6">
-                <p className="text-xl font-bold text-white">Grow your revenue</p>
-                <p className="text-sm text-white/70 mt-1">Reach thousands of new customers</p>
-              </div>
-            </div>
-            <div className="flex-1 max-w-lg">
-              <h3 className="text-xl sm:text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Grow your business with HUBB</h3>
-              <p className="text-sm mt-3 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                Businesses large and small partner with HUBB to reach new customers, increase order volume, and drive more sales.
-              </p>
-              <div className="flex flex-wrap gap-3 mt-5">
-                <Link
-                  href="/partner/restaurants"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold text-white transition-all hover:scale-[1.02]"
-                  style={{ background: "var(--hubb-accent)" }}
-                >
-                  Become a Partner
-                </Link>
-                <Link
-                  href="/partner/home-kitchen"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-[1.02]"
-                  style={{ background: "var(--bg-search)", color: "var(--hubb-accent)", border: "1.5px solid var(--hubb-accent)" }}
-                >
-                  Start a Home Kitchen
-                </Link>
-              </div>
-            </div>
+      {/* Become a partner — 3 cards */}
+      <section style={{ background: "var(--bg-secondary)" }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-center tracking-tight mb-2" style={{ color: "var(--text-primary)" }}>
+            It takes two sides to make a marketplace
+          </h2>
+          <p className="text-sm text-center mb-10" style={{ color: "var(--text-secondary)" }}>
+            Join thousands of riders, restaurants, and home cooks on HUBB
+          </p>
+          <div className="grid sm:grid-cols-3 gap-5">
+            {[
+              {
+                title: "Become a Rider",
+                desc: "Flexible hours, daily payouts. Earn on your own schedule.",
+                cta: "Start earning",
+                href: "/partner/riders",
+                img: "https://images.unsplash.com/photo-1526367790999-0150786686a2?w=600&q=80",
+                stat: "Avg. Rs. 25K/month",
+              },
+              {
+                title: "Become a Partner",
+                desc: "Reach new customers and grow your restaurant revenue.",
+                cta: "Sign up your restaurant",
+                href: "/partner/restaurants",
+                img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80",
+                stat: "0% commission for 30 days",
+              },
+              {
+                title: "Start a Home Kitchen",
+                desc: "Cook from home and earn. Zero setup cost to get started.",
+                cta: "Start cooking",
+                href: "/partner/home-kitchen",
+                img: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&q=80",
+                stat: "No upfront cost",
+              },
+            ].map((card) => (
+              <Link key={card.title} href={card.href} className="group rounded-2xl overflow-hidden card-hover" style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}>
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <Image src={card.img} alt={card.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-3 left-3">
+                    <span className="px-2.5 py-1 rounded-full text-[11px] font-bold text-white" style={{ background: "rgba(0,112,74,0.9)" }}>{card.stat}</span>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>{card.title}</h3>
+                  <p className="text-sm mt-1.5 mb-4" style={{ color: "var(--text-secondary)" }}>{card.desc}</p>
+                  <span className="text-sm font-bold inline-flex items-center gap-1.5 transition-all group-hover:gap-2.5" style={{ color: "var(--hubb-accent)" }}>
+                    {card.cta}
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                  </span>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Get more from your neighborhood */}
       <section style={{ background: "var(--bg-primary)" }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8" style={{ color: "var(--text-primary)" }}>
-            Get more from your neighborhood
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-center tracking-tight mb-8" style={{ color: "var(--text-primary)" }}>
+            Cities, cuisines, and more
           </h2>
 
-          {/* Tabs */}
-          <div className="flex justify-center mb-8" style={{ borderBottom: "1px solid var(--border-default)" }}>
+          <div className="flex justify-center mb-8 gap-1 flex-wrap">
             {([
               { key: "areas" as const, label: "Popular Areas" },
               { key: "cuisines" as const, label: "Top Cuisines" },
@@ -656,27 +567,24 @@ function LandingPage() {
               <button
                 key={tab.key}
                 onClick={() => setNeighborhoodTab(tab.key)}
-                className="px-6 py-3 text-sm font-semibold transition-colors relative"
+                className="px-5 py-2 rounded-full text-sm font-semibold transition-all"
                 style={{
-                  color: neighborhoodTab === tab.key ? "var(--text-primary)" : "var(--text-tertiary)",
+                  background: neighborhoodTab === tab.key ? "var(--hubb-accent)" : "var(--bg-search)",
+                  color: neighborhoodTab === tab.key ? "white" : "var(--text-secondary)",
                 }}
               >
                 {tab.label}
-                {neighborhoodTab === tab.key && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full" style={{ background: "var(--text-primary)" }} />
-                )}
               </button>
             ))}
           </div>
 
-          {/* Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
             {(neighborhoodTab === "areas" ? POPULAR_AREAS : neighborhoodTab === "cuisines" ? TOP_CUISINES : TOP_CHAINS).map((item) => (
               <Link
                 key={item}
                 href={`/search?q=${encodeURIComponent(item)}`}
-                className="text-sm py-1 transition-colors hover:underline"
-                style={{ color: "var(--text-secondary)" }}
+                className="text-sm font-medium py-2.5 px-4 rounded-xl text-center transition-all hover:-translate-y-0.5"
+                style={{ background: "var(--bg-search)", color: "var(--text-primary)" }}
               >
                 {item}
               </Link>
@@ -689,51 +597,53 @@ function LandingPage() {
       <section id="get-app" className="scroll-mt-20 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <div
           className="rounded-3xl p-8 sm:p-12 lg:p-16 flex flex-col sm:flex-row items-center gap-10 relative overflow-hidden"
-          style={{ background: "linear-gradient(135deg, #00704A, #005C3C, #004D33, #003D29)" }}
+          style={{ background: "linear-gradient(135deg, #00704A, #005C3C, #004D33)" }}
         >
           <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full opacity-15 blur-3xl" style={{ background: "#00A86B" }} />
-          <div className="absolute -bottom-16 left-1/4 w-56 h-56 rounded-full opacity-10 blur-3xl" style={{ background: "#FFD700" }} />
           <div className="relative flex-1">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold text-white/90 mb-4" style={{ background: "rgba(255,255,255,0.15)" }}>
               <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
               Coming Soon
             </div>
             <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-3 leading-tight">Get the HUBB app</h3>
-            <p className="text-base text-white/70 mb-8 max-w-md">Order faster with the app. Get exclusive deals, real-time tracking, and personalized recommendations on every order.</p>
+            <p className="text-sm sm:text-base text-white/70 mb-6 max-w-md">Order faster. Get exclusive deals, real-time tracking, and personalized recommendations.</p>
             <div className="flex flex-wrap gap-3">
-              <a href="https://apps.apple.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105 relative" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)", backdropFilter: "blur(8px)" }}>
+              <a href="https://apps.apple.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-5 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
-                App Store
-                <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-white/20">SOON</span>
+                <div className="text-left">
+                  <div className="text-[10px] opacity-60 leading-none">Download on the</div>
+                  <div className="text-sm font-bold leading-tight">App Store</div>
+                </div>
               </a>
-              <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105 relative" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)", backdropFilter: "blur(8px)" }}>
+              <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-5 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)" }}>
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-1.38l2.458 1.42c.63.364.63 1.14 0 1.506l-2.14 1.237-2.535-2.535 2.217-1.628zM5.864 2.658L16.8 8.991l-2.302 2.302-8.635-8.635z" /></svg>
-                Google Play
-                <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-white/20">SOON</span>
+                <div className="text-left">
+                  <div className="text-[10px] opacity-60 leading-none">GET IT ON</div>
+                  <div className="text-sm font-bold leading-tight">Google Play</div>
+                </div>
               </a>
             </div>
           </div>
           {/* Phone mockup */}
           <div className="shrink-0 relative">
             <div className="w-48 h-80 sm:w-52 sm:h-[360px] rounded-[2rem] border-4 border-white/20 flex flex-col items-center justify-center relative overflow-hidden" style={{ background: "linear-gradient(180deg, #005C3C, #003D29)" }}>
-              {/* Notch */}
               <div className="absolute top-3 w-20 h-5 rounded-full" style={{ background: "rgba(0,0,0,0.3)" }} />
-              {/* Logo */}
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-3" style={{ background: "rgba(255,255,255,0.15)" }}>
-                <span className="text-3xl font-black text-white">H</span>
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3" style={{ background: "rgba(255,255,255,0.15)" }}>
+                <span className="text-2xl font-black text-white">H</span>
               </div>
-              <span className="text-lg font-extrabold text-white tracking-tight">HUBB</span>
+              <span className="text-base font-extrabold text-white tracking-tight">HUBB</span>
               <span className="text-[10px] text-white/50 mt-1">Food delivery</span>
-              {/* Fake UI elements */}
-              <div className="mt-6 w-3/4 space-y-2">
-                <div className="h-2 rounded-full bg-white/15 w-full" />
+              <div className="mt-5 w-3/4 space-y-2">
+                <div className="h-8 rounded-xl bg-white/10 w-full" />
+                <div className="flex gap-2">
+                  <div className="h-16 rounded-xl bg-white/8 flex-1" />
+                  <div className="h-16 rounded-xl bg-white/8 flex-1" />
+                </div>
                 <div className="h-2 rounded-full bg-white/10 w-4/5" />
-                <div className="h-2 rounded-full bg-white/10 w-3/5" />
+                <div className="h-2 rounded-full bg-white/8 w-3/5" />
               </div>
-              {/* Bottom bar */}
               <div className="absolute bottom-4 w-1/3 h-1 rounded-full bg-white/30" />
             </div>
-            {/* Glow behind phone */}
             <div className="absolute -inset-4 rounded-[2.5rem] opacity-20 blur-2xl -z-10" style={{ background: "#00A86B" }} />
           </div>
         </div>
