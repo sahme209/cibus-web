@@ -38,21 +38,24 @@ export default function QuickReorder() {
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
-        <h2
-          className="text-xl font-bold"
-          style={{ color: "var(--text-primary)" }}
-        >
-          Order Again
-        </h2>
+        <div className="flex items-center gap-2">
+          <span className="text-xl">🔄</span>
+          <h2
+            className="text-xl sm:text-2xl font-extrabold tracking-tight"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Order Again
+          </h2>
+        </div>
         <Link
           href="/orders"
-          className="text-sm font-semibold"
-          style={{ color: "var(--hubb-accent)" }}
+          className="text-sm font-semibold px-4 py-2 rounded-full transition-all hover:shadow-sm"
+          style={{ color: "var(--hubb-accent)", background: "var(--hubb-tint)" }}
         >
-          View All →
+          See All
         </Link>
       </div>
-      <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+      <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2 stagger-children">
         {orders.map((order) => (
           <Link
             key={order.id}

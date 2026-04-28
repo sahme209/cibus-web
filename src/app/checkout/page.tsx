@@ -127,17 +127,40 @@ export default function CheckoutPage() {
   if (orderSuccess) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center"
+        className="min-h-screen flex items-center justify-center relative overflow-hidden"
         style={{ background: "var(--bg-secondary)" }}
       >
-        <div className="text-center max-w-md mx-4 animate-fade-up">
+        {/* Celebration dots */}
+        <div className="absolute inset-0 pointer-events-none">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 rounded-full"
+              style={{
+                background: ["#00704A", "#FFB347", "#FF3008", "#5856D6", "#00D474", "#FFD700"][i % 6],
+                left: `${10 + Math.random() * 80}%`,
+                top: `${5 + Math.random() * 40}%`,
+                opacity: 0,
+                animation: `confetti-fall ${1.5 + Math.random() * 2}s ease-out ${Math.random() * 0.5}s forwards`,
+              }}
+            />
+          ))}
+        </div>
+        <style>{`
+          @keyframes confetti-fall {
+            0% { opacity: 0; transform: translateY(-40px) rotate(0deg) scale(0); }
+            20% { opacity: 1; transform: translateY(0) rotate(90deg) scale(1); }
+            100% { opacity: 0; transform: translateY(120px) rotate(360deg) scale(0.5); }
+          }
+        `}</style>
+        <div className="text-center max-w-md mx-4 animate-fade-up relative z-10">
           <div className="relative mx-auto w-28 h-28 mb-6">
             <div
               className="absolute inset-0 rounded-full opacity-30 blur-2xl animate-pulse"
               style={{ background: "var(--hubb-accent)" }}
             />
             <div
-              className="relative w-28 h-28 rounded-full mx-auto flex items-center justify-center"
+              className="relative w-28 h-28 rounded-full mx-auto flex items-center justify-center animate-bounce-in"
               style={{ background: "var(--hubb-tint)" }}
             >
               <svg className="w-14 h-14" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,11 +189,17 @@ export default function CheckoutPage() {
               <span style={{ color: "var(--text-secondary)" }}>Order ID</span>
               <span className="font-mono text-xs" style={{ color: "var(--text-tertiary)" }}>#{orderSuccess.id.slice(0, 8)}</span>
             </div>
+            <div className="flex items-center gap-2 mt-3 pt-3" style={{ borderTop: "1px solid var(--border-default)" }}>
+              <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: "var(--hubb-accent)" }} />
+              <span className="text-xs font-medium" style={{ color: "var(--hubb-green)" }}>
+                Restaurant will start preparing shortly
+              </span>
+            </div>
           </div>
           <div className="flex gap-3 mt-6 justify-center">
             <Link
               href={`/tracking/${orderSuccess.id}`}
-              className="flex-1 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99]"
+              className="flex-1 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99] animate-subtle-pulse"
               style={{ background: "var(--hubb-accent)" }}
             >
               <span className="flex items-center justify-center gap-2">

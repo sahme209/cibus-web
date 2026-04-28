@@ -27,14 +27,17 @@ export default function PopularItems() {
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
-        <h2
-          className="text-xl font-bold"
-          style={{ color: "var(--text-primary)" }}
-        >
-          Popular Near You
-        </h2>
+        <div className="flex items-center gap-2">
+          <span className="text-xl">🌟</span>
+          <h2
+            className="text-xl sm:text-2xl font-extrabold tracking-tight"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Popular Near You
+          </h2>
+        </div>
       </div>
-      <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+      <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2 stagger-children">
         {items.map((item) => {
           const discountedPrice =
             item.discountPercentage > 0
