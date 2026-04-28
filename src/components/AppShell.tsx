@@ -8,6 +8,7 @@ import Footer from "./Footer";
 import ActiveOrderBanner from "./ActiveOrderBanner";
 import CartDrawer from "./CartDrawer";
 import MobileNav from "./MobileNav";
+import ScrollToTop from "./ScrollToTop";
 
 function RestaurantSwitchModal() {
   const { pendingSwitch, confirmSwitch, cancelSwitch } = useCart();
@@ -108,6 +109,7 @@ function ShellContent({ children, cartOpen, setCartOpen }: { children: ReactNode
       </div>
       <MobileNav />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+      <ScrollToTop />
       <RestaurantSwitchModal />
     </>
   );

@@ -8,6 +8,7 @@ import { useCart } from "@/lib/store";
 import { useToast } from "@/components/ToastProvider";
 import * as api from "@/lib/api";
 import Link from "next/link";
+import { saveRecentlyViewed } from "@/components/RecentlyViewed";
 import type { Restaurant, FoodCategory, FoodItem, CustomizationOption } from "@/lib/types";
 
 export default function RestaurantDetailPage() {
@@ -62,6 +63,14 @@ export default function RestaurantDetailPage() {
           api.getRestaurantMenu(id),
         ]);
         setRestaurant(detail);
+        saveRecentlyViewed({
+          id: detail.id,
+          name: detail.name,
+          imageURL: detail.imageURL,
+          cuisine: detail.cuisine,
+          rating: detail.rating,
+          deliveryTime: detail.deliveryTime,
+        });
         const categories = menuData.categories || menuData.menu || menuData || [];
         setMenu(categories);
         if (categories.length > 0) setActiveSection(categories[0].id);

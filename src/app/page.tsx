@@ -7,6 +7,7 @@ import RestaurantCard from "@/components/RestaurantCard";
 import PromoBanner from "@/components/PromoBanner";
 import PopularItems from "@/components/PopularItems";
 import QuickReorder from "@/components/QuickReorder";
+import RecentlyViewed from "@/components/RecentlyViewed";
 import FilterBar from "@/components/FilterBar";
 import { useAuth } from "@/lib/store";
 import type { Restaurant } from "@/lib/types";
@@ -213,13 +214,14 @@ export default function HomePage() {
                 Rs. 0 delivery on every order, 5% cashback, and exclusive member deals. Your first month free.
               </p>
             </div>
-            <Link href="/profile" className="shrink-0 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-105 active:scale-95" style={{ background: "white", color: "var(--hubb-accent)" }}>
+            <Link href="/hubb-plus" className="shrink-0 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-105 active:scale-95" style={{ background: "white", color: "var(--hubb-accent)" }}>
               Learn More
             </Link>
           </div>
         </div>
       </section>
 
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8"><RecentlyViewed /></section>
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8"><QuickReorder /></section>
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8"><PopularItems /></section>
 
@@ -519,7 +521,7 @@ function LandingPage() {
                   ))}
                 </div>
                 <Link
-                  href="/auth"
+                  href="/hubb-plus"
                   className="inline-flex items-center gap-2 mt-6 px-7 py-3.5 rounded-full text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
                   style={{ background: "white", color: "#00704A" }}
                 >
