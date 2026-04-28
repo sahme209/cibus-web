@@ -5,17 +5,19 @@ import Image from "next/image";
 import type { Restaurant } from "@/lib/types";
 
 export default function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
+  const priceIndicator = restaurant.minimumOrder < 500 ? "$" : restaurant.minimumOrder < 1000 ? "$$" : "$$$";
+
   return (
     <Link
       href={`/restaurant/${restaurant.id}`}
-      className="group block rounded-2xl overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+      className="group block rounded-2xl card-hover"
       style={{
         background: "var(--bg-card)",
         boxShadow: "var(--shadow-sm)",
       }}
     >
       {/* Image */}
-      <div className="relative aspect-[16/10] overflow-hidden">
+      <div className="relative aspect-[16/10] overflow-hidden rounded-t-2xl">
         <Image
           src={restaurant.imageURL}
           alt={restaurant.name}
@@ -27,24 +29,37 @@ export default function RestaurantCard({ restaurant }: { restaurant: Restaurant 
           {restaurant.isFeatured && (
             <span
               role="listitem"
-              aria-label="Featured restaurant"
-              className="px-2.5 py-1 rounded-md text-[10px] font-bold text-white tracking-wide backdrop-blur-sm"
-              style={{ background: "rgba(0,112,74,0.9)" }}
+              aria-label="Promoted restaurant"
+              className="px-2.5 py-1 rounded-full text-[10px] font-semibold text-white backdrop-blur-sm flex items-center gap-1"
+              style={{ background: "rgba(0,0,0,0.55)" }}
             >
-              FEATURED
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+              Promoted
             </span>
           )}
           {restaurant.deliveryFee === 0 && (
             <span
               role="listitem"
               aria-label="Free delivery"
-              className="px-2.5 py-1 rounded-md text-[10px] font-bold text-white backdrop-blur-sm"
+              className="px-2.5 py-1 rounded-full text-[10px] font-bold text-white backdrop-blur-sm"
               style={{ background: "rgba(0,112,74,0.9)" }}
             >
               Rs. 0 delivery
             </span>
           )}
         </div>
+        {/* Favorite button */}
+        <button
+          type="button"
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+          className="absolute top-3 right-12 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110"
+          style={{ background: "rgba(255,255,255,0.85)" }}
+          aria-label="Save to favorites"
+        >
+          <svg className="w-4 h-4" style={{ color: "var(--text-secondary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
         <div
           className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-bold backdrop-blur-sm"
           style={{
@@ -88,6 +103,8 @@ export default function RestaurantCard({ restaurant }: { restaurant: Restaurant 
           <span>{restaurant.cuisine}</span>
           <span style={{ color: "var(--text-tertiary)" }}>•</span>
           <span>{restaurant.distance}</span>
+          <span style={{ color: "var(--text-tertiary)" }}>•</span>
+          <span style={{ color: "var(--text-tertiary)" }}>{priceIndicator}</span>
           {restaurant.deliveryFee > 0 && (
             <>
               <span style={{ color: "var(--text-tertiary)" }}>•</span>
