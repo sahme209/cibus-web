@@ -203,17 +203,17 @@ export default function Navbar({ onCartClick }: NavbarProps) {
               )}
             </div>
           ) : (
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-1.5">
               <Link
                 href="/auth"
-                className="px-5 py-2 rounded-full text-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
-                style={{ color: "var(--hubb-accent)" }}
+                className="px-4 py-2 rounded-full text-sm font-semibold transition-all hover:opacity-80"
+                style={{ color: "var(--text-primary)" }}
               >
                 Sign In
               </Link>
               <Link
                 href="/auth"
-                className="px-5 py-2 rounded-full text-sm font-semibold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="px-5 py-2.5 rounded-full text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{ background: "var(--hubb-accent)" }}
               >
                 Sign Up

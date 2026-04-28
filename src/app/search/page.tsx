@@ -9,16 +9,16 @@ import * as api from "@/lib/api";
 import Link from "next/link";
 
 const CATEGORIES = [
-  { name: "Biryani", emoji: "🍚" },
-  { name: "Burgers", emoji: "🍔" },
-  { name: "Pizza", emoji: "🍕" },
-  { name: "Karahi", emoji: "🥘" },
-  { name: "Chinese", emoji: "🥡" },
-  { name: "BBQ", emoji: "🍖" },
-  { name: "Desserts", emoji: "🍰" },
-  { name: "Chai", emoji: "☕" },
-  { name: "Paratha", emoji: "🫓" },
-  { name: "Seafood", emoji: "🦐" },
+  { name: "Biryani", emoji: "🍚", img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=300&q=80" },
+  { name: "Burgers", emoji: "🍔", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=80" },
+  { name: "Pizza", emoji: "🍕", img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&q=80" },
+  { name: "Karahi", emoji: "🥘", img: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=300&q=80" },
+  { name: "Chinese", emoji: "🥡", img: "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=300&q=80" },
+  { name: "BBQ", emoji: "🍖", img: "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=300&q=80" },
+  { name: "Desserts", emoji: "🍰", img: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=300&q=80" },
+  { name: "Chai", emoji: "☕", img: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&q=80" },
+  { name: "Paratha", emoji: "🫓", img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=300&q=80" },
+  { name: "Seafood", emoji: "🦐", img: "https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?w=300&q=80" },
 ];
 
 const TRENDING = [
@@ -438,7 +438,7 @@ function SearchContent() {
         ) : !showSuggestions ? (
           /* Browse state — show categories to explore */
           <div className="animate-fade-up">
-            <h3 className="text-sm font-semibold mb-4" style={{ color: "var(--text-secondary)" }}>
+            <h3 className="text-lg font-bold mb-4" style={{ color: "var(--text-primary)" }}>
               Browse by Cuisine
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -446,11 +446,15 @@ function SearchContent() {
                 <button
                   key={cat.name}
                   onClick={() => { setQuery(cat.name); doSearch(cat.name); }}
-                  className="flex items-center gap-3 px-4 py-4 rounded-xl text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
-                  style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+                  className="group relative rounded-2xl overflow-hidden aspect-[4/3] text-left transition-all hover:-translate-y-1"
+                  style={{ boxShadow: "var(--shadow-sm)" }}
                 >
-                  <span className="text-2xl">{cat.emoji}</span>
-                  <span className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>{cat.name}</span>
+                  <Image src={cat.img} alt={cat.name} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw" className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-3">
+                    <span className="text-xl block mb-0.5">{cat.emoji}</span>
+                    <span className="text-sm font-bold text-white drop-shadow-md">{cat.name}</span>
+                  </div>
                 </button>
               ))}
             </div>
