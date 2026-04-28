@@ -338,6 +338,36 @@ export async function shopOnboarding(data: {
   });
 }
 
+export async function homeKitchenOnboarding(data: {
+  ownerName: string;
+  email: string;
+  password: string;
+  phone: string;
+  cnic: string;
+  kitchenName: string;
+  kitchenDescription: string;
+  cuisineType: string;
+  address: string;
+  city: string;
+  sector: string;
+  menuItems: { name: string; price: number; category: string }[];
+  hygieneChecklist: Record<string, boolean>;
+}) {
+  return partnerRequest<{
+    success: boolean;
+    message: string;
+    data: {
+      access_token: string;
+      kitchenId: string;
+      partnerId: string;
+      kitchenName: string;
+    };
+  }>("/home-kitchen/onboarding", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
 // --- Delivery Fee ---
 
 export async function getDeliveryFee(

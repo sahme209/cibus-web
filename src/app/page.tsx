@@ -291,6 +291,13 @@ const PARTNER_CARDS = [
     href: "/partner/restaurants",
   },
   {
+    icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
+    title: "Start a Home Kitchen",
+    desc: "Cook from home and earn. Zero setup cost, flexible hours, customers at your doorstep.",
+    cta: "Start cooking",
+    href: "/partner/home-kitchen",
+  },
+  {
     icon: "M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z",
     title: "Get the best HUBB experience",
     desc: "Experience the best your neighborhood has to offer, all in one app.",
@@ -546,13 +553,22 @@ function LandingPage() {
               <p className="text-sm mt-3 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                 Businesses large and small partner with HUBB to reach new customers, increase order volume, and drive more sales.
               </p>
-              <Link
-                href="/partner/restaurants"
-                className="inline-flex items-center gap-2 mt-5 px-6 py-3 rounded-full text-sm font-bold text-white transition-all hover:scale-[1.02]"
-                style={{ background: "var(--hubb-accent)" }}
-              >
-                Become a Partner
-              </Link>
+              <div className="flex flex-wrap gap-3 mt-5">
+                <Link
+                  href="/partner/restaurants"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold text-white transition-all hover:scale-[1.02]"
+                  style={{ background: "var(--hubb-accent)" }}
+                >
+                  Become a Partner
+                </Link>
+                <Link
+                  href="/partner/home-kitchen"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-[1.02]"
+                  style={{ background: "var(--bg-search)", color: "var(--hubb-accent)", border: "1.5px solid var(--hubb-accent)" }}
+                >
+                  Start a Home Kitchen
+                </Link>
+              </div>
             </div>
           </div>
         </div>
