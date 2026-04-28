@@ -68,6 +68,18 @@ export async function signUp(
   return { token: res.data.access_token, user: res.data.user };
 }
 
+export async function googleSignIn(idToken: string) {
+  const res = await request<{
+    success: boolean;
+    data: { access_token: string; refresh_token: string; user: any };
+  }>("/auth/google", {
+    method: "POST",
+    body: JSON.stringify({ idToken }),
+  });
+  localStorage.setItem("hubb_token", res.data.access_token);
+  return { token: res.data.access_token, user: res.data.user };
+}
+
 export function signOut() {
   localStorage.removeItem("hubb_token");
 }
@@ -198,6 +210,132 @@ export async function addAddress(body: Record<string, any>) {
 
 export async function deleteAddress(id: string) {
   return request<any>(`/users/me/addresses/${id}`, { method: "DELETE" });
+}
+
+// --- Partner Onboarding ---
+
+async function partnerRequest<T>(
+  path: string,
+  options: RequestInit = {},
+  token?: string
+): Promise<T> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    ...(options.headers as Record<string, string>),
+  };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new APIError(res.status, body.message || res.statusText);
+  }
+  if (res.status === 204) return {} as T;
+  return res.json();
+}
+
+export async function riderSignUp(data: {
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  cnic: string;
+  drivingLicenseNumber: string;
+  vehicleNumber: string;
+}) {
+  return partnerRequest<{
+    success: boolean;
+    data: {
+      access_token: string;
+      refresh_token: string;
+      riderId: string;
+      name: string;
+      phone: string;
+      verificationStatus: string;
+    };
+  }>("/rider/auth/sign-up", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function submitRiderVerification(
+  token: string,
+  data: Record<string, unknown>
+) {
+  return partnerRequest<{
+    success: boolean;
+    verificationStatus: string;
+    message: string;
+  }>("/rider-verification", { method: "POST", body: JSON.stringify(data) }, token);
+}
+
+export async function getRiderVerificationStatus(token: string) {
+  return partnerRequest<{
+    riderId: string;
+    verificationStatus: string;
+    documentsUploaded: boolean;
+    message: string;
+  }>("/rider-verification/status", {}, token);
+}
+
+export async function restaurantOnboarding(data: {
+  partnerName: string;
+  email: string;
+  password: string;
+  phone: string;
+  restaurantName: string;
+  address: string;
+  city: string;
+  sector: string;
+  cuisineType: string;
+  integrationType: string;
+  openHours?: { open: string; close: string };
+  deliveryRadiusKm?: number;
+}) {
+  return partnerRequest<{
+    success: boolean;
+    message: string;
+    data: {
+      access_token: string;
+      restaurantId: string;
+      partnerId: string;
+      restaurantName: string;
+    };
+  }>("/restaurant/onboarding", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function checkRestaurantEmail(email: string) {
+  return partnerRequest<{ available: boolean }>(
+    `/restaurant/onboarding/check-email?email=${encodeURIComponent(email)}`
+  );
+}
+
+export async function shopOnboarding(data: {
+  ownerName: string;
+  email: string;
+  password: string;
+  phone: string;
+  shopName: string;
+  shopType: string;
+  address: string;
+  sector: string;
+  city: string;
+}) {
+  return partnerRequest<{
+    success: boolean;
+    message?: string;
+    accessToken?: string;
+    partnerId?: string;
+    shopId?: string;
+  }>("/shop/onboarding", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }
 
 // --- Delivery Fee ---

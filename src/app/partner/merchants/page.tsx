@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import * as api from "@/lib/api";
+
 const STATS = [
   { value: "50+", label: "Categories" },
   { value: "24hr", label: "Onboarding" },
@@ -44,7 +47,148 @@ const FAQ = [
   { q: "What areas do you deliver to?", a: "HUBB operates in major cities across Pakistan. Contact us to check if your area is currently covered." },
 ];
 
+const SHOP_TYPES = [
+  { value: "grocery", label: "Grocery" },
+  { value: "bakery", label: "Bakery" },
+  { value: "pharmacy", label: "Pharmacy" },
+  { value: "convenience", label: "Convenience Store" },
+  { value: "desserts_sweets", label: "Desserts & Sweets" },
+  { value: "specialty_local", label: "Specialty & Local" },
+  { value: "other", label: "Other" },
+];
+
+const CITIES = [
+  "Islamabad",
+  "Rawalpindi",
+  "Lahore",
+  "Karachi",
+  "Faisalabad",
+  "Peshawar",
+];
+
+function getPasswordStrength(password: string): { level: number; label: string; color: string } {
+  if (!password) return { level: 0, label: "", color: "transparent" };
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (password.length >= 12) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+  if (score <= 1) return { level: 1, label: "Weak", color: "var(--hubb-error)" };
+  if (score <= 2) return { level: 2, label: "Fair", color: "var(--hubb-orange)" };
+  if (score <= 3) return { level: 3, label: "Good", color: "var(--hubb-accent)" };
+  return { level: 4, label: "Strong", color: "var(--hubb-accent)" };
+}
+
 export default function PartnerMerchantsPage() {
+  const [step, setStep] = useState(1);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [partnerId, setPartnerId] = useState("");
+  const [shopId, setShopId] = useState("");
+
+  const [ownerName, setOwnerName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [shopName, setShopName] = useState("");
+  const [shopType, setShopType] = useState("");
+  const [address, setAddress] = useState("");
+  const [sector, setSector] = useState("");
+  const [city, setCity] = useState("");
+
+  const passwordStrength = getPasswordStrength(password);
+
+  function validateForm(): boolean {
+    const errors: Record<string, string> = {};
+
+    if (!ownerName.trim()) errors.ownerName = "Owner name is required";
+    if (!email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = "Please enter a valid email address";
+    }
+    if (!password) {
+      errors.password = "Password is required";
+    } else if (password.length < 8) {
+      errors.password = "Password must be at least 8 characters";
+    }
+    if (!phone.trim()) {
+      errors.phone = "Phone number is required";
+    } else {
+      const digitsOnly = phone.replace(/\D/g, "");
+      if (digitsOnly.length < 10) {
+        errors.phone = "Phone number must be at least 10 digits";
+      }
+    }
+    if (!shopName.trim()) errors.shopName = "Shop name is required";
+    if (!shopType) errors.shopType = "Please select a shop type";
+    if (!address.trim()) errors.address = "Address is required";
+    if (!sector.trim()) errors.sector = "Sector/area is required";
+    if (!city) errors.city = "Please select a city";
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+
+    if (!validateForm()) return;
+
+    setSubmitting(true);
+    try {
+      const fullPhone = "+92" + phone.replace(/\D/g, "").replace(/^0+/, "");
+      const result = await api.shopOnboarding({
+        ownerName: ownerName.trim(),
+        email: email.trim().toLowerCase(),
+        password,
+        phone: fullPhone,
+        shopName: shopName.trim(),
+        shopType,
+        address: address.trim(),
+        sector: sector.trim(),
+        city,
+      });
+
+      if (result.success) {
+        setPartnerId(result.partnerId || "");
+        setShopId(result.shopId || "");
+        setStep(2);
+      } else {
+        setError(result.message || "Something went wrong. Please try again.");
+      }
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      if (message.includes("409") || message.toLowerCase().includes("duplicate") || message.toLowerCase().includes("already")) {
+        setError("An account with this email already exists. Please use a different email or sign in.");
+      } else if (message.includes("400") || message.toLowerCase().includes("validation")) {
+        setError("Please check your information and try again.");
+      } else {
+        setError(message);
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const inputStyle = {
+    background: "var(--bg-search)",
+    border: "1.5px solid var(--border-default)",
+    color: "var(--text-primary)",
+  };
+
+  const inputClasses = "w-full px-4 py-3 rounded-xl text-sm outline-none transition-colors focus:border-[var(--hubb-accent)]";
+
+  function scrollToApply(e: React.MouseEvent) {
+    e.preventDefault();
+    document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
+  }
+
   return (
     <div style={{ background: "var(--bg-secondary)" }} className="min-h-screen">
       {/* Hero */}
@@ -67,7 +211,8 @@ export default function PartnerMerchantsPage() {
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <a
-                href="mailto:merchants@hubb.pk?subject=Merchant%20Partnership%20Inquiry"
+                href="#apply"
+                onClick={scrollToApply}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{ background: "var(--hubb-accent)" }}
               >
@@ -102,6 +247,339 @@ export default function PartnerMerchantsPage() {
               <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>{s.label}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Application Form */}
+      <section id="apply" className="scroll-mt-20 mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-16">
+        <div className="animate-fade-up rounded-2xl p-6 sm:p-8" style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-lg)" }}>
+          {step === 1 ? (
+            <>
+              <div className="text-center mb-8">
+                <div
+                  className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-4"
+                  style={{ background: "var(--hubb-tint)" }}
+                >
+                  <svg className="w-7 h-7" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
+                  Register your shop
+                </h2>
+                <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>
+                  Fill in your details and we will get you set up in no time.
+                </p>
+              </div>
+
+              {error && (
+                <div
+                  className="rounded-xl px-4 py-3 mb-6 text-sm font-medium"
+                  style={{ background: "var(--hubb-error-bg)", color: "var(--hubb-error)" }}
+                >
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} noValidate>
+                <div className="space-y-4">
+                  {/* Owner Name */}
+                  <div>
+                    <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                      Owner Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Full name"
+                      value={ownerName}
+                      onChange={(e) => { setOwnerName(e.target.value); setFieldErrors((p) => ({ ...p, ownerName: "" })); }}
+                      className={inputClasses}
+                      style={inputStyle}
+                    />
+                    {fieldErrors.ownerName && (
+                      <p className="text-xs mt-1" style={{ color: "var(--hubb-error)" }}>{fieldErrors.ownerName}</p>
+                    )}
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => { setEmail(e.target.value); setFieldErrors((p) => ({ ...p, email: "" })); }}
+                      className={inputClasses}
+                      style={inputStyle}
+                    />
+                    {fieldErrors.email && (
+                      <p className="text-xs mt-1" style={{ color: "var(--hubb-error)" }}>{fieldErrors.email}</p>
+                    )}
+                  </div>
+
+                  {/* Password */}
+                  <div>
+                    <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                      Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Minimum 8 characters"
+                        value={password}
+                        onChange={(e) => { setPassword(e.target.value); setFieldErrors((p) => ({ ...p, password: "" })); }}
+                        className={inputClasses}
+                        style={{ ...inputStyle, paddingRight: "3rem" }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1"
+                        style={{ color: "var(--text-tertiary)" }}
+                      >
+                        {showPassword ? (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L6.59 6.59m7.532 7.532l3.29 3.29M3 3l18 18" />
+                          </svg>
+                        ) : (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                    {password && (
+                      <div className="mt-2">
+                        <div className="flex gap-1">
+                          {[1, 2, 3, 4].map((i) => (
+                            <div
+                              key={i}
+                              className="h-1 flex-1 rounded-full transition-colors"
+                              style={{
+                                background: i <= passwordStrength.level ? passwordStrength.color : "var(--border-default)",
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <p className="text-xs mt-1" style={{ color: passwordStrength.color }}>
+                          {passwordStrength.label}
+                        </p>
+                      </div>
+                    )}
+                    {fieldErrors.password && (
+                      <p className="text-xs mt-1" style={{ color: "var(--hubb-error)" }}>{fieldErrors.password}</p>
+                    )}
+                  </div>
+
+                  {/* Phone */}
+                  <div>
+                    <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                      Phone Number
+                    </label>
+                    <div className="flex gap-2">
+                      <div
+                        className="flex items-center gap-1.5 px-3 py-3 rounded-xl text-sm shrink-0"
+                        style={{ background: "var(--bg-search)", border: "1.5px solid var(--border-default)", color: "var(--text-secondary)" }}
+                      >
+                        <span>🇵🇰</span>
+                        <span>+92</span>
+                      </div>
+                      <input
+                        type="tel"
+                        placeholder="3XX XXXXXXX"
+                        value={phone}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^\d\s-]/g, "");
+                          setPhone(val);
+                          setFieldErrors((p) => ({ ...p, phone: "" }));
+                        }}
+                        className={inputClasses}
+                        style={inputStyle}
+                      />
+                    </div>
+                    {fieldErrors.phone && (
+                      <p className="text-xs mt-1" style={{ color: "var(--hubb-error)" }}>{fieldErrors.phone}</p>
+                    )}
+                  </div>
+
+                  {/* Divider */}
+                  <div className="pt-2 pb-1">
+                    <div className="border-t" style={{ borderColor: "var(--border-subtle)" }} />
+                    <p className="text-xs font-medium mt-4 mb-1" style={{ color: "var(--text-tertiary)" }}>
+                      SHOP DETAILS
+                    </p>
+                  </div>
+
+                  {/* Shop Name */}
+                  <div>
+                    <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                      Shop Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Your business name"
+                      value={shopName}
+                      onChange={(e) => { setShopName(e.target.value); setFieldErrors((p) => ({ ...p, shopName: "" })); }}
+                      className={inputClasses}
+                      style={inputStyle}
+                    />
+                    {fieldErrors.shopName && (
+                      <p className="text-xs mt-1" style={{ color: "var(--hubb-error)" }}>{fieldErrors.shopName}</p>
+                    )}
+                  </div>
+
+                  {/* Shop Type */}
+                  <div>
+                    <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                      Shop Type
+                    </label>
+                    <select
+                      value={shopType}
+                      onChange={(e) => { setShopType(e.target.value); setFieldErrors((p) => ({ ...p, shopType: "" })); }}
+                      className={inputClasses}
+                      style={inputStyle}
+                    >
+                      <option value="">Select shop type</option>
+                      {SHOP_TYPES.map((t) => (
+                        <option key={t.value} value={t.value}>{t.label}</option>
+                      ))}
+                    </select>
+                    {fieldErrors.shopType && (
+                      <p className="text-xs mt-1" style={{ color: "var(--hubb-error)" }}>{fieldErrors.shopType}</p>
+                    )}
+                  </div>
+
+                  {/* Address */}
+                  <div>
+                    <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                      Address
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Shop address"
+                      value={address}
+                      onChange={(e) => { setAddress(e.target.value); setFieldErrors((p) => ({ ...p, address: "" })); }}
+                      className={inputClasses}
+                      style={inputStyle}
+                    />
+                    {fieldErrors.address && (
+                      <p className="text-xs mt-1" style={{ color: "var(--hubb-error)" }}>{fieldErrors.address}</p>
+                    )}
+                  </div>
+
+                  {/* Sector & City row */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                        Sector / Area
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. F-7, Gulberg"
+                        value={sector}
+                        onChange={(e) => { setSector(e.target.value); setFieldErrors((p) => ({ ...p, sector: "" })); }}
+                        className={inputClasses}
+                        style={inputStyle}
+                      />
+                      {fieldErrors.sector && (
+                        <p className="text-xs mt-1" style={{ color: "var(--hubb-error)" }}>{fieldErrors.sector}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                        City
+                      </label>
+                      <select
+                        value={city}
+                        onChange={(e) => { setCity(e.target.value); setFieldErrors((p) => ({ ...p, city: "" })); }}
+                        className={inputClasses}
+                        style={inputStyle}
+                      >
+                        <option value="">Select city</option>
+                        {CITIES.map((c) => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </select>
+                      {fieldErrors.city && (
+                        <p className="text-xs mt-1" style={{ color: "var(--hubb-error)" }}>{fieldErrors.city}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full mt-8 px-6 py-4 rounded-xl font-bold text-white text-sm transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
+                  style={{ background: "var(--hubb-accent)" }}
+                >
+                  {submitting ? (
+                    <span className="inline-flex items-center gap-2">
+                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      Submitting...
+                    </span>
+                  ) : (
+                    "Submit Application"
+                  )}
+                </button>
+              </form>
+            </>
+          ) : (
+            /* Step 2: Success */
+            <div className="text-center animate-fade-up py-4">
+              <div
+                className="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-5"
+                style={{ background: "var(--hubb-tint)" }}
+              >
+                <svg className="w-8 h-8" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
+                Application submitted!
+              </h2>
+              <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
+                Your shop is under verification and will be activated within 1-3 business days. Download the HUBB Merchant app to manage your store.
+              </p>
+
+              <div
+                className="rounded-xl p-4 mb-6 text-left space-y-3"
+                style={{ background: "var(--bg-search)", border: "1.5px solid var(--border-subtle)" }}
+              >
+                {partnerId && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>Partner ID</span>
+                    <span className="text-sm font-bold font-mono" style={{ color: "var(--text-primary)" }}>{partnerId}</span>
+                  </div>
+                )}
+                {shopId && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>Shop ID</span>
+                    <span className="text-sm font-bold font-mono" style={{ color: "var(--text-primary)" }}>{shopId}</span>
+                  </div>
+                )}
+              </div>
+
+              <div
+                className="rounded-xl p-4 mb-6 flex items-start gap-3 text-left"
+                style={{ background: "var(--hubb-tint)" }}
+              >
+                <svg className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                  Save your Partner ID and Shop ID for your records. You will receive a confirmation email with next steps shortly.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -195,7 +673,8 @@ export default function PartnerMerchantsPage() {
               List your products and reach more customers than ever.
             </p>
             <a
-              href="mailto:merchants@hubb.pk?subject=Merchant%20Partnership%20Inquiry"
+              href="#apply"
+              onClick={scrollToApply}
               className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
               style={{ background: "white", color: "var(--hubb-accent)" }}
             >

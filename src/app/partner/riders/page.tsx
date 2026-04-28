@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import * as api from "@/lib/api";
+
 const STATS = [
   { value: "Rs. 800+", label: "Avg daily earnings" },
   { value: "1,000+", label: "Active riders" },
@@ -45,7 +48,538 @@ const FAQ = [
   { q: "Can I work part-time?", a: "Absolutely. There are no minimum hours. Many riders combine HUBB with studies or other work." },
 ];
 
+type PayoutMethod = "bank" | "jazzcash" | "easypaisa";
+
+interface FieldErrors {
+  [key: string]: string;
+}
+
 export default function PartnerRidersPage() {
+  // Form step management
+  const [formStep, setFormStep] = useState(1);
+  const [accessToken, setAccessToken] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
+
+  // Step 1 fields
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [cnic, setCnic] = useState("");
+  const [drivingLicense, setDrivingLicense] = useState("");
+  const [vehiclePlate, setVehiclePlate] = useState("");
+  const [step1Errors, setStep1Errors] = useState<FieldErrors>({});
+
+  // Step 2 fields
+  const [vehicleType, setVehicleType] = useState("motorcycle");
+  const [vehicleColor, setVehicleColor] = useState("");
+  const [city, setCity] = useState("");
+  const [payoutMethod, setPayoutMethod] = useState<PayoutMethod>("bank");
+  const [bankName, setBankName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [jazzCashWallet, setJazzCashWallet] = useState("");
+  const [easypaisaWallet, setEasypaisaWallet] = useState("");
+  const [step2Errors, setStep2Errors] = useState<FieldErrors>({});
+
+  // Step 3 data
+  const [verificationStatus, setVerificationStatus] = useState("");
+  const [verificationMessage, setVerificationMessage] = useState("");
+
+  function validateStep1(): boolean {
+    const errors: FieldErrors = {};
+
+    if (!name.trim()) errors.name = "Full name is required";
+    if (!email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = "Enter a valid email address";
+    }
+    if (!password) {
+      errors.password = "Password is required";
+    } else if (password.length < 8) {
+      errors.password = "Password must be at least 8 characters";
+    }
+    if (!phone.trim()) {
+      errors.phone = "Phone number is required";
+    } else if (phone.replace(/\D/g, "").length < 10) {
+      errors.phone = "Phone must be at least 10 digits";
+    }
+    if (!cnic.trim()) {
+      errors.cnic = "CNIC is required";
+    } else if (cnic.replace(/\D/g, "").length !== 13) {
+      errors.cnic = "CNIC must be exactly 13 digits";
+    }
+    if (!drivingLicense.trim()) errors.drivingLicense = "Driving license number is required";
+    if (!vehiclePlate.trim()) errors.vehiclePlate = "Vehicle plate number is required";
+
+    setStep1Errors(errors);
+    return Object.keys(errors).length === 0;
+  }
+
+  function validateStep2(): boolean {
+    const errors: FieldErrors = {};
+
+    if (!vehicleColor.trim()) errors.vehicleColor = "Vehicle color is required";
+    if (!city.trim()) errors.city = "City is required";
+
+    if (payoutMethod === "bank") {
+      if (!bankName.trim()) errors.bankName = "Bank name is required";
+      if (!accountNumber.trim()) errors.accountNumber = "Account number is required";
+    } else if (payoutMethod === "jazzcash") {
+      if (!jazzCashWallet.trim()) errors.jazzCashWallet = "JazzCash wallet number is required";
+    } else if (payoutMethod === "easypaisa") {
+      if (!easypaisaWallet.trim()) errors.easypaisaWallet = "Easypaisa wallet number is required";
+    }
+
+    setStep2Errors(errors);
+    return Object.keys(errors).length === 0;
+  }
+
+  async function handleStep1Submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!validateStep1()) return;
+
+    setLoading(true);
+    setApiError("");
+
+    try {
+      const res = await api.riderSignUp({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        password,
+        phone: phone.trim(),
+        cnic: cnic.replace(/\D/g, ""),
+        drivingLicenseNumber: drivingLicense.trim(),
+        vehicleNumber: vehiclePlate.trim(),
+      });
+
+      setAccessToken(res.data.access_token);
+      setFormStep(2);
+    } catch (err) {
+      if (err instanceof api.APIError) {
+        if (err.status === 409) {
+          setApiError("An account with this email, CNIC, or phone already exists. Please use different credentials or sign in to the rider app.");
+        } else if (err.status === 429) {
+          setApiError("Too many attempts. Please wait a few minutes and try again.");
+        } else {
+          setApiError(err.message || "Something went wrong. Please try again.");
+        }
+      } else {
+        setApiError("Network error. Please check your connection and try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleStep2Submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!validateStep2()) return;
+
+    setLoading(true);
+    setApiError("");
+
+    const payoutInfo: Record<string, string> = {};
+    if (payoutMethod === "bank") {
+      payoutInfo.bankName = bankName.trim();
+      payoutInfo.accountNumber = accountNumber.trim();
+    } else if (payoutMethod === "jazzcash") {
+      payoutInfo.jazzCashWallet = jazzCashWallet.trim();
+    } else if (payoutMethod === "easypaisa") {
+      payoutInfo.easypaisaWallet = easypaisaWallet.trim();
+    }
+
+    try {
+      const res = await api.submitRiderVerification(accessToken, {
+        vehicleType,
+        vehiclePlateNumber: vehiclePlate.trim(),
+        vehicleColor: vehicleColor.trim(),
+        drivingLicenseNumber: drivingLicense.trim(),
+        city: city.trim(),
+        payoutInfo,
+        documents: [
+          { type: "cnic_front", isPendingUpload: true },
+          { type: "cnic_back", isPendingUpload: true },
+          { type: "driving_license", isPendingUpload: true },
+          { type: "vehicle_registration", isPendingUpload: true },
+          { type: "selfie_verification", isPendingUpload: true },
+        ],
+      });
+
+      setVerificationStatus(res.verificationStatus || "pending_review");
+      setVerificationMessage(res.message || "Your application has been submitted successfully.");
+      setFormStep(3);
+    } catch (err) {
+      if (err instanceof api.APIError) {
+        setApiError(err.message || "Failed to submit verification. Please try again.");
+      } else {
+        setApiError("Network error. Please check your connection and try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function scrollToApply(e: React.MouseEvent) {
+    e.preventDefault();
+    document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function renderStepIndicator() {
+    return (
+      <div className="flex items-center justify-center gap-3 mb-8">
+        {[1, 2, 3].map((step) => (
+          <div key={step} className="flex items-center gap-3">
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-colors"
+              style={{
+                background: formStep >= step ? "var(--hubb-accent)" : "var(--bg-search)",
+                color: formStep >= step ? "white" : "var(--text-tertiary)",
+              }}
+            >
+              {formStep > step ? (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+              ) : (
+                step
+              )}
+            </div>
+            {step < 3 && (
+              <div
+                className="w-12 sm:w-16 h-0.5 rounded-full"
+                style={{
+                  background: formStep > step ? "var(--hubb-accent)" : "var(--border-default)",
+                }}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  function renderInput(
+    label: string,
+    value: string,
+    onChange: (v: string) => void,
+    error: string | undefined,
+    opts: {
+      type?: string;
+      placeholder?: string;
+      maxLength?: number;
+      inputMode?: "text" | "email" | "tel" | "numeric";
+    } = {}
+  ) {
+    const { type = "text", placeholder = "", maxLength, inputMode } = opts;
+    return (
+      <div className="space-y-1.5">
+        <label className="block text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+          {label}
+        </label>
+        <input
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          maxLength={maxLength}
+          inputMode={inputMode}
+          className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-colors"
+          style={{
+            background: "var(--bg-search)",
+            border: error ? "1.5px solid var(--hubb-orange)" : "1.5px solid var(--border-default)",
+            color: "var(--text-primary)",
+          }}
+        />
+        {error && (
+          <p className="text-xs" style={{ color: "var(--hubb-orange)" }}>{error}</p>
+        )}
+      </div>
+    );
+  }
+
+  function renderStep1() {
+    return (
+      <form onSubmit={handleStep1Submit} className="space-y-4">
+        <h3 className="text-lg font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+          Personal Information
+        </h3>
+        <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
+          Fill in your details to create a rider account.
+        </p>
+
+        {renderInput("Full Name", name, setName, step1Errors.name, {
+          placeholder: "e.g. Ahmad Khan",
+        })}
+        {renderInput("Email Address", email, setEmail, step1Errors.email, {
+          type: "email",
+          placeholder: "you@example.com",
+          inputMode: "email",
+        })}
+        {renderInput("Password", password, setPassword, step1Errors.password, {
+          type: "password",
+          placeholder: "Minimum 8 characters",
+        })}
+        {renderInput("Phone Number", phone, setPhone, step1Errors.phone, {
+          type: "tel",
+          placeholder: "03XX XXXXXXX",
+          inputMode: "tel",
+        })}
+        {renderInput("CNIC Number", cnic, setCnic, step1Errors.cnic, {
+          placeholder: "XXXXX-XXXXXXX-X",
+          maxLength: 15,
+          inputMode: "numeric",
+        })}
+        {renderInput("Driving License Number", drivingLicense, setDrivingLicense, step1Errors.drivingLicense, {
+          placeholder: "Your driving license number",
+        })}
+        {renderInput("Vehicle Plate Number", vehiclePlate, setVehiclePlate, step1Errors.vehiclePlate, {
+          placeholder: "e.g. LEA-1234",
+        })}
+
+        {apiError && (
+          <div
+            className="px-4 py-3 rounded-xl text-sm"
+            style={{ background: "var(--hubb-error-bg)", color: "var(--hubb-error)" }}
+          >
+            {apiError}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full py-3.5 rounded-xl font-bold text-white text-sm transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ background: "var(--hubb-accent)" }}
+        >
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              Creating account...
+            </span>
+          ) : (
+            "Continue"
+          )}
+        </button>
+      </form>
+    );
+  }
+
+  function renderStep2() {
+    return (
+      <form onSubmit={handleStep2Submit} className="space-y-4">
+        <h3 className="text-lg font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+          Vehicle & Payout Details
+        </h3>
+        <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
+          Tell us about your vehicle and how you want to get paid.
+        </p>
+
+        {/* Vehicle Type */}
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+            Vehicle Type
+          </label>
+          <div className="flex gap-3">
+            {[
+              { value: "motorcycle", label: "Motorcycle" },
+              { value: "bicycle", label: "Bicycle" },
+              { value: "car", label: "Car" },
+            ].map((opt) => (
+              <label
+                key={opt.value}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+                style={{
+                  background: vehicleType === opt.value ? "var(--hubb-tint)" : "var(--bg-search)",
+                  border: vehicleType === opt.value ? "1.5px solid var(--hubb-accent)" : "1.5px solid var(--border-default)",
+                  color: vehicleType === opt.value ? "var(--hubb-accent)" : "var(--text-secondary)",
+                }}
+              >
+                <input
+                  type="radio"
+                  name="vehicleType"
+                  value={opt.value}
+                  checked={vehicleType === opt.value}
+                  onChange={(e) => setVehicleType(e.target.value)}
+                  className="sr-only"
+                />
+                {opt.label}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {renderInput("Vehicle Color", vehicleColor, setVehicleColor, step2Errors.vehicleColor, {
+          placeholder: "e.g. Red, Black, White",
+        })}
+        {renderInput("City", city, setCity, step2Errors.city, {
+          placeholder: "e.g. Islamabad, Lahore, Karachi",
+        })}
+
+        {/* Payout Method */}
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+            Payout Method
+          </label>
+          <div className="flex gap-3">
+            {[
+              { value: "bank" as PayoutMethod, label: "Bank Account" },
+              { value: "jazzcash" as PayoutMethod, label: "JazzCash" },
+              { value: "easypaisa" as PayoutMethod, label: "Easypaisa" },
+            ].map((opt) => (
+              <label
+                key={opt.value}
+                className="flex-1 flex items-center justify-center px-3 py-3 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+                style={{
+                  background: payoutMethod === opt.value ? "var(--hubb-tint)" : "var(--bg-search)",
+                  border: payoutMethod === opt.value ? "1.5px solid var(--hubb-accent)" : "1.5px solid var(--border-default)",
+                  color: payoutMethod === opt.value ? "var(--hubb-accent)" : "var(--text-secondary)",
+                }}
+              >
+                <input
+                  type="radio"
+                  name="payoutMethod"
+                  value={opt.value}
+                  checked={payoutMethod === opt.value}
+                  onChange={(e) => setPayoutMethod(e.target.value as PayoutMethod)}
+                  className="sr-only"
+                />
+                {opt.label}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Payout fields conditional on method */}
+        {payoutMethod === "bank" && (
+          <>
+            {renderInput("Bank Name", bankName, setBankName, step2Errors.bankName, {
+              placeholder: "e.g. HBL, Meezan, UBL",
+            })}
+            {renderInput("Account Number / IBAN", accountNumber, setAccountNumber, step2Errors.accountNumber, {
+              placeholder: "Your bank account or IBAN",
+            })}
+          </>
+        )}
+        {payoutMethod === "jazzcash" && (
+          renderInput("JazzCash Wallet Number", jazzCashWallet, setJazzCashWallet, step2Errors.jazzCashWallet, {
+            type: "tel",
+            placeholder: "03XX XXXXXXX",
+            inputMode: "tel",
+          })
+        )}
+        {payoutMethod === "easypaisa" && (
+          renderInput("Easypaisa Wallet Number", easypaisaWallet, setEasypaisaWallet, step2Errors.easypaisaWallet, {
+            type: "tel",
+            placeholder: "03XX XXXXXXX",
+            inputMode: "tel",
+          })
+        )}
+
+        {apiError && (
+          <div
+            className="px-4 py-3 rounded-xl text-sm"
+            style={{ background: "var(--hubb-error-bg)", color: "var(--hubb-error)" }}
+          >
+            {apiError}
+          </div>
+        )}
+
+        <div className="flex gap-3 pt-2">
+          <button
+            type="button"
+            onClick={() => { setFormStep(1); setApiError(""); }}
+            className="flex-1 py-3.5 rounded-xl font-bold text-sm transition-all hover:opacity-80"
+            style={{
+              background: "var(--bg-search)",
+              color: "var(--text-secondary)",
+              border: "1.5px solid var(--border-default)",
+            }}
+          >
+            Back
+          </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex-[2] py-3.5 rounded-xl font-bold text-white text-sm transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ background: "var(--hubb-accent)" }}
+          >
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Submitting...
+              </span>
+            ) : (
+              "Submit Application"
+            )}
+          </button>
+        </div>
+      </form>
+    );
+  }
+
+  function renderStep3() {
+    return (
+      <div className="text-center py-4">
+        <div
+          className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
+          style={{ background: "var(--hubb-tint)" }}
+        >
+          <svg className="w-8 h-8" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h3 className="text-xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
+          Application Submitted!
+        </h3>
+        <p className="text-sm mb-4 max-w-sm mx-auto" style={{ color: "var(--text-secondary)" }}>
+          {verificationMessage}
+        </p>
+        <div
+          className="inline-block px-4 py-2 rounded-full text-xs font-bold mb-6"
+          style={{ background: "var(--hubb-tint)", color: "var(--hubb-accent)" }}
+        >
+          Status: {verificationStatus.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+        </div>
+        <div
+          className="rounded-xl p-5 text-left space-y-3"
+          style={{ background: "var(--bg-search)", border: "1.5px solid var(--border-default)" }}
+        >
+          <h4 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
+            Next Steps
+          </h4>
+          <div className="space-y-2">
+            {[
+              "Download the HUBB Rider app from the App Store or Google Play.",
+              "Sign in with the email and password you just used.",
+              "Upload your documents (CNIC, driving license, vehicle registration, selfie) in the app.",
+              "Our team will review your application within 24-48 hours.",
+            ].map((step, i) => (
+              <div key={i} className="flex gap-2.5 items-start">
+                <span
+                  className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5"
+                  style={{ background: "var(--hubb-accent)", color: "white" }}
+                >
+                  {i + 1}
+                </span>
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                  {step}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ background: "var(--bg-secondary)" }} className="min-h-screen">
       {/* Hero */}
@@ -68,7 +602,8 @@ export default function PartnerRidersPage() {
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <a
-                href="mailto:riders@hubb.pk?subject=Rider%20Application"
+                href="#apply"
+                onClick={scrollToApply}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{ background: "var(--hubb-accent)" }}
               >
@@ -103,6 +638,28 @@ export default function PartnerRidersPage() {
               <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>{s.label}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Application Form */}
+      <section id="apply" className="scroll-mt-20 mx-auto max-w-xl px-4 sm:px-6 lg:px-8 py-16">
+        <div className="animate-fade-up">
+          <h2 className="text-xl sm:text-2xl font-bold text-center mb-2" style={{ color: "var(--text-primary)" }}>
+            Apply to ride with HUBB
+          </h2>
+          <p className="text-sm text-center mb-8" style={{ color: "var(--text-secondary)" }}>
+            Complete the form below to get started. It only takes a few minutes.
+          </p>
+
+          <div
+            className="rounded-2xl p-6 sm:p-8"
+            style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-lg)" }}
+          >
+            {renderStepIndicator()}
+            {formStep === 1 && renderStep1()}
+            {formStep === 2 && renderStep2()}
+            {formStep === 3 && renderStep3()}
+          </div>
         </div>
       </section>
 
@@ -196,7 +753,8 @@ export default function PartnerRidersPage() {
               Join thousands of riders earning on their own terms with HUBB.
             </p>
             <a
-              href="mailto:riders@hubb.pk?subject=Rider%20Application"
+              href="#apply"
+              onClick={scrollToApply}
               className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
               style={{ background: "white", color: "var(--hubb-accent)" }}
             >

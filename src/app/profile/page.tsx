@@ -24,6 +24,7 @@ export default function ProfilePage() {
   const [editName, setEditName] = useState("");
   const [editPhone, setEditPhone] = useState("");
   const [saving, setSaving] = useState(false);
+  const [prefs, setPrefs] = useState({ push: true, email: true, sms: true });
 
   if (!isLoggedIn) {
     return (
@@ -380,9 +381,9 @@ export default function ProfilePage() {
             <h2 className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>Preferences</h2>
           </div>
           {[
-            { label: "Push Notifications", description: "Order updates, promos, and deals" },
-            { label: "Email Updates", description: "Weekly deals and restaurant picks" },
-            { label: "SMS Alerts", description: "Delivery and order status texts" },
+            { label: "Push Notifications", description: "Order updates, promos, and deals", key: "push" as const },
+            { label: "Email Updates", description: "Weekly deals and restaurant picks", key: "email" as const },
+            { label: "SMS Alerts", description: "Delivery and order status texts", key: "sms" as const },
           ].map((pref) => (
             <div
               key={pref.label}
@@ -393,14 +394,22 @@ export default function ProfilePage() {
                 <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{pref.label}</p>
                 <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>{pref.description}</p>
               </div>
-              <div
+              <button
+                onClick={() => {
+                  setPrefs((p) => ({ ...p, [pref.key]: !p[pref.key] }));
+                  showToast(`${pref.label} ${prefs[pref.key] ? "disabled" : "enabled"}`);
+                }}
                 className="w-11 h-6 rounded-full relative cursor-pointer transition-colors"
-                style={{ background: "var(--hubb-accent)" }}
+                style={{ background: prefs[pref.key] ? "var(--hubb-accent)" : "var(--border-default)" }}
+                role="switch"
+                aria-checked={prefs[pref.key]}
+                aria-label={pref.label}
               >
                 <div
-                  className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform"
+                  className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-all"
+                  style={{ left: prefs[pref.key] ? "calc(100% - 22px)" : "2px" }}
                 />
-              </div>
+              </button>
             </div>
           ))}
         </div>

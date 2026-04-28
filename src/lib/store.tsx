@@ -71,6 +71,7 @@ interface AuthContextType {
     password: string,
     phone: string
   ) => Promise<void>;
+  googleLogin: (idToken: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -81,6 +82,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   login: async () => {},
   signup: async () => {},
+  googleLogin: async () => {},
   logout: () => {},
   refreshUser: async () => {},
 });
@@ -273,6 +275,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const googleLogin = useCallback(async (idToken: string) => {
+    const { user: u } = await api.googleSignIn(idToken);
+    setUser(u);
+  }, []);
+
   const logout = useCallback(() => {
     api.signOut();
     setUser(null);
@@ -317,6 +324,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         loading: authLoading,
         login,
         signup,
+        googleLogin,
         logout,
         refreshUser,
       }}

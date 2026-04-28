@@ -220,15 +220,16 @@ export default function TrackingPage() {
                   <p className="text-sm font-semibold text-white">{tracking.riderName}</p>
                   <p className="text-xs text-white/50">Your delivery rider</p>
                 </div>
-                <button
-                  className="w-9 h-9 rounded-full flex items-center justify-center"
+                <a
+                  href={`mailto:support@hubb.pk?subject=Contact Rider — Order ${id}&body=Order ID: ${id}%0ARider: ${tracking?.riderName || ""}%0A%0APlease describe your issue:`}
+                  className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95"
                   style={{ background: "rgba(255,255,255,0.15)" }}
-                  aria-label="Contact rider"
+                  aria-label="Contact support about your rider"
                 >
                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
-                </button>
+                </a>
               </div>
             )}
             <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-10 blur-2xl" style={{ background: "var(--hubb-accent)" }} />

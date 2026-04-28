@@ -1,6 +1,8 @@
 "use client";
 
+import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
+import * as api from "@/lib/api";
 
 const STATS = [
   { value: "10,000+", label: "Active customers" },
@@ -47,7 +49,696 @@ const FAQ = [
   { q: "Can I pause my listing?", a: "Yes. You can temporarily mark your restaurant as closed from the dashboard at any time." },
 ];
 
+const CITIES = ["Islamabad", "Rawalpindi", "Lahore", "Karachi", "Faisalabad", "Peshawar"];
+
+const CUISINES = [
+  "Pakistani",
+  "Fast Food",
+  "Chinese",
+  "BBQ",
+  "Desi",
+  "Biryani",
+  "Continental",
+  "Desserts",
+  "Cafe",
+  "Other",
+];
+
+const INTEGRATION_TYPES = [
+  { value: "APP", label: "Restaurant App", desc: "Manage orders through the HUBB Restaurant mobile app" },
+  { value: "WEB", label: "Web Dashboard", desc: "Use the browser-based restaurant dashboard" },
+  { value: "POS", label: "POS Integration", desc: "Connect your existing POS system via API" },
+];
+
+const HOURS = Array.from({ length: 24 }, (_, i) => {
+  const h = i.toString().padStart(2, "0");
+  return `${h}:00`;
+});
+
+function getPasswordStrength(pw: string): { label: string; color: string; width: string } {
+  if (pw.length < 8) return { label: "Too short", color: "var(--hubb-error)", width: "20%" };
+  let score = 0;
+  if (/[a-z]/.test(pw)) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^a-zA-Z0-9]/.test(pw)) score++;
+  if (pw.length >= 12) score++;
+  if (score <= 2) return { label: "Weak", color: "var(--hubb-orange)", width: "33%" };
+  if (score <= 3) return { label: "Fair", color: "#E5A100", width: "66%" };
+  return { label: "Strong", color: "var(--hubb-accent)", width: "100%" };
+}
+
+type FormData = {
+  partnerName: string;
+  email: string;
+  password: string;
+  phone: string;
+  restaurantName: string;
+  address: string;
+  city: string;
+  sector: string;
+  cuisineType: string;
+  integrationType: string;
+  openTime: string;
+  closeTime: string;
+  deliveryRadiusKm: number;
+};
+
+type FieldErrors = Partial<Record<keyof FormData, string>>;
+
+type SuccessData = {
+  restaurantName: string;
+  partnerId: string;
+  message: string;
+};
+
 export default function PartnerRestaurantsPage() {
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState<FormData>({
+    partnerName: "",
+    email: "",
+    password: "",
+    phone: "",
+    restaurantName: "",
+    address: "",
+    city: "",
+    sector: "",
+    cuisineType: "",
+    integrationType: "APP",
+    openTime: "09:00",
+    closeTime: "23:00",
+    deliveryRadiusKm: 5,
+  });
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
+  const [emailChecking, setEmailChecking] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [apiError, setApiError] = useState("");
+  const [successData, setSuccessData] = useState<SuccessData | null>(null);
+
+  const emailCheckTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const updateField = useCallback(
+    <K extends keyof FormData>(key: K, value: FormData[K]) => {
+      setForm((prev) => ({ ...prev, [key]: value }));
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+    },
+    []
+  );
+
+  const checkEmail = useCallback((email: string) => {
+    if (emailCheckTimer.current) clearTimeout(emailCheckTimer.current);
+    setEmailAvailable(null);
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+    setEmailChecking(true);
+    emailCheckTimer.current = setTimeout(async () => {
+      try {
+        const res = await api.checkRestaurantEmail(email);
+        setEmailAvailable(res.available);
+        if (!res.available) {
+          setErrors((prev) => ({ ...prev, email: "This email is already registered" }));
+        }
+      } catch {
+        // silently fail — server-side check will catch duplicates
+      } finally {
+        setEmailChecking(false);
+      }
+    }, 600);
+  }, []);
+
+  const validateStep1 = (): boolean => {
+    const errs: FieldErrors = {};
+    if (!form.partnerName.trim()) errs.partnerName = "Full name is required";
+    if (!form.email.trim()) {
+      errs.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      errs.email = "Enter a valid email address";
+    } else if (emailAvailable === false) {
+      errs.email = "This email is already registered";
+    }
+    if (!form.password) {
+      errs.password = "Password is required";
+    } else if (form.password.length < 8) {
+      errs.password = "Password must be at least 8 characters";
+    }
+    if (!form.phone.trim()) {
+      errs.phone = "Phone number is required";
+    } else if (form.phone.replace(/\D/g, "").length < 10) {
+      errs.phone = "Enter a valid phone number (10+ digits)";
+    }
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const validateStep2 = (): boolean => {
+    const errs: FieldErrors = {};
+    if (!form.restaurantName.trim()) errs.restaurantName = "Restaurant name is required";
+    if (!form.address.trim()) errs.address = "Address is required";
+    if (!form.city) errs.city = "Select a city";
+    if (!form.sector.trim()) errs.sector = "Sector/area is required";
+    if (!form.cuisineType) errs.cuisineType = "Select a cuisine type";
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const handleNext = () => {
+    if (step === 1 && validateStep1()) {
+      setStep(2);
+    }
+  };
+
+  const handleBack = () => {
+    if (step === 2) setStep(1);
+  };
+
+  const handleSubmit = async () => {
+    if (!validateStep2()) return;
+    setSubmitting(true);
+    setApiError("");
+    try {
+      const res = await api.restaurantOnboarding({
+        partnerName: form.partnerName.trim(),
+        email: form.email.trim().toLowerCase(),
+        password: form.password,
+        phone: form.phone.replace(/\D/g, ""),
+        restaurantName: form.restaurantName.trim(),
+        address: form.address.trim(),
+        city: form.city,
+        sector: form.sector.trim(),
+        cuisineType: form.cuisineType,
+        integrationType: form.integrationType,
+        openHours: { open: form.openTime, close: form.closeTime },
+        deliveryRadiusKm: form.deliveryRadiusKm,
+      });
+      setSuccessData({
+        restaurantName: res.data.restaurantName,
+        partnerId: res.data.partnerId,
+        message: res.message,
+      });
+      setStep(3);
+    } catch (err: any) {
+      if (err?.status === 409) {
+        setApiError("An account with this email already exists. Please use a different email.");
+      } else if (err?.status === 400) {
+        setApiError(err.message || "Please check your details and try again.");
+      } else {
+        setApiError(err?.message || "Something went wrong. Please try again later.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const passwordStrength = getPasswordStrength(form.password);
+
+  const inputStyle = (field?: keyof FormData) => ({
+    background: "var(--bg-search)",
+    border: `1.5px solid ${errors[field!] ? "var(--hubb-orange)" : "var(--border-default)"}`,
+    color: "var(--text-primary)",
+    outline: "none",
+  });
+
+  const labelStyle = { color: "var(--text-secondary)" };
+
+  const renderStepIndicator = () => (
+    <div className="flex items-center justify-center gap-3 mb-8">
+      {[1, 2, 3].map((s) => (
+        <div key={s} className="flex items-center gap-3">
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all"
+            style={{
+              background: step >= s ? "var(--hubb-accent)" : "var(--bg-search)",
+              color: step >= s ? "white" : "var(--text-tertiary)",
+              border: step >= s ? "none" : "1.5px solid var(--border-default)",
+            }}
+          >
+            {step > s ? (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+              </svg>
+            ) : (
+              s
+            )}
+          </div>
+          {s < 3 && (
+            <div
+              className="w-12 sm:w-20 h-0.5 rounded-full"
+              style={{ background: step > s ? "var(--hubb-accent)" : "var(--border-default)" }}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderStep1 = () => (
+    <div className="space-y-5 animate-fade-up">
+      <div className="text-center mb-6">
+        <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>
+          Partner Information
+        </h3>
+        <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
+          Tell us about yourself
+        </p>
+      </div>
+
+      {/* Partner Name */}
+      <div>
+        <label className="block text-xs font-medium mb-1.5" style={labelStyle}>
+          Full Name <span style={{ color: "var(--hubb-orange)" }}>*</span>
+        </label>
+        <input
+          type="text"
+          placeholder="e.g. Ahmed Khan"
+          value={form.partnerName}
+          onChange={(e) => updateField("partnerName", e.target.value)}
+          className="w-full px-4 py-3 rounded-xl text-sm transition-colors focus:ring-0"
+          style={inputStyle("partnerName")}
+        />
+        {errors.partnerName && (
+          <p className="text-xs mt-1" style={{ color: "var(--hubb-orange)" }}>{errors.partnerName}</p>
+        )}
+      </div>
+
+      {/* Email */}
+      <div>
+        <label className="block text-xs font-medium mb-1.5" style={labelStyle}>
+          Email Address <span style={{ color: "var(--hubb-orange)" }}>*</span>
+        </label>
+        <div className="relative">
+          <input
+            type="email"
+            placeholder="you@example.com"
+            value={form.email}
+            onChange={(e) => {
+              updateField("email", e.target.value);
+              setEmailAvailable(null);
+            }}
+            onBlur={() => checkEmail(form.email)}
+            className="w-full px-4 py-3 rounded-xl text-sm pr-10 transition-colors focus:ring-0"
+            style={inputStyle("email")}
+          />
+          {emailChecking && (
+            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+              <div
+                className="w-4 h-4 border-2 rounded-full animate-spin"
+                style={{ borderColor: "var(--border-default)", borderTopColor: "var(--hubb-accent)" }}
+              />
+            </div>
+          )}
+          {!emailChecking && emailAvailable === true && (
+            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+              <svg className="w-5 h-5" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          )}
+          {!emailChecking && emailAvailable === false && (
+            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+              <svg className="w-5 h-5" style={{ color: "var(--hubb-orange)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+          )}
+        </div>
+        {errors.email && (
+          <p className="text-xs mt-1" style={{ color: "var(--hubb-orange)" }}>{errors.email}</p>
+        )}
+      </div>
+
+      {/* Password */}
+      <div>
+        <label className="block text-xs font-medium mb-1.5" style={labelStyle}>
+          Password <span style={{ color: "var(--hubb-orange)" }}>*</span>
+        </label>
+        <input
+          type="password"
+          placeholder="Min. 8 characters"
+          value={form.password}
+          onChange={(e) => updateField("password", e.target.value)}
+          className="w-full px-4 py-3 rounded-xl text-sm transition-colors focus:ring-0"
+          style={inputStyle("password")}
+        />
+        {form.password.length > 0 && (
+          <div className="mt-2">
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "var(--bg-search)" }}>
+                <div
+                  className="h-full rounded-full transition-all duration-300"
+                  style={{ width: passwordStrength.width, background: passwordStrength.color }}
+                />
+              </div>
+              <span className="text-xs font-medium" style={{ color: passwordStrength.color }}>
+                {passwordStrength.label}
+              </span>
+            </div>
+          </div>
+        )}
+        {errors.password && (
+          <p className="text-xs mt-1" style={{ color: "var(--hubb-orange)" }}>{errors.password}</p>
+        )}
+      </div>
+
+      {/* Phone */}
+      <div>
+        <label className="block text-xs font-medium mb-1.5" style={labelStyle}>
+          Phone Number <span style={{ color: "var(--hubb-orange)" }}>*</span>
+        </label>
+        <div className="flex">
+          <div
+            className="flex items-center gap-1.5 px-3 py-3 rounded-l-xl text-sm font-medium shrink-0"
+            style={{
+              background: "var(--bg-search)",
+              border: "1.5px solid var(--border-default)",
+              borderRight: "none",
+              color: "var(--text-secondary)",
+            }}
+          >
+            <span>🇵🇰</span>
+            <span>+92</span>
+          </div>
+          <input
+            type="tel"
+            placeholder="3XX XXXXXXX"
+            value={form.phone}
+            onChange={(e) => updateField("phone", e.target.value.replace(/[^0-9\s-]/g, ""))}
+            className="w-full px-4 py-3 rounded-r-xl text-sm transition-colors focus:ring-0"
+            style={{
+              ...inputStyle("phone"),
+              borderLeft: "none",
+              borderTopLeftRadius: 0,
+              borderBottomLeftRadius: 0,
+            }}
+          />
+        </div>
+        {errors.phone && (
+          <p className="text-xs mt-1" style={{ color: "var(--hubb-orange)" }}>{errors.phone}</p>
+        )}
+      </div>
+
+      <button
+        onClick={handleNext}
+        className="w-full px-6 py-3.5 rounded-xl font-bold text-white text-sm transition-all hover:scale-[1.01] active:scale-[0.99]"
+        style={{ background: "var(--hubb-accent)" }}
+      >
+        Continue
+      </button>
+    </div>
+  );
+
+  const renderStep2 = () => (
+    <div className="space-y-5 animate-fade-up">
+      <div className="text-center mb-6">
+        <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>
+          Restaurant Details
+        </h3>
+        <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
+          Tell us about your restaurant
+        </p>
+      </div>
+
+      {/* Restaurant Name */}
+      <div>
+        <label className="block text-xs font-medium mb-1.5" style={labelStyle}>
+          Restaurant Name <span style={{ color: "var(--hubb-orange)" }}>*</span>
+        </label>
+        <input
+          type="text"
+          placeholder="e.g. Karachi Broast"
+          value={form.restaurantName}
+          onChange={(e) => updateField("restaurantName", e.target.value)}
+          className="w-full px-4 py-3 rounded-xl text-sm transition-colors focus:ring-0"
+          style={inputStyle("restaurantName")}
+        />
+        {errors.restaurantName && (
+          <p className="text-xs mt-1" style={{ color: "var(--hubb-orange)" }}>{errors.restaurantName}</p>
+        )}
+      </div>
+
+      {/* Address */}
+      <div>
+        <label className="block text-xs font-medium mb-1.5" style={labelStyle}>
+          Address <span style={{ color: "var(--hubb-orange)" }}>*</span>
+        </label>
+        <input
+          type="text"
+          placeholder="Full street address"
+          value={form.address}
+          onChange={(e) => updateField("address", e.target.value)}
+          className="w-full px-4 py-3 rounded-xl text-sm transition-colors focus:ring-0"
+          style={inputStyle("address")}
+        />
+        {errors.address && (
+          <p className="text-xs mt-1" style={{ color: "var(--hubb-orange)" }}>{errors.address}</p>
+        )}
+      </div>
+
+      {/* City + Sector */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-medium mb-1.5" style={labelStyle}>
+            City <span style={{ color: "var(--hubb-orange)" }}>*</span>
+          </label>
+          <select
+            value={form.city}
+            onChange={(e) => updateField("city", e.target.value)}
+            className="w-full px-4 py-3 rounded-xl text-sm transition-colors focus:ring-0 appearance-none"
+            style={inputStyle("city")}
+          >
+            <option value="">Select city</option>
+            {CITIES.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          {errors.city && (
+            <p className="text-xs mt-1" style={{ color: "var(--hubb-orange)" }}>{errors.city}</p>
+          )}
+        </div>
+        <div>
+          <label className="block text-xs font-medium mb-1.5" style={labelStyle}>
+            Sector / Area <span style={{ color: "var(--hubb-orange)" }}>*</span>
+          </label>
+          <input
+            type="text"
+            placeholder="e.g. F-7, DHA Phase 5"
+            value={form.sector}
+            onChange={(e) => updateField("sector", e.target.value)}
+            className="w-full px-4 py-3 rounded-xl text-sm transition-colors focus:ring-0"
+            style={inputStyle("sector")}
+          />
+          {errors.sector && (
+            <p className="text-xs mt-1" style={{ color: "var(--hubb-orange)" }}>{errors.sector}</p>
+          )}
+        </div>
+      </div>
+
+      {/* Cuisine Type */}
+      <div>
+        <label className="block text-xs font-medium mb-1.5" style={labelStyle}>
+          Cuisine Type <span style={{ color: "var(--hubb-orange)" }}>*</span>
+        </label>
+        <select
+          value={form.cuisineType}
+          onChange={(e) => updateField("cuisineType", e.target.value)}
+          className="w-full px-4 py-3 rounded-xl text-sm transition-colors focus:ring-0 appearance-none"
+          style={inputStyle("cuisineType")}
+        >
+          <option value="">Select cuisine</option>
+          {CUISINES.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+        {errors.cuisineType && (
+          <p className="text-xs mt-1" style={{ color: "var(--hubb-orange)" }}>{errors.cuisineType}</p>
+        )}
+      </div>
+
+      {/* Integration Type */}
+      <div>
+        <label className="block text-xs font-medium mb-1.5" style={labelStyle}>
+          Integration Type
+        </label>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          {INTEGRATION_TYPES.map((it) => (
+            <button
+              key={it.value}
+              type="button"
+              onClick={() => updateField("integrationType", it.value)}
+              className="text-left rounded-xl p-3 transition-all"
+              style={{
+                background: form.integrationType === it.value ? "var(--hubb-tint)" : "var(--bg-search)",
+                border: `1.5px solid ${form.integrationType === it.value ? "var(--hubb-accent)" : "var(--border-default)"}`,
+              }}
+            >
+              <p
+                className="text-sm font-semibold"
+                style={{ color: form.integrationType === it.value ? "var(--hubb-accent)" : "var(--text-primary)" }}
+              >
+                {it.label}
+              </p>
+              <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>
+                {it.desc}
+              </p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Opening Hours */}
+      <div>
+        <label className="block text-xs font-medium mb-1.5" style={labelStyle}>
+          Opening Hours
+        </label>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs mb-1" style={{ color: "var(--text-tertiary)" }}>Open</label>
+            <select
+              value={form.openTime}
+              onChange={(e) => updateField("openTime", e.target.value)}
+              className="w-full px-4 py-3 rounded-xl text-sm transition-colors focus:ring-0 appearance-none"
+              style={inputStyle()}
+            >
+              {HOURS.map((h) => (
+                <option key={`open-${h}`} value={h}>{h}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs mb-1" style={{ color: "var(--text-tertiary)" }}>Close</label>
+            <select
+              value={form.closeTime}
+              onChange={(e) => updateField("closeTime", e.target.value)}
+              className="w-full px-4 py-3 rounded-xl text-sm transition-colors focus:ring-0 appearance-none"
+              style={inputStyle()}
+            >
+              {HOURS.map((h) => (
+                <option key={`close-${h}`} value={h}>{h}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Delivery Radius */}
+      <div>
+        <label className="block text-xs font-medium mb-1.5" style={labelStyle}>
+          Delivery Radius: <span style={{ color: "var(--hubb-accent)" }}>{form.deliveryRadiusKm} km</span>
+        </label>
+        <input
+          type="range"
+          min={1}
+          max={15}
+          step={1}
+          value={form.deliveryRadiusKm}
+          onChange={(e) => updateField("deliveryRadiusKm", Number(e.target.value))}
+          className="w-full h-2 rounded-full appearance-none cursor-pointer"
+          style={{ accentColor: "var(--hubb-accent)", background: "var(--bg-search)" }}
+        />
+        <div className="flex justify-between mt-1">
+          <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>1 km</span>
+          <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>15 km</span>
+        </div>
+      </div>
+
+      {/* API Error */}
+      {apiError && (
+        <div
+          className="rounded-xl px-4 py-3 text-sm"
+          style={{ background: "var(--hubb-error-bg)", color: "var(--hubb-error)" }}
+        >
+          {apiError}
+        </div>
+      )}
+
+      {/* Buttons */}
+      <div className="flex gap-3">
+        <button
+          onClick={handleBack}
+          className="px-6 py-3.5 rounded-xl font-semibold text-sm transition-all"
+          style={{
+            background: "var(--bg-search)",
+            color: "var(--text-secondary)",
+            border: "1.5px solid var(--border-default)",
+          }}
+        >
+          Back
+        </button>
+        <button
+          onClick={handleSubmit}
+          disabled={submitting}
+          className="flex-1 px-6 py-3.5 rounded-xl font-bold text-white text-sm transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
+          style={{ background: "var(--hubb-accent)" }}
+        >
+          {submitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <div
+                className="w-4 h-4 border-2 rounded-full animate-spin"
+                style={{ borderColor: "rgba(255,255,255,0.3)", borderTopColor: "white" }}
+              />
+              Submitting...
+            </span>
+          ) : (
+            "Submit Application"
+          )}
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderStep3 = () => (
+    <div className="text-center animate-fade-up py-4">
+      <div
+        className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
+        style={{ background: "var(--hubb-tint)" }}
+      >
+        <svg className="w-8 h-8" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <h3 className="text-xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
+        Application Submitted!
+      </h3>
+      {successData && (
+        <>
+          <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
+            {successData.message}
+          </p>
+          <div
+            className="rounded-xl p-5 text-left space-y-3 mb-6"
+            style={{ background: "var(--bg-search)", border: "1.5px solid var(--border-default)" }}
+          >
+            <div className="flex justify-between items-center">
+              <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>Restaurant</span>
+              <span className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                {successData.restaurantName}
+              </span>
+            </div>
+            <div
+              className="border-t"
+              style={{ borderColor: "var(--border-subtle)" }}
+            />
+            <div className="flex justify-between items-center">
+              <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>Partner ID</span>
+              <span className="text-sm font-mono font-semibold" style={{ color: "var(--hubb-accent)" }}>
+                {successData.partnerId}
+              </span>
+            </div>
+          </div>
+          <div
+            className="rounded-xl px-4 py-3 text-sm text-left"
+            style={{ background: "var(--hubb-tint)", color: "var(--hubb-accent)" }}
+          >
+            Your listing is under review and will be activated within 1-3 business days. Download the HUBB Restaurant app to manage your orders.
+          </div>
+        </>
+      )}
+    </div>
+  );
+
   return (
     <div style={{ background: "var(--bg-secondary)" }} className="min-h-screen">
       {/* Hero */}
@@ -70,7 +761,7 @@ export default function PartnerRestaurantsPage() {
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <a
-                href="mailto:partners@hubb.pk?subject=Restaurant%20Partnership%20Inquiry"
+                href="#apply"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{ background: "var(--hubb-accent)" }}
               >
@@ -105,6 +796,27 @@ export default function PartnerRestaurantsPage() {
               <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>{s.label}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Application Form */}
+      <section id="apply" className="scroll-mt-20 mx-auto max-w-xl px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
+            Apply to become a partner
+          </h2>
+          <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>
+            Fill out the form below and we&apos;ll get you started
+          </p>
+        </div>
+        <div
+          className="rounded-2xl p-6 sm:p-8"
+          style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-lg)" }}
+        >
+          {renderStepIndicator()}
+          {step === 1 && renderStep1()}
+          {step === 2 && renderStep2()}
+          {step === 3 && renderStep3()}
         </div>
       </section>
 
@@ -198,7 +910,7 @@ export default function PartnerRestaurantsPage() {
               Join hundreds of restaurant partners already thriving on HUBB.
             </p>
             <a
-              href="mailto:partners@hubb.pk?subject=Restaurant%20Partnership%20Inquiry"
+              href="#apply"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
               style={{ background: "white", color: "var(--hubb-accent)" }}
             >
