@@ -347,7 +347,7 @@ function LandingPage() {
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight">
               Food delivery in
               <br />
-              <span className="gradient-text">Islamabad</span>
+              <span style={{ color: "#FFD700" }}>Islamabad</span>
             </h1>
             <p className="mt-4 text-base sm:text-lg text-white/60 max-w-xl mx-auto">Rs. 0 delivery fee on your first order. Your favorite restaurants, delivered fast.</p>
 
