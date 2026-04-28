@@ -21,6 +21,7 @@ export default function RestaurantDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [specialInstructions, setSpecialInstructions] = useState("");
   const [menuSearch, setMenuSearch] = useState("");
+  const [showStoreInfo, setShowStoreInfo] = useState(false);
   const { cart, subtotal, itemCount, addItem } = useCart();
   const { showToast } = useToast();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -253,6 +254,93 @@ export default function RestaurantDetailPage() {
           </div>
         </div>
       )}
+
+      {/* Store Info */}
+      <div
+        className="border-b"
+        style={{ background: "var(--bg-card)", borderColor: "var(--border-default)" }}
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <button
+            onClick={() => setShowStoreInfo(!showStoreInfo)}
+            className="w-full flex items-center justify-between py-3 text-sm font-semibold"
+            style={{ color: "var(--text-primary)" }}
+          >
+            <span className="flex items-center gap-2">
+              <svg className="w-4 h-4" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              More info
+            </span>
+            <svg
+              className="w-4 h-4 transition-transform"
+              style={{ color: "var(--text-tertiary)", transform: showStoreInfo ? "rotate(180deg)" : "rotate(0deg)" }}
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          {showStoreInfo && (
+            <div className="pb-4 space-y-3 animate-fade-up">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="rounded-xl p-3.5" style={{ background: "var(--bg-search)" }}>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <svg className="w-4 h-4" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>Delivery Time</span>
+                  </div>
+                  <p className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{restaurant.deliveryTime}</p>
+                  <p className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>Estimated for your location</p>
+                </div>
+                <div className="rounded-xl p-3.5" style={{ background: "var(--bg-search)" }}>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <svg className="w-4 h-4" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg>
+                    <span className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>Rating</span>
+                  </div>
+                  <p className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{restaurant.rating.toFixed(1)} <span className="font-normal text-xs" style={{ color: "var(--text-tertiary)" }}>({restaurant.reviewCount} reviews)</span></p>
+                </div>
+                <div className="rounded-xl p-3.5" style={{ background: "var(--bg-search)" }}>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <svg className="w-4 h-4" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>Pricing</span>
+                  </div>
+                  <p className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
+                    {restaurant.deliveryFee === 0 ? "Free Delivery" : `Rs. ${restaurant.deliveryFee} delivery`}
+                  </p>
+                  {restaurant.minimumOrder > 0 && (
+                    <p className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>Min. order Rs. {restaurant.minimumOrder}</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {restaurant.cuisine && restaurant.cuisine.split(",").map((c: string) => (
+                  <span
+                    key={c.trim()}
+                    className="px-3 py-1.5 rounded-full text-xs font-medium"
+                    style={{ background: "var(--bg-search)", color: "var(--text-secondary)" }}
+                  >
+                    {c.trim()}
+                  </span>
+                ))}
+                {restaurant.tags && (restaurant.tags as string[]).map((tag: string) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1.5 rounded-full text-xs font-medium"
+                    style={{ background: "var(--hubb-tint)", color: "var(--hubb-green)" }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5">
         <div className="flex gap-8">

@@ -16,9 +16,9 @@ export default function NotFound() {
             className="relative w-40 h-40 rounded-full mx-auto flex items-center justify-center"
             style={{ background: "var(--bg-search)" }}
           >
-            <div className="text-center">
-              <span className="text-5xl">🔍</span>
-            </div>
+            <svg className="w-20 h-20" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
         </div>
         <h1
