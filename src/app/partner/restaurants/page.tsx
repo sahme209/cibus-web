@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import * as api from "@/lib/api";
 
 const STATS = [
@@ -33,12 +34,12 @@ const STEPS = [
 ];
 
 const FEATURES = [
-  { title: "More Customers", desc: "Access a growing network of food lovers looking for quality meals in your area.", icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" },
-  { title: "Easy Management", desc: "Manage orders, update menus, and track performance with our real-time dashboard.", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
-  { title: "Reliable Delivery", desc: "Our trained riders ensure your food reaches customers fresh and on time, every time.", icon: "M13 10V3L4 14h7v7l9-11h-7z" },
-  { title: "Marketing Support", desc: "Get featured in promotions, deals, and curated collections to boost your visibility.", icon: "M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" },
-  { title: "Flexible Payouts", desc: "Weekly settlements directly to your bank account with transparent fee breakdowns.", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
-  { title: "24/7 Support", desc: "Dedicated partner support team available round the clock to resolve any issues quickly.", icon: "M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" },
+  { title: "More Customers", desc: "Access a growing network of food lovers looking for quality meals in your area.", icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z", color: "#007AFF" },
+  { title: "Easy Management", desc: "Manage orders, update menus, and track performance with our real-time dashboard.", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z", color: "#5856D6" },
+  { title: "Reliable Delivery", desc: "Our trained riders ensure your food reaches customers fresh and on time, every time.", icon: "M13 10V3L4 14h7v7l9-11h-7z", color: "#FF3008" },
+  { title: "Marketing Support", desc: "Get featured in promotions, deals, and curated collections to boost your visibility.", icon: "M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z", color: "#FFB347" },
+  { title: "Flexible Payouts", desc: "Weekly settlements directly to your bank account with transparent fee breakdowns.", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z", color: "#00704A" },
+  { title: "24/7 Support", desc: "Dedicated partner support team available round the clock to resolve any issues quickly.", icon: "M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z", color: "#34C759" },
 ];
 
 const FAQ = [
@@ -742,21 +743,31 @@ export default function PartnerRestaurantsPage() {
   return (
     <div style={{ background: "var(--bg-secondary)" }} className="min-h-screen">
       {/* Hero */}
-      <section className="relative overflow-hidden" style={{ background: "var(--hubb-primary)" }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+      <section className="relative overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1920&q=80"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(0,0,0,0.85), rgba(0,60,40,0.8))" }} />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32">
           <div className="max-w-2xl animate-fade-up">
             <span
-              className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-5"
-              style={{ background: "var(--hubb-accent)", color: "white" }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-5"
+              style={{ background: "rgba(0,112,74,0.9)", color: "white" }}
             >
+              <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
               PARTNER WITH US
             </span>
-            <h1 className="text-3xl sm:text-5xl font-bold text-white leading-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
               Grow your restaurant
               <br />
-              <span style={{ color: "var(--hubb-accent)" }}>with HUBB</span>
+              <span style={{ color: "#00D474" }}>with HUBB</span>
             </h1>
-            <p className="mt-5 text-base sm:text-lg text-white/60 max-w-lg">
+            <p className="mt-5 text-base sm:text-lg text-white/60 max-w-lg leading-relaxed">
               Reach thousands of hungry customers in your city. Join HUBB&apos;s restaurant partner network and increase your revenue.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
@@ -773,15 +784,13 @@ export default function PartnerRestaurantsPage() {
               <a
                 href="#how-it-works"
                 className="inline-flex items-center justify-center px-8 py-4 rounded-full text-base font-semibold text-white/80 transition-all hover:text-white"
-                style={{ border: "1px solid rgba(255,255,255,0.2)" }}
+                style={{ border: "1px solid rgba(255,255,255,0.3)" }}
               >
                 Learn more
               </a>
             </div>
           </div>
         </div>
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-15 blur-3xl" style={{ background: "var(--hubb-accent)" }} />
-        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full opacity-10 blur-3xl" style={{ background: "#FFD700" }} />
       </section>
 
       {/* Stats bar */}
@@ -827,9 +836,9 @@ export default function PartnerRestaurantsPage() {
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {FEATURES.map((f) => (
-            <div key={f.title} className="rounded-2xl p-6" style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}>
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ background: "var(--hubb-tint)" }}>
-                <svg className="w-6 h-6" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div key={f.title} className="rounded-2xl p-6 transition-all hover:-translate-y-0.5" style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}>
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style={{ background: `${f.color}15` }}>
+                <svg className="w-6 h-6" style={{ color: f.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={f.icon} />
                 </svg>
               </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import * as api from "@/lib/api";
 
 const STATS = [
@@ -32,12 +33,12 @@ const STEPS = [
 ];
 
 const FEATURES = [
-  { title: "Flexible Hours", desc: "Work when you want. Log in and out of the app at your convenience — no minimum hours required.", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" },
-  { title: "Competitive Pay", desc: "Earn per delivery plus 100% of tips. Bonuses during peak hours and bad weather.", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
-  { title: "Safety First", desc: "Insurance coverage while delivering, in-app SOS button, and safety training for all riders.", icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" },
-  { title: "In-App Navigation", desc: "Built-in turn-by-turn navigation to every restaurant and delivery address.", icon: "M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" },
-  { title: "Weekly Payouts", desc: "Get paid every week directly to your bank or JazzCash/Easypaisa account. No delays.", icon: "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" },
-  { title: "Rider Community", desc: "Join a community of thousands of riders. Access exclusive perks, events, and career growth.", icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" },
+  { title: "Flexible Hours", desc: "Work when you want. Log in and out of the app at your convenience — no minimum hours required.", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z", color: "#5856D6" },
+  { title: "Competitive Pay", desc: "Earn per delivery plus 100% of tips. Bonuses during peak hours and bad weather.", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z", color: "#00704A" },
+  { title: "Safety First", desc: "Insurance coverage while delivering, in-app SOS button, and safety training for all riders.", icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z", color: "#FF3008" },
+  { title: "In-App Navigation", desc: "Built-in turn-by-turn navigation to every restaurant and delivery address.", icon: "M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7", color: "#007AFF" },
+  { title: "Weekly Payouts", desc: "Get paid every week directly to your bank or JazzCash/Easypaisa account. No delays.", icon: "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z", color: "#FFB347" },
+  { title: "Rider Community", desc: "Join a community of thousands of riders. Access exclusive perks, events, and career growth.", icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z", color: "#34C759" },
 ];
 
 const FAQ = [
@@ -602,21 +603,31 @@ export default function PartnerRidersPage() {
   return (
     <div style={{ background: "var(--bg-secondary)" }} className="min-h-screen">
       {/* Hero */}
-      <section className="relative overflow-hidden" style={{ background: "var(--hubb-primary)" }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+      <section className="relative overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=80"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(0,0,0,0.85), rgba(0,60,40,0.8))" }} />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32">
           <div className="max-w-2xl animate-fade-up">
             <span
-              className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-5"
-              style={{ background: "var(--hubb-accent)", color: "white" }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-5"
+              style={{ background: "rgba(0,112,74,0.9)", color: "white" }}
             >
+              <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
               BECOME A RIDER
             </span>
-            <h1 className="text-3xl sm:text-5xl font-bold text-white leading-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
               Deliver with
               <br />
-              <span style={{ color: "var(--hubb-accent)" }}>HUBB</span>
+              <span style={{ color: "#00D474" }}>HUBB</span>
             </h1>
-            <p className="mt-5 text-base sm:text-lg text-white/60 max-w-lg">
+            <p className="mt-5 text-base sm:text-lg text-white/60 max-w-lg leading-relaxed">
               Set your own schedule. Earn competitive pay. Join our growing rider team and start delivering today.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
@@ -634,15 +645,13 @@ export default function PartnerRidersPage() {
               <a
                 href="#how-it-works"
                 className="inline-flex items-center justify-center px-8 py-4 rounded-full text-base font-semibold text-white/80 transition-all hover:text-white"
-                style={{ border: "1px solid rgba(255,255,255,0.2)" }}
+                style={{ border: "1px solid rgba(255,255,255,0.3)" }}
               >
                 Learn more
               </a>
             </div>
           </div>
         </div>
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-15 blur-3xl" style={{ background: "var(--hubb-accent)" }} />
-        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full opacity-10 blur-3xl" style={{ background: "#FFD700" }} />
       </section>
 
       {/* Stats bar */}
@@ -689,9 +698,9 @@ export default function PartnerRidersPage() {
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {FEATURES.map((f) => (
-            <div key={f.title} className="rounded-2xl p-6" style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}>
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ background: "var(--hubb-tint)" }}>
-                <svg className="w-6 h-6" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div key={f.title} className="rounded-2xl p-6 transition-all hover:-translate-y-0.5" style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}>
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style={{ background: `${f.color}15` }}>
+                <svg className="w-6 h-6" style={{ color: f.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={f.icon} />
                 </svg>
               </div>

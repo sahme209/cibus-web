@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import * as api from "@/lib/api";
 
 const STATS = [
@@ -32,12 +33,12 @@ const STEPS = [
 ];
 
 const FEATURES = [
-  { title: "Wider Reach", desc: "Access thousands of customers in your city without the overhead of a physical storefront.", icon: "M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
-  { title: "Quick Onboarding", desc: "Get set up and start selling in as little as 24 hours with our streamlined process.", icon: "M13 10V3L4 14h7v7l9-11h-7z" },
-  { title: "Real-time Analytics", desc: "Track sales, monitor popular items, and optimize your offerings with our live dashboard.", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
-  { title: "Inventory Management", desc: "Mark items in/out of stock in real time. Set operating hours and manage availability.", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" },
-  { title: "Promotional Tools", desc: "Create discounts, featured placements, and bundle deals to attract more customers.", icon: "M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" },
-  { title: "Dedicated Support", desc: "Merchant support team available via chat and phone to help with any issue.", icon: "M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" },
+  { title: "Wider Reach", desc: "Access thousands of customers in your city without the overhead of a physical storefront.", icon: "M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z", color: "#007AFF" },
+  { title: "Quick Onboarding", desc: "Get set up and start selling in as little as 24 hours with our streamlined process.", icon: "M13 10V3L4 14h7v7l9-11h-7z", color: "#FF3008" },
+  { title: "Real-time Analytics", desc: "Track sales, monitor popular items, and optimize your offerings with our live dashboard.", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z", color: "#5856D6" },
+  { title: "Inventory Management", desc: "Mark items in/out of stock in real time. Set operating hours and manage availability.", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01", color: "#00704A" },
+  { title: "Promotional Tools", desc: "Create discounts, featured placements, and bundle deals to attract more customers.", icon: "M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z", color: "#FFB347" },
+  { title: "Dedicated Support", desc: "Merchant support team available via chat and phone to help with any issue.", icon: "M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z", color: "#34C759" },
 ];
 
 const FAQ = [
@@ -192,21 +193,31 @@ export default function PartnerMerchantsPage() {
   return (
     <div style={{ background: "var(--bg-secondary)" }} className="min-h-screen">
       {/* Hero */}
-      <section className="relative overflow-hidden" style={{ background: "var(--hubb-primary)" }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+      <section className="relative overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=1920&q=80"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(0,0,0,0.85), rgba(0,60,40,0.8))" }} />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32">
           <div className="max-w-2xl animate-fade-up">
             <span
-              className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-5"
-              style={{ background: "var(--hubb-accent)", color: "white" }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-5"
+              style={{ background: "rgba(0,112,74,0.9)", color: "white" }}
             >
+              <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
               MERCHANTS
             </span>
-            <h1 className="text-3xl sm:text-5xl font-bold text-white leading-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
               Sell on
               <br />
-              <span style={{ color: "var(--hubb-accent)" }}>HUBB</span>
+              <span style={{ color: "#00D474" }}>HUBB</span>
             </h1>
-            <p className="mt-5 text-base sm:text-lg text-white/60 max-w-lg">
+            <p className="mt-5 text-base sm:text-lg text-white/60 max-w-lg leading-relaxed">
               Expand your reach by listing your products on HUBB. From groceries to essentials, connect with customers who need what you offer.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
@@ -224,15 +235,13 @@ export default function PartnerMerchantsPage() {
               <a
                 href="#how-it-works"
                 className="inline-flex items-center justify-center px-8 py-4 rounded-full text-base font-semibold text-white/80 transition-all hover:text-white"
-                style={{ border: "1px solid rgba(255,255,255,0.2)" }}
+                style={{ border: "1px solid rgba(255,255,255,0.3)" }}
               >
                 Learn more
               </a>
             </div>
           </div>
         </div>
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-15 blur-3xl" style={{ background: "var(--hubb-accent)" }} />
-        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full opacity-10 blur-3xl" style={{ background: "#FFD700" }} />
       </section>
 
       {/* Stats bar */}
@@ -590,9 +599,9 @@ export default function PartnerMerchantsPage() {
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {FEATURES.map((f) => (
-            <div key={f.title} className="rounded-2xl p-6" style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}>
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ background: "var(--hubb-tint)" }}>
-                <svg className="w-6 h-6" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div key={f.title} className="rounded-2xl p-6 transition-all hover:-translate-y-0.5" style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}>
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style={{ background: `${f.color}15` }}>
+                <svg className="w-6 h-6" style={{ color: f.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={f.icon} />
                 </svg>
               </div>

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import * as api from "@/lib/api";
 
 const STATS = [
@@ -33,12 +34,12 @@ const STEPS = [
 ];
 
 const FEATURES = [
-  { title: "Zero Setup Cost", desc: "No registration fee, no minimum orders. Start earning from day one with what you already have.", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
-  { title: "Flexible Hours", desc: "Cook when you want. Set your own availability and take a break whenever you need to.", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" },
-  { title: "Local Customers", desc: "Reach food lovers in your neighborhood who are looking for authentic home-cooked meals.", icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" },
-  { title: "Order Management", desc: "Accept or decline orders through the HUBB app. Full control over your kitchen workload.", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" },
-  { title: "Weekly Payouts", desc: "Earnings deposited directly to your bank account or mobile wallet every week.", icon: "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" },
-  { title: "Growth Support", desc: "Get featured in curated collections. We help you build a loyal customer base.", icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" },
+  { title: "Zero Setup Cost", desc: "No registration fee, no minimum orders. Start earning from day one with what you already have.", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z", color: "#00704A" },
+  { title: "Flexible Hours", desc: "Cook when you want. Set your own availability and take a break whenever you need to.", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z", color: "#5856D6" },
+  { title: "Local Customers", desc: "Reach food lovers in your neighborhood who are looking for authentic home-cooked meals.", icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z", color: "#007AFF" },
+  { title: "Order Management", desc: "Accept or decline orders through the HUBB app. Full control over your kitchen workload.", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4", color: "#FF3008" },
+  { title: "Weekly Payouts", desc: "Earnings deposited directly to your bank account or mobile wallet every week.", icon: "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z", color: "#FFB347" },
+  { title: "Growth Support", desc: "Get featured in curated collections. We help you build a loyal customer base.", icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6", color: "#34C759" },
 ];
 
 const FAQ = [
@@ -813,24 +814,34 @@ export default function HomeKitchenOnboardingPage() {
   return (
     <div style={{ background: "var(--bg-secondary)" }} className="min-h-screen">
       {/* Hero */}
-      <section className="relative overflow-hidden" style={{ background: "var(--hubb-primary)" }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+      <section className="relative overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1920&q=80"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(0,0,0,0.85), rgba(0,60,40,0.8))" }} />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32">
           <div className="max-w-2xl animate-fade-up">
             <span
-              className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-5"
-              style={{ background: "var(--hubb-accent)", color: "white" }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-5"
+              style={{ background: "rgba(0,112,74,0.9)", color: "white" }}
             >
+              <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
               HOME KITCHEN
             </span>
-            <h1 className="text-3xl sm:text-5xl font-bold text-white leading-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
               Sell food from home
               <br />
-              <span style={{ color: "var(--hubb-accent)" }}>with HUBB</span>
+              <span style={{ color: "#00D474" }}>with HUBB</span>
             </h1>
-            <p className="mt-3 text-lg font-medium" style={{ color: "var(--hubb-accent)" }}>
+            <p className="mt-3 text-lg font-medium" style={{ color: "#00D474" }}>
               Ghar se khana becho!
             </p>
-            <p className="mt-4 text-base sm:text-lg text-white/60 max-w-lg">
+            <p className="mt-4 text-base sm:text-lg text-white/60 max-w-lg leading-relaxed">
               Turn your home kitchen into a business. No rent, no setup costs — just your cooking skills and HUBB&apos;s platform to reach hungry customers nearby.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
@@ -847,15 +858,13 @@ export default function HomeKitchenOnboardingPage() {
               <a
                 href="#how-it-works"
                 className="inline-flex items-center justify-center px-8 py-4 rounded-full text-base font-semibold text-white/80 transition-all hover:text-white"
-                style={{ border: "1px solid rgba(255,255,255,0.2)" }}
+                style={{ border: "1px solid rgba(255,255,255,0.3)" }}
               >
                 Learn more
               </a>
             </div>
           </div>
         </div>
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-15 blur-3xl" style={{ background: "var(--hubb-accent)" }} />
-        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full opacity-10 blur-3xl" style={{ background: "#FFD700" }} />
       </section>
 
       {/* Stats bar */}
@@ -900,9 +909,9 @@ export default function HomeKitchenOnboardingPage() {
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {FEATURES.map((f) => (
-            <div key={f.title} className="rounded-2xl p-6" style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}>
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ background: "var(--hubb-tint)" }}>
-                <svg className="w-6 h-6" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div key={f.title} className="rounded-2xl p-6 transition-all hover:-translate-y-0.5" style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}>
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style={{ background: `${f.color}15` }}>
+                <svg className="w-6 h-6" style={{ color: f.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={f.icon} />
                 </svg>
               </div>
