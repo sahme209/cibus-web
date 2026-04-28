@@ -14,9 +14,9 @@ const FOOTER_LINKS = {
   ],
   "Doing Business": [
     { label: "Become a Rider", href: "/partner/riders" },
-    { label: "HUBB for Merchants", href: "/partner/merchants" },
     { label: "Restaurant Partners", href: "/partner/restaurants" },
-    { label: "Advertise", href: "mailto:ads@hubb.pk?subject=Advertising%20Inquiry" },
+    { label: "Start a Home Kitchen", href: "/partner/home-kitchen" },
+    { label: "HUBB for Merchants", href: "/partner/merchants" },
   ],
 };
 
