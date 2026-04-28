@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Help & Support",
@@ -52,43 +53,46 @@ const TOPICS = [
 export default function HelpPage() {
   return (
     <div style={{ background: "var(--bg-secondary)" }} className="min-h-screen">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1
-            className="text-2xl sm:text-3xl font-bold"
-            style={{ color: "var(--text-primary)" }}
-          >
-            How can we help?
-          </h1>
-          <p className="text-sm mt-2 max-w-md mx-auto" style={{ color: "var(--text-secondary)" }}>
-            Browse topics below or email us directly for personalized support.
-          </p>
-        </div>
-
-        {/* Contact card */}
-        <div
-          className="rounded-2xl p-6 mb-10 flex flex-col sm:flex-row items-center gap-4 relative overflow-hidden"
-          style={{ background: "linear-gradient(135deg, var(--hubb-accent), #005C3C)" }}
-        >
-          <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full opacity-15 blur-3xl" style={{ background: "#FFD700" }} />
-          <div className="relative flex-1 text-center sm:text-left">
-            <h2 className="text-lg font-bold text-white mb-1">Contact support</h2>
-            <p className="text-sm text-white/70">
-              Email us and we&apos;ll get back to you within 24 hours.
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1920&q=80"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(0,0,0,0.85), rgba(0,60,40,0.8))" }} />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+          <div className="max-w-2xl mx-auto text-center animate-fade-up">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-5" style={{ background: "rgba(0,112,74,0.9)", color: "white" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
+              24/7 SUPPORT
+            </span>
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-white leading-tight tracking-tight">
+              How can we
+              <br />
+              <span style={{ color: "#00D474" }}>help you?</span>
+            </h1>
+            <p className="mt-4 text-sm sm:text-base text-white/60 max-w-md mx-auto">
+              Browse topics below or email us directly for personalized support.
             </p>
+            <a
+              href="mailto:support@hubb.pk"
+              className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
+              style={{ background: "white", color: "var(--hubb-accent)" }}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              support@hubb.pk
+            </a>
           </div>
-          <a
-            href="mailto:support@hubb.pk"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0"
-            style={{ background: "white", color: "var(--hubb-accent)" }}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            support@hubb.pk
-          </a>
         </div>
+      </section>
+
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14">
 
         {/* Topics with FAQ */}
         <div className="space-y-8">

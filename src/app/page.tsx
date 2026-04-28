@@ -89,11 +89,17 @@ export default function HomePage() {
   return (
     <div style={{ background: "var(--bg-secondary)" }}>
       {/* Hero */}
-      <section
-        className="relative overflow-hidden"
-        style={{ background: "var(--hubb-hero)" }}
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <section className="relative overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920&q=80"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(0,80,54,0.88), rgba(0,60,40,0.82))" }} />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="max-w-2xl animate-fade-up">
             {isLoggedIn && user?.name ? (
               <p className="text-base font-medium text-white/70 mb-2">
@@ -112,16 +118,18 @@ export default function HomePage() {
               <Link
                 href="/search"
                 className="flex items-center gap-3 max-w-md px-5 py-3.5 rounded-full text-sm font-medium transition-all hover:shadow-xl"
-                style={{ background: "white", color: "var(--text-secondary)" }}
+                style={{ background: "white", color: "var(--text-secondary)", boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }}
               >
                 <svg className="w-5 h-5 shrink-0" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 Enter delivery address
-                <svg className="w-5 h-5 ml-auto shrink-0" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
+                <span className="ml-auto w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: "var(--hubb-accent)" }}>
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </span>
               </Link>
             </div>
           </div>
@@ -149,6 +157,43 @@ export default function HomePage() {
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
         <PromoBanner />
+      </section>
+
+      {/* Deals & Offers */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🔥</span>
+            <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight" style={{ color: "var(--text-primary)" }}>Deals & Offers</h2>
+          </div>
+        </div>
+        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2 stagger-children">
+          {[
+            { title: "50% Off First Order", desc: "New to HUBB? Get half off on your first order", code: "HUBB50", bg: "linear-gradient(135deg, #FF6B35, #FF3008)", icon: "🎉" },
+            { title: "Free Delivery Week", desc: "Rs. 0 delivery on all orders above Rs. 500", code: "FREEDEL", bg: "linear-gradient(135deg, #00704A, #00A86B)", icon: "🚀" },
+            { title: "Rs. 200 Off Biryani", desc: "Use code on any biryani order this weekend", code: "BIRYANI200", bg: "linear-gradient(135deg, #6C5CE7, #A29BFE)", icon: "🍚" },
+            { title: "Buy 1 Get 1 Burgers", desc: "BOGO on select burger restaurants", code: "BOGO", bg: "linear-gradient(135deg, #FDCB6E, #E17055)", icon: "🍔" },
+          ].map((deal) => (
+            <div
+              key={deal.code}
+              className="shrink-0 w-64 sm:w-72 rounded-2xl p-5 relative overflow-hidden transition-all hover:-translate-y-1 hover:shadow-lg cursor-pointer"
+              style={{ background: deal.bg }}
+            >
+              <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full opacity-20 blur-xl" style={{ background: "white" }} />
+              <span className="text-2xl mb-2 block">{deal.icon}</span>
+              <h3 className="text-base font-bold text-white leading-snug">{deal.title}</h3>
+              <p className="text-xs text-white/70 mt-1 leading-relaxed">{deal.desc}</p>
+              <div className="mt-3 flex items-center justify-between">
+                <span className="px-3 py-1 rounded-full text-[11px] font-bold text-white" style={{ background: "rgba(255,255,255,0.25)", border: "1px dashed rgba(255,255,255,0.5)" }}>
+                  {deal.code}
+                </span>
+                <svg className="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* HUBB+ */}
