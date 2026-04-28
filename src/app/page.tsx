@@ -505,7 +505,7 @@ function LandingPage() {
           <div className="flex flex-col md:flex-row items-center gap-8 mb-12">
             <div className="flex-1 aspect-[4/3] max-w-lg w-full rounded-2xl overflow-hidden relative">
               <Image
-                src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80"
+                src="https://images.unsplash.com/photo-1526367790999-0150786686a2?w=800&q=80"
                 alt="Delivery rider on motorcycle"
                 fill
                 sizes="(max-width: 768px) 100vw, 512px"
