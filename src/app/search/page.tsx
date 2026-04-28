@@ -62,6 +62,14 @@ export default function SearchPage() {
   );
 }
 
+type FilterKey = "freeDelivery" | "rating4plus" | "under30min";
+
+const FILTER_CHIPS: { key: FilterKey; label: string }[] = [
+  { key: "freeDelivery", label: "Free Delivery" },
+  { key: "rating4plus", label: "Rating 4+" },
+  { key: "under30min", label: "Under 30 min" },
+];
+
 function SearchContent() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
@@ -69,9 +77,11 @@ function SearchContent() {
   const [results, setResults] = useState<Restaurant[]>([]);
   const [foodResults, setFoodResults] = useState<FoodItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [debouncing, setDebouncing] = useState(false);
   const [searched, setSearched] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [inputFocused, setInputFocused] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<Record<FilterKey, boolean>>({ freeDelivery: false, rating4plus: false, under30min: false });
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -117,13 +127,31 @@ function SearchContent() {
     setQuery(value);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (value.trim().length >= 2) {
-      debounceRef.current = setTimeout(() => doSearch(value), 400);
-    } else if (!value.trim()) {
-      setSearched(false);
-      setResults([]);
-      setFoodResults([]);
+      setDebouncing(true);
+      debounceRef.current = setTimeout(() => { setDebouncing(false); doSearch(value); }, 400);
+    } else {
+      setDebouncing(false);
+      if (!value.trim()) {
+        setSearched(false);
+        setResults([]);
+        setFoodResults([]);
+      }
     }
   };
+
+  const toggleFilter = (key: FilterKey) => {
+    setActiveFilters((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const filteredResults = results.filter((r) => {
+    if (activeFilters.freeDelivery && r.deliveryFee !== 0) return false;
+    if (activeFilters.rating4plus && r.rating < 4.0) return false;
+    if (activeFilters.under30min) {
+      const mins = parseInt(r.deliveryTime);
+      if (isNaN(mins) || mins > 30) return false;
+    }
+    return true;
+  });
 
   const showSuggestions = inputFocused && !searched && query.length === 0;
 
@@ -267,26 +295,68 @@ function SearchContent() {
           </div>
         )}
 
+        {/* Debounce searching indicator */}
+        {debouncing && !loading && (
+          <div className="flex items-center justify-center gap-2 py-4 mb-4 animate-fade-up">
+            <div className="w-4 h-4 border-2 rounded-full animate-spin" style={{ borderColor: "var(--border-default)", borderTopColor: "var(--hubb-accent)" }} />
+            <span className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>Searching...</span>
+          </div>
+        )}
+
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded-2xl overflow-hidden">
-                <div className="aspect-[16/10] skeleton-shimmer" />
-                <div className="p-4 space-y-3" style={{ background: "var(--bg-card)" }}>
-                  <div className="h-4 rounded-full w-3/4 skeleton-shimmer" />
-                  <div className="h-3 rounded-full w-1/2 skeleton-shimmer" />
+          <div>
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-4 h-4 border-2 rounded-full animate-spin" style={{ borderColor: "var(--border-default)", borderTopColor: "var(--hubb-accent)" }} />
+              <span className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>Searching for &ldquo;{query}&rdquo;...</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="rounded-2xl overflow-hidden">
+                  <div className="aspect-[16/10] skeleton-shimmer" />
+                  <div className="p-4 space-y-3" style={{ background: "var(--bg-card)" }}>
+                    <div className="h-4 rounded-full w-3/4 skeleton-shimmer" />
+                    <div className="h-3 rounded-full w-1/2 skeleton-shimmer" />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         ) : searched && (results.length > 0 || foodResults.length > 0) ? (
           <div className="animate-fade-up">
             <p
-              className="text-sm mb-5"
+              className="text-sm mb-3"
               style={{ color: "var(--text-secondary)" }}
             >
               {results.length} restaurant{results.length !== 1 ? "s" : ""} found for &ldquo;{query}&rdquo;
             </p>
+
+            {/* Filter chips */}
+            <div className="flex flex-wrap gap-2 mb-5">
+              {FILTER_CHIPS.map((chip) => (
+                <button
+                  key={chip.key}
+                  onClick={() => toggleFilter(chip.key)}
+                  className="px-3.5 py-2 rounded-full text-xs font-semibold transition-all hover:scale-105"
+                  style={{
+                    background: activeFilters[chip.key] ? "var(--hubb-accent)" : "var(--bg-card)",
+                    color: activeFilters[chip.key] ? "white" : "var(--text-primary)",
+                    boxShadow: "var(--shadow-sm)",
+                    border: activeFilters[chip.key] ? "1.5px solid var(--hubb-accent)" : "1.5px solid var(--border-default)",
+                  }}
+                >
+                  {chip.label}
+                </button>
+              ))}
+              {Object.values(activeFilters).some(Boolean) && (
+                <button
+                  onClick={() => setActiveFilters({ freeDelivery: false, rating4plus: false, under30min: false })}
+                  className="px-3 py-2 rounded-full text-xs font-medium transition-all hover:opacity-70"
+                  style={{ color: "var(--hubb-accent)" }}
+                >
+                  Clear filters
+                </button>
+              )}
+            </div>
 
             {/* Food item matches */}
             {foodResults.length > 0 && (
@@ -321,17 +391,25 @@ function SearchContent() {
             )}
 
             {/* Restaurant results */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
-              {results.map((r) => (
-                <RestaurantCard key={r.id} restaurant={r} />
-              ))}
-            </div>
+            {filteredResults.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
+                {filteredResults.map((r) => (
+                  <RestaurantCard key={r.id} restaurant={r} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                  No restaurants match the selected filters. Try removing some filters.
+                </p>
+              </div>
+            )}
           </div>
         ) : searched ? (
           <div className="text-center py-20 animate-fade-up">
-            <div className="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4" style={{ background: "var(--bg-search)" }}>
-              <svg className="w-10 h-10" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <div className="w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-5" style={{ background: "var(--bg-search)" }}>
+              <svg className="w-12 h-12" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
             <h3
@@ -340,10 +418,10 @@ function SearchContent() {
             >
               No results for &ldquo;{query}&rdquo;
             </h3>
-            <p className="text-sm mt-1 mb-6" style={{ color: "var(--text-secondary)" }}>
-              Try a different spelling or browse by category
+            <p className="text-sm mt-2 mb-2 max-w-sm mx-auto" style={{ color: "var(--text-secondary)" }}>
+              We couldn&apos;t find any restaurants or dishes matching your search. Try a different spelling or browse by category below.
             </p>
-            <div className="flex flex-wrap justify-center gap-2">
+            <div className="flex flex-wrap justify-center gap-2 mt-6">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat.name}

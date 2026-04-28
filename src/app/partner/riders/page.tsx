@@ -416,9 +416,28 @@ export default function PartnerRidersPage() {
         {renderInput("Vehicle Color", vehicleColor, setVehicleColor, step2Errors.vehicleColor, {
           placeholder: "e.g. Red, Black, White",
         })}
-        {renderInput("City", city, setCity, step2Errors.city, {
-          placeholder: "e.g. Islamabad, Lahore, Karachi",
-        })}
+        {/* City dropdown */}
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+            City
+          </label>
+          <select
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-colors appearance-none"
+            style={{
+              background: "var(--bg-search)",
+              border: step2Errors.city ? "1.5px solid var(--hubb-orange)" : "1.5px solid var(--border-default)",
+              color: "var(--text-primary)",
+            }}
+          >
+            <option value="">Select city</option>
+            <option value="Islamabad">Islamabad</option>
+          </select>
+          {step2Errors.city && (
+            <p className="text-xs" style={{ color: "var(--hubb-orange)" }}>{step2Errors.city}</p>
+          )}
+        </div>
 
         {/* Payout Method */}
         <div className="space-y-1.5">

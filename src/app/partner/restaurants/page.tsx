@@ -49,7 +49,7 @@ const FAQ = [
   { q: "Can I pause my listing?", a: "Yes. You can temporarily mark your restaurant as closed from the dashboard at any time." },
 ];
 
-const CITIES = ["Islamabad", "Rawalpindi", "Lahore", "Karachi", "Faisalabad", "Peshawar"];
+const CITIES = ["Islamabad"];
 
 const CUISINES = [
   "Pakistani",

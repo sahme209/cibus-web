@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "About HUBB",
-  description: "Learn about HUBB — Pakistan's fast-growing food delivery platform delivering in minutes, not hours.",
+  description: "Learn about HUBB — Islamabad's fast-growing food delivery platform delivering in minutes, not hours.",
 };
 
 const VALUES = [
@@ -42,7 +42,7 @@ export default function AboutPage() {
               <span style={{ color: "var(--hubb-accent)" }}>not hours</span>
             </h1>
             <p className="mt-5 text-base sm:text-lg text-white/60 max-w-lg">
-              HUBB connects hungry customers with their favorite restaurants through a network of dedicated riders — all in one app.
+              HUBB connects Islamabad&apos;s hungry customers with their favorite restaurants through a network of dedicated riders — all in one app.
             </p>
           </div>
         </div>
@@ -56,7 +56,7 @@ export default function AboutPage() {
             Our mission
           </h2>
           <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-            To make food delivery fast, affordable, and reliable for everyone in Pakistan. We believe great food shouldn&apos;t require a long wait — and that the people who make and deliver it deserve a fair deal.
+            To make food delivery fast, affordable, and reliable across Islamabad. We&apos;re building the best food delivery experience in the capital — one neighborhood at a time — because great food shouldn&apos;t require a long wait, and the people who make and deliver it deserve a fair deal.
           </p>
         </div>
       </section>
@@ -90,7 +90,7 @@ export default function AboutPage() {
           style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-md)", borderColor: "var(--border-subtle)" }}
         >
           {[
-            { value: "3", label: "Cities" },
+            { value: "1", label: "City" },
             { value: "500+", label: "Restaurants" },
             { value: "1,000+", label: "Riders" },
             { value: "10,000+", label: "Happy customers" },

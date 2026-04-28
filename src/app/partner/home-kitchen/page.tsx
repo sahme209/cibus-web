@@ -49,7 +49,7 @@ const FAQ = [
   { q: "What commission does HUBB charge?", a: "HUBB charges a small commission on each completed order. Your first 30 days are commission-free so you can get started risk-free." },
 ];
 
-const CITIES = ["Islamabad", "Rawalpindi", "Lahore", "Karachi", "Faisalabad", "Peshawar"];
+const CITIES = ["Islamabad"];
 
 const CUISINES = [
   "Pakistani",

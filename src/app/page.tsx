@@ -325,14 +325,14 @@ const VALUE_SECTIONS = [
   },
 ];
 
-const TOP_CITIES = ["Islamabad", "Lahore", "Karachi", "Rawalpindi", "Faisalabad", "Peshawar", "Multan", "Quetta"];
+const POPULAR_AREAS = ["F-6", "F-7", "F-8", "F-10", "F-11", "G-6", "G-8", "G-9", "G-11", "I-8", "I-9", "I-10", "Blue Area", "DHA"];
 
 const TOP_CUISINES = ["Biryani", "Burgers", "Pizza", "Karahi", "Chinese", "BBQ", "Desserts", "Shawarma", "Nihari", "Haleem", "Paratha Rolls", "Seekh Kebab"];
 
 const TOP_CHAINS = ["KFC", "McDonald's", "Pizza Hut", "Domino's", "Hardee's", "Subway", "Burger King", "OPTP"];
 
 function LandingPage() {
-  const [neighborhoodTab, setNeighborhoodTab] = useState<"cities" | "cuisines" | "chains">("cities");
+  const [neighborhoodTab, setNeighborhoodTab] = useState<"areas" | "cuisines" | "chains">("areas");
 
   return (
     <div style={{ background: "var(--bg-secondary)" }}>
@@ -345,11 +345,11 @@ function LandingPage() {
               <span className="text-xl font-bold text-white">HUBB</span>
             </div>
             <h1 className="text-3xl sm:text-5xl font-extrabold text-white leading-tight tracking-tight">
-              Rs. 0 delivery fee
+              Food delivery
               <br />
-              on your first order
+              in Islamabad
             </h1>
-            <p className="mt-3 text-sm text-white/50">Other fees apply. Available at participating stores.</p>
+            <p className="mt-3 text-sm text-white/50">Rs. 0 delivery fee on your first order. Available at participating stores.</p>
 
             <div className="mt-8 flex flex-col items-center gap-3 max-w-md mx-auto">
               <Link
@@ -498,7 +498,7 @@ function LandingPage() {
       <section style={{ background: "var(--bg-secondary)" }}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-12" style={{ color: "var(--text-primary)" }}>
-            Unlocking opportunity for riders and businesses
+            Unlocking opportunity across Islamabad
           </h2>
 
           {/* Rider CTA */}
@@ -520,7 +520,7 @@ function LandingPage() {
             <div className="flex-1 max-w-lg">
               <h3 className="text-xl sm:text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Sign up to ride and get paid</h3>
               <p className="text-sm mt-3 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                Deliver with the #1 Food and Delivery App in Pakistan. As a delivery rider, you&apos;ll make money and work on your own schedule. Sign up in minutes.
+                Deliver with Islamabad&apos;s fastest-growing food delivery app. As a delivery rider, you&apos;ll make money and work on your own schedule. Sign up in minutes.
               </p>
               <Link
                 href="/partner/riders"
@@ -584,7 +584,7 @@ function LandingPage() {
           {/* Tabs */}
           <div className="flex justify-center mb-8" style={{ borderBottom: "1px solid var(--border-default)" }}>
             {([
-              { key: "cities" as const, label: "Top Cities" },
+              { key: "areas" as const, label: "Popular Areas" },
               { key: "cuisines" as const, label: "Top Cuisines" },
               { key: "chains" as const, label: "Top Chains" },
             ]).map((tab) => (
@@ -606,7 +606,7 @@ function LandingPage() {
 
           {/* Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3">
-            {(neighborhoodTab === "cities" ? TOP_CITIES : neighborhoodTab === "cuisines" ? TOP_CUISINES : TOP_CHAINS).map((item) => (
+            {(neighborhoodTab === "areas" ? POPULAR_AREAS : neighborhoodTab === "cuisines" ? TOP_CUISINES : TOP_CHAINS).map((item) => (
               <Link
                 key={item}
                 href={`/search?q=${encodeURIComponent(item)}`}

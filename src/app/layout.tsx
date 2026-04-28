@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   description:
     "Order food delivery from the best restaurants near you. Rs. 0 delivery on your first order. Fast delivery, exclusive deals, and premium quality. Download the HUBB app today.",
-  keywords: ["food delivery", "HUBB", "restaurants", "order food online", "Pakistan", "Islamabad", "Lahore", "Karachi", "delivery app", "biryani", "pizza", "burgers"],
+  keywords: ["food delivery", "HUBB", "restaurants", "order food online", "Pakistan", "Islamabad", "Islamabad food delivery", "delivery app", "biryani", "pizza", "burgers"],
   metadataBase: new URL("https://gethubb.com"),
   alternates: {
     canonical: "/",
@@ -78,8 +78,6 @@ const jsonLd = {
     "Order food delivery from the best restaurants near you. Fast delivery, exclusive deals, and premium quality.",
   areaServed: [
     { "@type": "City", name: "Islamabad" },
-    { "@type": "City", name: "Lahore" },
-    { "@type": "City", name: "Karachi" },
   ],
   sameAs: [
     "https://instagram.com/gethubb",
