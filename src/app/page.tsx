@@ -336,26 +336,58 @@ function LandingPage() {
 
   return (
     <div style={{ background: "var(--bg-secondary)" }}>
-      {/* Hero */}
-      <section className="relative overflow-hidden" style={{ background: "var(--hubb-hero)" }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32 text-center">
-          <div className="max-w-3xl mx-auto animate-fade-up">
-            <div className="flex items-center justify-center gap-2 mb-8">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-xl" style={{ background: "rgba(255,255,255,0.2)" }}>H</div>
-              <span className="text-2xl font-bold text-white">HUBB</span>
-            </div>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight">
-              Food delivery in
-              <br />
-              <span style={{ color: "#FFD700" }}>Islamabad</span>
-            </h1>
-            <p className="mt-4 text-base sm:text-lg text-white/60 max-w-xl mx-auto">Rs. 0 delivery fee on your first order. Your favorite restaurants, delivered fast.</p>
+      {/* Hero — DoorDash-style with food imagery */}
+      <section className="relative overflow-hidden">
+        {/* Background food image */}
+        <Image
+          src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920&q=80"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        {/* Color overlay */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(0,93,62,0.92), rgba(0,70,47,0.88))" }} />
 
-            <div className="mt-10 flex flex-col items-center gap-4 max-w-lg mx-auto">
+        {/* Floating food photos — left side */}
+        <div className="absolute top-12 left-4 sm:left-8 lg:left-16 hidden md:block">
+          <div className="relative w-40 lg:w-52 h-40 lg:h-52 rounded-2xl overflow-hidden rotate-[-6deg] shadow-2xl">
+            <Image src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&q=80" alt="Biryani" fill sizes="220px" className="object-cover" />
+          </div>
+          <div className="relative w-32 lg:w-40 h-32 lg:h-40 rounded-2xl overflow-hidden rotate-[4deg] shadow-2xl mt-[-20px] ml-16 lg:ml-20">
+            <Image src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80" alt="Burger" fill sizes="180px" className="object-cover" />
+          </div>
+        </div>
+
+        {/* Floating food photos — right side */}
+        <div className="absolute top-16 right-4 sm:right-8 lg:right-16 hidden md:block">
+          <div className="relative w-36 lg:w-48 h-36 lg:h-48 rounded-2xl overflow-hidden rotate-[6deg] shadow-2xl">
+            <Image src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80" alt="Pizza" fill sizes="200px" className="object-cover" />
+          </div>
+          <div className="relative w-32 lg:w-40 h-32 lg:h-40 rounded-2xl overflow-hidden rotate-[-3deg] shadow-2xl mt-[-16px] mr-16 lg:mr-20">
+            <Image src="https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&q=80" alt="Dessert" fill sizes="180px" className="object-cover" />
+          </div>
+        </div>
+
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32 text-center">
+          <div className="max-w-2xl mx-auto animate-fade-up">
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-lg" style={{ background: "rgba(255,255,255,0.2)", backdropFilter: "blur(8px)" }}>H</div>
+              <span className="text-xl font-bold text-white">HUBB</span>
+            </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight drop-shadow-lg">
+              Rs. 0 delivery fee
+              <br />
+              <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white/90">on your first order</span>
+            </h1>
+            <p className="mt-3 text-sm text-white/50">Other fees apply</p>
+
+            <div className="mt-8 flex flex-col items-center gap-3 max-w-lg mx-auto">
               <Link
                 href="/search"
-                className="flex items-center gap-3 w-full px-6 py-4.5 rounded-full text-base font-medium transition-all hover:shadow-2xl"
-                style={{ background: "white", color: "var(--text-secondary)", boxShadow: "0 8px 32px rgba(0,0,0,0.18)" }}
+                className="flex items-center gap-3 w-full px-6 py-4 rounded-full text-base font-medium transition-all hover:shadow-2xl"
+                style={{ background: "white", color: "#333", boxShadow: "0 8px 32px rgba(0,0,0,0.2)" }}
               >
                 <svg className="w-5 h-5 shrink-0" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -363,7 +395,7 @@ function LandingPage() {
                 </svg>
                 Enter delivery address
                 <span
-                  className="ml-auto w-9 h-9 rounded-full flex items-center justify-center shrink-0 animate-subtle-pulse"
+                  className="ml-auto w-9 h-9 rounded-full flex items-center justify-center shrink-0"
                   style={{ background: "var(--hubb-accent)" }}
                 >
                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -373,8 +405,8 @@ function LandingPage() {
               </Link>
               <Link
                 href="/auth"
-                className="flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-semibold transition-all hover:opacity-90"
-                style={{ background: "rgba(255,255,255,0.12)", color: "white", border: "1px solid rgba(255,255,255,0.25)" }}
+                className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all hover:bg-white/20"
+                style={{ background: "rgba(255,255,255,0.12)", color: "white", border: "1px solid rgba(255,255,255,0.3)", backdropFilter: "blur(4px)" }}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -384,33 +416,18 @@ function LandingPage() {
             </div>
 
             {/* Social proof */}
-            <div className="mt-10 flex items-center justify-center gap-3 animate-count-up">
+            <div className="mt-8 flex items-center justify-center gap-3">
               <div className="flex -space-x-2">
                 {["bg-emerald-500", "bg-amber-500", "bg-sky-500", "bg-rose-500"].map((color, i) => (
-                  <div key={i} className={`w-8 h-8 rounded-full ${color} border-2 border-white/20 flex items-center justify-center text-[10px] font-bold text-white`}>
+                  <div key={i} className={`w-7 h-7 rounded-full ${color} border-2 border-white/20 flex items-center justify-center text-[9px] font-bold text-white`}>
                     {["A", "S", "F", "N"][i]}
                   </div>
                 ))}
               </div>
-              <p className="text-sm text-white/70 font-medium">
+              <p className="text-xs text-white/60 font-medium">
                 Trusted by <span className="text-white font-bold">10,000+</span> customers in Islamabad
               </p>
             </div>
-          </div>
-        </div>
-        <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full opacity-20 blur-3xl" style={{ background: "#00A86B" }} />
-        <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full opacity-10 blur-3xl" style={{ background: "#FFD700" }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-5 blur-3xl" style={{ background: "white" }} />
-
-        {/* Animated food emoji ticker */}
-        <div className="relative overflow-hidden py-4" style={{ background: "rgba(0,0,0,0.15)" }}>
-          <div className="animate-ticker whitespace-nowrap">
-            {[0, 1].map((setIndex) => (
-              <span key={setIndex} className="inline-flex items-center gap-8 text-2xl mx-4">
-                <span>🍚</span><span>🍔</span><span>🍕</span><span>🥘</span><span>🥡</span><span>🍖</span><span>🍰</span><span>☕</span><span>🫓</span><span>🦐</span>
-                <span>🍛</span><span>🥙</span><span>🧁</span><span>🍗</span><span>🥗</span><span>🌮</span><span>🍜</span><span>🥟</span><span>🍲</span><span>🧆</span>
-              </span>
-            ))}
           </div>
         </div>
       </section>

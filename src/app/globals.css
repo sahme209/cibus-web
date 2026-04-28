@@ -356,17 +356,6 @@ html {
   50% { background-position: 100% center; }
 }
 
-/* Infinite scroll ticker */
-@keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-.animate-ticker {
-  display: inline-block;
-  animation: ticker 25s linear infinite;
-  will-change: transform;
-}
-
 /* Glow effect on hover */
 .hover-glow:hover {
   box-shadow: 0 0 20px rgba(0, 112, 74, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
