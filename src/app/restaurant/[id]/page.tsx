@@ -270,7 +270,7 @@ export default function RestaurantDetailPage() {
                       Most Popular
                     </h2>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     {popularItems.slice(0, 4).map((item) => (
                       <FoodItemCard
                         key={`popular-${item.id}`}
@@ -373,7 +373,7 @@ export default function RestaurantDetailPage() {
                   >
                     {cat.name}
                   </h2>
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     {cat.items.map((item) => (
                       <FoodItemCard
                         key={item.id}
@@ -529,13 +529,13 @@ export default function RestaurantDetailPage() {
               </p>
             )}
 
-            {customizingItem.customizationOptions.length > 0 && (
+            {(customizingItem.customizationOptions ?? []).length > 0 && (
               <>
                 <p className="text-xs font-semibold mb-2" style={{ color: "var(--text-tertiary)" }}>
                   CUSTOMIZE
                 </p>
                 <div className="space-y-2 max-h-48 overflow-y-auto mb-4">
-                  {customizingItem.customizationOptions.map((opt) => {
+                  {(customizingItem.customizationOptions ?? []).map((opt) => {
                     const isSelected = selectedOptions.some((s) => s.id === opt.id);
                     return (
                       <label
