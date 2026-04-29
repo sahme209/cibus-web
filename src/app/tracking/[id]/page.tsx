@@ -469,27 +469,67 @@ export default function TrackingPage() {
             className="rounded-2xl p-5 mt-5 animate-fade-up"
             style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
           >
-            <h3 className="font-bold text-sm mb-3" style={{ color: "var(--text-primary)" }}>
+            <h3 className="font-bold text-sm mb-1" style={{ color: "var(--text-primary)" }}>
               How was your order?
             </h3>
-            <div className="flex gap-2 mb-3" role="radiogroup" aria-label="Order rating">
-              {[1, 2, 3, 4, 5].map((star) => (
+            <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>Your feedback helps us improve</p>
+
+            <div className="flex justify-center gap-4 mb-4" role="radiogroup" aria-label="Order rating">
+              {[
+                { val: 1, emoji: "😞", label: "Bad" },
+                { val: 2, emoji: "😕", label: "Poor" },
+                { val: 3, emoji: "😐", label: "Okay" },
+                { val: 4, emoji: "😊", label: "Good" },
+                { val: 5, emoji: "🤩", label: "Amazing" },
+              ].map((opt) => (
                 <button
-                  key={star}
-                  onClick={() => setRating(star)}
-                  aria-label={`Rate ${star} star${star !== 1 ? "s" : ""}`}
-                  aria-pressed={star <= rating}
-                  className="text-2xl transition-transform hover:scale-110"
-                  style={{ opacity: star <= rating ? 1 : 0.25 }}
+                  key={opt.val}
+                  onClick={() => setRating(opt.val)}
+                  aria-label={`Rate ${opt.label}`}
+                  aria-pressed={rating === opt.val}
+                  className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all hover:scale-110"
+                  style={{
+                    background: rating === opt.val ? "var(--hubb-tint)" : "transparent",
+                    border: rating === opt.val ? "2px solid var(--hubb-accent)" : "2px solid transparent",
+                  }}
                 >
-                  ★
+                  <span className="text-2xl">{opt.emoji}</span>
+                  <span className="text-[10px] font-medium" style={{ color: rating === opt.val ? "var(--hubb-accent)" : "var(--text-tertiary)" }}>{opt.label}</span>
                 </button>
               ))}
             </div>
+
+            {rating > 0 && (
+              <div className="mb-3">
+                <p className="text-xs font-semibold mb-2" style={{ color: "var(--text-tertiary)" }}>
+                  {rating >= 4 ? "What did you enjoy?" : "What could be better?"}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {(rating >= 4
+                    ? ["Fast delivery", "Tasty food", "Good packaging", "Accurate order", "Friendly rider"]
+                    : ["Slow delivery", "Cold food", "Wrong items", "Bad packaging", "Missing items"]
+                  ).map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => setRatingComment((prev) => prev.includes(tag) ? prev.replace(tag + ", ", "").replace(tag, "") : prev ? prev + ", " + tag : tag)}
+                      className="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+                      style={{
+                        background: ratingComment.includes(tag) ? "var(--hubb-tint)" : "var(--bg-search)",
+                        color: ratingComment.includes(tag) ? "var(--hubb-accent)" : "var(--text-secondary)",
+                        border: ratingComment.includes(tag) ? "1px solid var(--hubb-accent)" : "1px solid transparent",
+                      }}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <textarea
               value={ratingComment}
               onChange={(e) => setRatingComment(e.target.value)}
-              placeholder="Any feedback? (optional)"
+              placeholder="Add more details (optional)..."
               rows={2}
               className="w-full px-4 py-2.5 rounded-xl text-sm resize-none"
               style={{
@@ -501,7 +541,7 @@ export default function TrackingPage() {
             <button
               onClick={handleRate}
               disabled={submittingRating || rating === 0}
-              className="w-full mt-3 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-50"
+              className="w-full mt-3 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-50 transition-all hover:scale-[1.01] active:scale-[0.99]"
               style={{ background: "var(--hubb-accent)" }}
             >
               {submittingRating ? "Submitting..." : "Submit Rating"}
@@ -513,8 +553,12 @@ export default function TrackingPage() {
             className="rounded-2xl p-5 mt-5 text-center animate-fade-up"
             style={{ background: "var(--hubb-tint)" }}
           >
-            <p className="text-sm font-medium" style={{ color: "var(--hubb-green)" }}>
-              Thank you for your feedback!
+            <span className="text-3xl block mb-2">🎉</span>
+            <p className="text-sm font-semibold" style={{ color: "var(--hubb-green)" }}>
+              Thanks for your feedback!
+            </p>
+            <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
+              Your review helps others find great food
             </p>
           </div>
         )}
