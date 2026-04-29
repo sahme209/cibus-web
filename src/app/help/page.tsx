@@ -94,6 +94,30 @@ export default function HelpPage() {
 
       <div className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14">
 
+        {/* Quick action cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+          {[
+            { title: "Track Order", desc: "See real-time delivery status", href: "/orders", icon: "M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7", color: "var(--hubb-accent)" },
+            { title: "Report Issue", desc: "Wrong item, missing order, refund", href: "mailto:support@hubb.pk?subject=Order Issue", icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z", color: "#FF3008" },
+            { title: "Call Us", desc: "Speak with support directly", href: "tel:+923001234567", icon: "M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z", color: "#FFB347" },
+          ].map((action) => (
+            <a
+              key={action.title}
+              href={action.href}
+              className="rounded-2xl p-5 flex flex-col items-center text-center transition-all hover:-translate-y-1 hover:shadow-md"
+              style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+            >
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style={{ background: `${action.color}15` }}>
+                <svg className="w-6 h-6" style={{ color: action.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={action.icon} />
+                </svg>
+              </div>
+              <h3 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{action.title}</h3>
+              <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>{action.desc}</p>
+            </a>
+          ))}
+        </div>
+
         {/* Topics with FAQ */}
         <div className="space-y-8">
           {TOPICS.map((topic) => (

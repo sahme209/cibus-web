@@ -248,6 +248,46 @@ export default function ProfilePage() {
           </div>
         </Link>
 
+        {/* Refer & Earn */}
+        <div
+          className="rounded-2xl p-5 mb-5 animate-fade-up"
+          style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)", border: "1px solid var(--border-subtle)" }}
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(255,179,71,0.15)" }}>
+              <svg className="w-5 h-5" style={{ color: "#FFB347" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>Refer & Earn</h2>
+              <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>Give Rs. 200, get Rs. 200</p>
+            </div>
+          </div>
+          <p className="text-xs mb-3" style={{ color: "var(--text-secondary)" }}>
+            Share your code with friends. When they order, you both get Rs. 200 off!
+          </p>
+          <div className="flex items-center gap-2">
+            <div
+              className="flex-1 px-3 py-2.5 rounded-lg text-sm font-mono font-bold tracking-wider text-center"
+              style={{ background: "var(--bg-search)", color: "var(--text-primary)", border: "1px dashed var(--border-default)" }}
+            >
+              HUBB-{user?.name?.slice(0, 4).toUpperCase() || "USER"}-200
+            </div>
+            <button
+              onClick={() => {
+                const code = `HUBB-${user?.name?.slice(0, 4).toUpperCase() || "USER"}-200`;
+                navigator.clipboard.writeText(code);
+                showToast("Referral code copied!");
+              }}
+              className="px-4 py-2.5 rounded-lg text-xs font-bold text-white shrink-0 transition-all hover:scale-105"
+              style={{ background: "var(--hubb-accent)" }}
+            >
+              Copy
+            </button>
+          </div>
+        </div>
+
         {/* Quick Links */}
         <div
           className="rounded-2xl overflow-hidden divide-y mb-5 animate-fade-up"

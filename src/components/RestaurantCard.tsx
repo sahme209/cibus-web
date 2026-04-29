@@ -70,7 +70,7 @@ export default function RestaurantCard({ restaurant }: { restaurant: Restaurant 
         >
           {restaurant.rating.toFixed(1)}
         </div>
-        <div className="absolute bottom-3 left-3">
+        <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
           <span
             className="px-2.5 py-1 rounded-md text-xs font-bold"
             style={{ background: "var(--bg-card)", color: "var(--text-primary)", boxShadow: "var(--shadow-sm)" }}
@@ -78,6 +78,11 @@ export default function RestaurantCard({ restaurant }: { restaurant: Restaurant 
           >
             {restaurant.deliveryTime}
           </span>
+          {parseInt(restaurant.deliveryTime) > 40 && restaurant.isOpen && (
+            <span className="px-2 py-1 rounded-md text-[10px] font-bold text-white" style={{ background: "rgba(255,120,0,0.85)" }}>
+              Busy
+            </span>
+          )}
         </div>
         {!restaurant.isOpen && (
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-[1px]" aria-label="Restaurant currently closed">

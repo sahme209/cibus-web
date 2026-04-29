@@ -47,7 +47,7 @@ export default function FoodItemCard({
       {/* Info */}
       <div className="flex-1 min-w-0 flex flex-col justify-between">
         <div>
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <h4
               className="font-bold text-sm line-clamp-1"
               style={{ color: "var(--text-primary)" }}
@@ -60,6 +60,16 @@ export default function FoodItemCard({
                 style={{ background: "#FF300815", color: "#FF3008" }}
               >
                 Popular
+              </span>
+            )}
+            {/spicy|hot|mirch|achari/i.test(item.name) && (
+              <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: "rgba(255,68,0,0.1)", color: "#FF4400" }}>
+                🌶️ Spicy
+              </span>
+            )}
+            {item.discountPercentage > 0 && !item.isPopular && (
+              <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: "rgba(0,112,74,0.1)", color: "var(--hubb-green)" }}>
+                Deal
               </span>
             )}
           </div>
