@@ -21,6 +21,8 @@ const FILTER_CHIPS = [
   { key: "rating4plus", label: "4.0+", icon: "⭐" },
   { key: "under30min", label: "Under 30 min", icon: "⚡" },
   { key: "open", label: "Open Now", icon: "🟢" },
+  { key: "priceLow", label: "$ Budget", icon: "💰" },
+  { key: "priceHigh", label: "$$$ Premium", icon: "✨" },
 ];
 
 export default function FilterBar({ onSortChange, onFilterChange }: FilterBarProps) {
