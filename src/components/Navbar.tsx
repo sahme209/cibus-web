@@ -29,10 +29,10 @@ export default function Navbar({ onCartClick }: NavbarProps) {
     <header
       className="sticky top-0 z-50 border-b"
       style={{
-        background: "color-mix(in srgb, var(--bg-primary) 92%, transparent)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        borderColor: "var(--border-default)",
+        background: "color-mix(in srgb, var(--bg-primary) 75%, transparent)",
+        backdropFilter: "blur(24px) saturate(1.5)",
+        WebkitBackdropFilter: "blur(24px) saturate(1.5)",
+        borderColor: "color-mix(in srgb, var(--border-default) 50%, transparent)",
       }}
       role="banner"
     >
@@ -231,8 +231,7 @@ export default function Navbar({ onCartClick }: NavbarProps) {
               </Link>
               <Link
                 href="/auth"
-                className="px-5 py-2.5 rounded-full text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
-                style={{ background: "var(--hubb-accent)" }}
+                className="px-5 py-2.5 rounded-full text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98] btn-gradient"
               >
                 Sign Up
               </Link>

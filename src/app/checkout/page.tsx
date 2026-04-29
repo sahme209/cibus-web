@@ -802,8 +802,7 @@ export default function CheckoutPage() {
           <button
             onClick={handlePlaceOrder}
             disabled={placing || !selectedAddress}
-            className="w-full py-4 rounded-2xl text-base font-bold text-white transition-all disabled:opacity-50 hover:scale-[1.01] active:scale-[0.99]"
-            style={{ background: "var(--hubb-accent)" }}
+            className="w-full py-4 rounded-2xl text-base font-bold text-white transition-all disabled:opacity-50 hover:scale-[1.01] active:scale-[0.99] btn-gradient"
           >
             {placing
               ? "Placing Order..."

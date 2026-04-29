@@ -92,7 +92,7 @@ export default function HomePage() {
   }
 
   return (
-    <div style={{ background: "var(--bg-secondary)" }}>
+    <div className="animate-page-enter" style={{ background: "var(--bg-secondary)" }}>
       {/* Hero */}
       <section className="relative overflow-hidden">
         <Image
@@ -101,7 +101,8 @@ export default function HomePage() {
           fill
           priority
           sizes="100vw"
-          className="object-cover"
+          className="object-cover scale-[1.05]"
+          style={{ willChange: "transform" }}
         />
         <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(0,80,54,0.88), rgba(0,60,40,0.82))" }} />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
@@ -111,10 +112,10 @@ export default function HomePage() {
                 Welcome back, {user.name.split(" ")[0]}
               </p>
             ) : null}
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white leading-tight tracking-tight">
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-white leading-tight tracking-tight drop-shadow-lg">
               Rs. 0 delivery fee
               <br />
-              on your first order
+              <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(135deg, #FFFFFF, #E0F2E9)" }}>on your first order</span>
             </h1>
             <p className="mt-3 text-sm sm:text-base text-white/60">
               Other fees apply. Available at participating stores.
@@ -487,7 +488,7 @@ function LandingPage() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.08] tracking-tight drop-shadow-lg">
               Rs. 0 delivery fee
               <br />
-              <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white/90">on your first order</span>
+              <span className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(135deg, #FFFFFF, #C5E8D4, #FFFFFF)" }}>on your first order</span>
             </h1>
             <p className="mt-2 text-xs sm:text-sm text-white/45">Other fees apply</p>
 

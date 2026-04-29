@@ -31,6 +31,14 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "HUBB",
     locale: "en_PK",
+    images: [
+      {
+        url: "https://gethubb.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "HUBB — Order food delivery from 500+ restaurants",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -103,6 +111,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        <link rel="preconnect" href="https://api-vtadzgdqca-uc.a.run.app" />
+        <link rel="dns-prefetch" href="https://api-vtadzgdqca-uc.a.run.app" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -16,7 +16,8 @@ export default function RestaurantCard({ restaurant }: { restaurant: Restaurant 
       className="group block rounded-2xl card-hover"
       style={{
         background: "var(--bg-card)",
-        boxShadow: "var(--shadow-sm)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06)",
+        border: "1px solid color-mix(in srgb, var(--border-default) 50%, transparent)",
       }}
     >
       {/* Image */}
