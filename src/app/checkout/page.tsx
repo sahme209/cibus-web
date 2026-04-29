@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useCart } from "@/lib/store";
 import { useAuth, useAddress } from "@/lib/store";
 import { useToast } from "@/components/ToastProvider";
@@ -652,14 +653,34 @@ export default function CheckoutPage() {
               {cart.restaurantName}
             </p>
             {cart.items.map((ci) => (
-              <div
-                key={ci.id}
-                className="flex justify-between text-sm"
-              >
-                <span style={{ color: "var(--text-secondary)" }}>
-                  {ci.quantity}× {ci.foodItem.name}
-                </span>
-                <span style={{ color: "var(--text-primary)" }}>
+              <div key={ci.id} className="flex items-center gap-3">
+                {ci.foodItem.imageURL ? (
+                  <Image
+                    src={ci.foodItem.imageURL}
+                    alt={ci.foodItem.name}
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 rounded-lg object-cover shrink-0"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-lg shrink-0 flex items-center justify-center" style={{ background: "var(--bg-search)" }}>
+                    <span className="text-lg">🍽️</span>
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate" style={{ color: "var(--text-primary)" }}>
+                    {ci.foodItem.name}
+                  </p>
+                  {ci.selectedOptions.length > 0 && (
+                    <p className="text-[11px] truncate" style={{ color: "var(--text-tertiary)" }}>
+                      {ci.selectedOptions.map((o) => o.name).join(", ")}
+                    </p>
+                  )}
+                  <p className="text-xs mt-0.5" style={{ color: "var(--text-secondary)" }}>
+                    Qty: {ci.quantity}
+                  </p>
+                </div>
+                <span className="text-sm font-semibold shrink-0" style={{ color: "var(--text-primary)" }}>
                   Rs. {Math.round(ci.quantity * ci.foodItem.price)}
                 </span>
               </div>

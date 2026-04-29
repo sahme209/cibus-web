@@ -8,6 +8,7 @@ import PromoBanner from "@/components/PromoBanner";
 import PopularItems from "@/components/PopularItems";
 import QuickReorder from "@/components/QuickReorder";
 import RecentlyViewed from "@/components/RecentlyViewed";
+import PickedForYou from "@/components/PickedForYou";
 import FilterBar from "@/components/FilterBar";
 import { useAuth } from "@/lib/store";
 import type { Restaurant } from "@/lib/types";
@@ -223,6 +224,7 @@ export default function HomePage() {
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8"><RecentlyViewed /></section>
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8"><QuickReorder /></section>
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8"><PickedForYou /></section>
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8"><PopularItems /></section>
 
       {/* Fastest Near You */}

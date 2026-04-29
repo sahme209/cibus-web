@@ -81,9 +81,11 @@ function SearchContent() {
   const [searched, setSearched] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [inputFocused, setInputFocused] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const [activeFilters, setActiveFilters] = useState<Record<FilterKey, boolean>>({ freeDelivery: false, rating4plus: false, under30min: false });
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const suggestRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     setRecentSearches(getRecentSearches());
@@ -126,11 +128,21 @@ function SearchContent() {
   const handleInputChange = (value: string) => {
     setQuery(value);
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (suggestRef.current) clearTimeout(suggestRef.current);
     if (value.trim().length >= 2) {
       setDebouncing(true);
-      debounceRef.current = setTimeout(() => { setDebouncing(false); doSearch(value); }, 400);
+      debounceRef.current = setTimeout(() => { setDebouncing(false); doSearch(value); setSuggestions([]); }, 400);
+      suggestRef.current = setTimeout(() => {
+        const q = value.toLowerCase();
+        const matches = [
+          ...CATEGORIES.map((c) => c.name),
+          ...TRENDING,
+        ].filter((s) => s.toLowerCase().includes(q) && s.toLowerCase() !== q);
+        setSuggestions(matches.slice(0, 5));
+      }, 100);
     } else {
       setDebouncing(false);
+      setSuggestions([]);
       if (!value.trim()) {
         setSearched(false);
         setResults([]);
@@ -230,6 +242,32 @@ function SearchContent() {
               Search
             </button>
           </form>
+          {/* Autocomplete suggestions */}
+          {suggestions.length > 0 && inputFocused && !loading && (
+            <div
+              className="absolute left-4 right-4 top-full mt-1 rounded-xl py-1 z-50 animate-fade-in overflow-hidden"
+              style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-lg)", border: "1px solid var(--border-default)" }}
+            >
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  onMouseDown={(e) => { e.preventDefault(); setQuery(s); doSearch(s); setSuggestions([]); inputRef.current?.blur(); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:opacity-80"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  <svg className="w-4 h-4 shrink-0" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <span dangerouslySetInnerHTML={{
+                    __html: s.replace(
+                      new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'),
+                      '<strong>$1</strong>'
+                    ),
+                  }} />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import FoodItemCard from "@/components/FoodItemCard";
+import RestaurantCard from "@/components/RestaurantCard";
 import { useCart } from "@/lib/store";
 import { useToast } from "@/components/ToastProvider";
 import * as api from "@/lib/api";
@@ -23,6 +24,7 @@ export default function RestaurantDetailPage() {
   const [specialInstructions, setSpecialInstructions] = useState("");
   const [menuSearch, setMenuSearch] = useState("");
   const [showStoreInfo, setShowStoreInfo] = useState(false);
+  const [similarRestaurants, setSimilarRestaurants] = useState<Restaurant[]>([]);
   const { cart, subtotal, itemCount, addItem } = useCart();
   const { showToast } = useToast();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -74,6 +76,19 @@ export default function RestaurantDetailPage() {
         const categories = menuData.categories || menuData.menu || menuData || [];
         setMenu(categories);
         if (categories.length > 0) setActiveSection(categories[0].id);
+        try {
+          const all = await api.getRestaurants(33.6844, 73.0479, 15);
+          const similar = all
+            .filter((r: Restaurant) => r.id !== id && r.cuisine === detail.cuisine)
+            .slice(0, 4);
+          if (similar.length < 4) {
+            const others = all.filter((r: Restaurant) => r.id !== id && !similar.some((s: Restaurant) => s.id === r.id)).slice(0, 4 - similar.length);
+            similar.push(...others);
+          }
+          setSimilarRestaurants(similar);
+        } catch {
+          // non-critical
+        }
       } catch {
         // error handled by null state
       } finally {
@@ -576,6 +591,23 @@ export default function RestaurantDetailPage() {
           )}
         </div>
       </div>
+
+      {/* You might also like */}
+      {similarRestaurants.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-xl">👀</span>
+            <h2 className="text-xl font-extrabold tracking-tight" style={{ color: "var(--text-primary)" }}>
+              You might also like
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
+            {similarRestaurants.map((r) => (
+              <RestaurantCard key={r.id} restaurant={r} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Customization modal */}
       {customizingItem && (

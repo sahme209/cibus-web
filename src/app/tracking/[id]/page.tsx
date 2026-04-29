@@ -181,8 +181,8 @@ export default function TrackingPage() {
             style={{ background: "var(--text-primary)" }}
           >
             <div className="text-center relative z-10">
-              <p className="text-sm text-white/60">Estimated Delivery</p>
-              <p className="text-4xl font-bold text-white mt-1">
+              <p className="text-xs font-semibold tracking-wider text-white/50 uppercase">Estimated Delivery</p>
+              <p className="text-4xl font-extrabold text-white mt-1.5 tracking-tight">
                 {order.estimatedDelivery
                   ? new Date(order.estimatedDelivery).toLocaleTimeString("en-PK", {
                       hour: "2-digit",
@@ -190,15 +190,25 @@ export default function TrackingPage() {
                     })
                   : "Calculating..."}
               </p>
+              {order.estimatedDelivery && (() => {
+                const mins = Math.max(0, Math.round((new Date(order.estimatedDelivery).getTime() - Date.now()) / 60000));
+                return mins > 0 ? (
+                  <p className="text-sm text-white/70 mt-1 font-medium">
+                    ~{mins} min remaining
+                  </p>
+                ) : null;
+              })()}
               {/* Horizontal progress bar */}
-              <div className="mt-4 w-full h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.15)" }}>
+              <div className="mt-4 w-full h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.1)" }}>
                 <div
-                  className="h-full rounded-full transition-all duration-500"
+                  className="h-full rounded-full transition-all duration-1000 relative"
                   style={{
-                    background: "var(--hubb-accent)",
+                    background: "linear-gradient(90deg, #00704A, #00A86B)",
                     width: `${Math.min(100, ((currentStep + 1) / STEPS.length) * 100)}%`,
                   }}
-                />
+                >
+                  <div className="absolute inset-0 rounded-full" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)", animation: "shimmer 2s infinite" }} />
+                </div>
               </div>
               <div className="flex justify-between mt-2">
                 <span className="text-[10px] text-white/40">Order Placed</span>
@@ -396,6 +406,46 @@ export default function TrackingPage() {
             </div>
           </div>
         </div>
+
+        {/* Delivery info */}
+        {order.deliveryAddress && (
+          <div
+            className="rounded-2xl p-5 mt-4 animate-fade-up"
+            style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}
+          >
+            <h3 className="font-bold text-sm mb-3" style={{ color: "var(--text-primary)" }}>Delivery Details</h3>
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "var(--hubb-tint)" }}>
+                  <svg className="w-4 h-4" style={{ color: "var(--hubb-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                    {(order.deliveryAddress as any).label || "Delivery Address"}
+                  </p>
+                  <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                    {(order.deliveryAddress as any).street}{(order.deliveryAddress as any).city ? `, ${(order.deliveryAddress as any).city}` : ""}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "var(--bg-search)" }}>
+                  <svg className="w-4 h-4" style={{ color: "var(--text-secondary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                    {(order as any).paymentMethod === "cash" ? "Cash on Delivery" : (order as any).paymentMethod || "Cash on Delivery"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Cancel Order */}
         {canCancel && (
