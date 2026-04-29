@@ -285,11 +285,42 @@ export default function CheckoutPage() {
     >
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
         <h1
-          className="text-2xl font-bold mb-6"
+          className="text-2xl font-bold mb-4"
           style={{ color: "var(--text-primary)" }}
         >
           Checkout
         </h1>
+
+        {/* Progress stepper */}
+        <div className="flex items-center justify-between mb-6">
+          {[
+            { label: "Cart", icon: "M3 3h2l.4 2M7 13h10l4-8H5.4", done: true },
+            { label: "Details", icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z", done: !!selectedAddress },
+            { label: "Payment", icon: "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z", done: !!paymentMethod },
+            { label: "Review", icon: "M5 13l4 4L19 7", done: false },
+          ].map((step, idx, arr) => (
+            <div key={step.label} className="flex items-center flex-1">
+              <div className="flex flex-col items-center">
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
+                  style={{
+                    background: step.done ? "var(--hubb-accent)" : "var(--bg-search)",
+                  }}
+                >
+                  <svg className="w-3.5 h-3.5" style={{ color: step.done ? "white" : "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={step.icon} />
+                  </svg>
+                </div>
+                <span className="text-[10px] font-medium mt-1" style={{ color: step.done ? "var(--hubb-accent)" : "var(--text-tertiary)" }}>
+                  {step.label}
+                </span>
+              </div>
+              {idx < arr.length - 1 && (
+                <div className="flex-1 h-0.5 mx-2 rounded-full" style={{ background: step.done ? "var(--hubb-accent)" : "var(--border-default)" }} />
+              )}
+            </div>
+          ))}
+        </div>
 
         <div className="space-y-5">
           {/* Estimated Delivery */}

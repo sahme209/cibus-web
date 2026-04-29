@@ -9,6 +9,7 @@ const FOOTER_LINKS = {
   "Let Us Help You": [
     { label: "Account Details", href: "/profile" },
     { label: "Order History", href: "/orders" },
+    { label: "HUBB+ Membership", href: "/hubb-plus" },
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
   ],

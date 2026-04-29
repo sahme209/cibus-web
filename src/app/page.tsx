@@ -254,6 +254,63 @@ export default function HomePage() {
         </section>
       )}
 
+      {/* Top Rated Near You */}
+      {!loading && restaurants.length > 0 && (() => {
+        const topRated = [...restaurants].filter(r => r.isOpen && r.rating >= 4.0).sort((a, b) => b.rating - a.rating).slice(0, 8);
+        if (topRated.length < 3) return null;
+        return (
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">⭐</span>
+                <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight" style={{ color: "var(--text-primary)" }}>Top Rated Near You</h2>
+              </div>
+              <Link href="/search?sort=rating" className="text-sm font-semibold px-4 py-2 rounded-full transition-all hover:shadow-sm" style={{ color: "var(--hubb-accent)", background: "var(--hubb-tint)" }}>See All</Link>
+            </div>
+            <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2 stagger-children">
+              {topRated.map((r) => (
+                <Link key={`top-${r.id}`} href={`/restaurant/${r.id}`} className="shrink-0 w-52 rounded-2xl overflow-hidden transition-all hover:-translate-y-1 hover:shadow-md" style={{ background: "var(--bg-card)", boxShadow: "var(--shadow-sm)" }}>
+                  <div className="relative h-32">
+                    {r.imageURL && <Image src={r.imageURL} alt={r.name} fill sizes="208px" className="object-cover" />}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold text-white" style={{ background: "rgba(0,112,74,0.9)" }}>
+                      <span style={{ color: "#FFD700" }}>★</span> {r.rating.toFixed(1)}
+                    </div>
+                    <div className="absolute bottom-2 left-2">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold" style={{ background: "var(--bg-card)", color: "var(--text-primary)" }}>{r.deliveryTime}</span>
+                    </div>
+                  </div>
+                  <div className="p-3">
+                    <p className="text-sm font-bold truncate" style={{ color: "var(--text-primary)" }}>{r.name}</p>
+                    <p className="text-xs truncate mt-0.5" style={{ color: "var(--text-tertiary)" }}>{r.cuisine}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        );
+      })()}
+
+      {/* Free Delivery */}
+      {!loading && restaurants.length > 0 && (() => {
+        const freeDelivery = restaurants.filter(r => r.isOpen && r.deliveryFee === 0).slice(0, 6);
+        if (freeDelivery.length < 2) return null;
+        return (
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🚚</span>
+                <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight" style={{ color: "var(--text-primary)" }}>Free Delivery</h2>
+              </div>
+              <Link href="/search?filter=freeDelivery" className="text-sm font-semibold px-4 py-2 rounded-full transition-all hover:shadow-sm" style={{ color: "var(--hubb-accent)", background: "var(--hubb-tint)" }}>See All</Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
+              {freeDelivery.map((r) => <RestaurantCard key={`free-${r.id}`} restaurant={r} />)}
+            </div>
+          </section>
+        );
+      })()}
+
       {/* Featured */}
       {featured.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10">

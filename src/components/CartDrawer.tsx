@@ -218,6 +218,21 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                 />
               </div>
             </div>
+            {/* HUBB+ savings callout */}
+            <Link
+              href="/hubb-plus"
+              onClick={onClose}
+              className="flex items-center gap-2.5 rounded-xl p-3 transition-all hover:opacity-90"
+              style={{ background: "linear-gradient(135deg, rgba(0,112,74,0.08), rgba(212,175,55,0.08))", border: "1px solid rgba(212,175,55,0.15)" }}
+            >
+              <span className="text-sm font-black shrink-0" style={{ color: "var(--hubb-accent)" }}>HUBB+</span>
+              <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
+                Save <strong style={{ color: "#D4AF37" }}>Rs. {99 + Math.round(subtotal * 0.05)}</strong> on this order
+              </span>
+              <svg className="w-3.5 h-3.5 ml-auto shrink-0" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
             <div className="flex justify-between text-sm">
               <span style={{ color: "var(--text-secondary)" }}>Subtotal</span>
               <span className="font-medium" style={{ color: "var(--text-primary)" }}>Rs. {Math.round(subtotal)}</span>
