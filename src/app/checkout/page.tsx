@@ -653,10 +653,25 @@ export default function CheckoutPage() {
             <h2 className="font-bold text-sm mb-3" style={{ color: "var(--text-primary)" }}>
               Delivery Instructions
             </h2>
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {["Ring the bell", "Don't ring bell", "Call on arrival", "Gate code required", "Leave with guard"].map((preset) => (
+                <button
+                  key={preset}
+                  onClick={() => setDeliveryNote((prev) => prev ? `${prev}, ${preset}` : preset)}
+                  className="px-2.5 py-1 rounded-full text-[11px] font-medium transition-all hover:scale-105"
+                  style={{
+                    background: deliveryNote.includes(preset) ? "var(--hubb-tint)" : "var(--bg-search)",
+                    color: deliveryNote.includes(preset) ? "var(--hubb-accent)" : "var(--text-tertiary)",
+                  }}
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
             <textarea
               value={deliveryNote}
               onChange={(e) => setDeliveryNote(e.target.value)}
-              placeholder="Gate code, building directions, leave at door..."
+              placeholder="Gate code, building directions, special requests..."
               rows={2}
               maxLength={200}
               className="w-full px-4 py-2.5 rounded-xl text-sm resize-none"

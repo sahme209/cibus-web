@@ -10,6 +10,7 @@ import CartDrawer from "./CartDrawer";
 import MobileNav from "./MobileNav";
 import ScrollToTop from "./ScrollToTop";
 import LiveChatWidget from "./LiveChatWidget";
+import AppInstallBanner from "./AppInstallBanner";
 
 function RestaurantSwitchModal() {
   const { pendingSwitch, confirmSwitch, cancelSwitch } = useCart();
@@ -112,6 +113,7 @@ function ShellContent({ children, cartOpen, setCartOpen }: { children: ReactNode
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
       <ScrollToTop />
       <LiveChatWidget />
+      <AppInstallBanner />
       <RestaurantSwitchModal />
     </>
   );
