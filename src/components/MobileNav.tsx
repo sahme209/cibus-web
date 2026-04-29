@@ -62,10 +62,10 @@ export default function MobileNav() {
     <nav
       className="sm:hidden fixed bottom-0 left-0 right-0 z-50 border-t safe-area-bottom"
       style={{
-        background: "color-mix(in srgb, var(--bg-primary) 92%, transparent)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        borderColor: "var(--border-default)",
+        background: "color-mix(in srgb, var(--bg-primary) 75%, transparent)",
+        backdropFilter: "blur(24px) saturate(1.5)",
+        WebkitBackdropFilter: "blur(24px) saturate(1.5)",
+        borderColor: "color-mix(in srgb, var(--border-default) 50%, transparent)",
       }}
       aria-label="Main navigation"
     >

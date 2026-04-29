@@ -241,7 +241,7 @@ export default function HomePage() {
                 Rs. 0 delivery on every order, 5% cashback, and exclusive member deals. Your first month free.
               </p>
             </div>
-            <Link href="/hubb-plus" className="shrink-0 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-105 active:scale-95" style={{ background: "white", color: "var(--hubb-accent)" }}>
+            <Link href="/hubb-plus" className="shrink-0 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-105 active:scale-95 hover:shadow-lg" style={{ background: "white", color: "var(--hubb-accent)" }}>
               Learn More
             </Link>
           </div>
@@ -450,7 +450,7 @@ function LandingPage() {
   const [neighborhoodTab, setNeighborhoodTab] = useState<"areas" | "cuisines" | "chains">("areas");
 
   return (
-    <div style={{ background: "var(--bg-secondary)" }}>
+    <div className="animate-page-enter" style={{ background: "var(--bg-secondary)" }}>
       {/* Hero — DoorDash-style with food imagery */}
       <section className="relative overflow-hidden">
         <Image

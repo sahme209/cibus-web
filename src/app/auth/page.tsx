@@ -479,8 +479,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50 hover:scale-[1.01] active:scale-[0.99]"
-                  style={{ background: "var(--hubb-accent)" }}
+                  className="w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50 hover:scale-[1.01] active:scale-[0.99] btn-gradient"
                 >
                   {loading ? "Signing in..." : "Continue to Sign In"}
                 </button>
@@ -764,8 +763,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50 hover:scale-[1.01] active:scale-[0.99]"
-                  style={{ background: "var(--hubb-accent)" }}
+                  className="w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50 hover:scale-[1.01] active:scale-[0.99] btn-gradient"
                 >
                   {loading ? "Creating account..." : "Sign Up"}
                 </button>

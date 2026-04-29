@@ -31,8 +31,8 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[60] bg-black/40 transition-opacity duration-300"
-        style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }}
+        className="fixed inset-0 z-[60] transition-opacity duration-300"
+        style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", background: "rgba(0,0,0,0.45)", backdropFilter: open ? "blur(4px)" : "none" }}
         onClick={onClose}
       />
 
@@ -240,8 +240,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             <Link
               href="/checkout"
               onClick={onClose}
-              className="block text-center py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99]"
-              style={{ background: "var(--hubb-accent)" }}
+              className="block text-center py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99] btn-gradient"
             >
               Checkout • Rs. {Math.round(total)}
             </Link>

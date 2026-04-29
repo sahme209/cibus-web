@@ -772,8 +772,7 @@ export default function RestaurantDetailPage() {
                 showToast(`${customizingItem.name} added to cart`);
                 setCustomizingItem(null);
               }}
-              className="w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99]"
-              style={{ background: "var(--hubb-accent)" }}
+              className="w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99] btn-gradient"
             >
               Add to Cart • Rs.{" "}
               {Math.round(
@@ -793,8 +792,7 @@ export default function RestaurantDetailPage() {
         >
           <Link
             href="/checkout"
-            className="flex items-center justify-between w-full py-3.5 px-5 rounded-xl text-white font-bold text-sm transition-all hover:scale-[1.01] active:scale-[0.99]"
-            style={{ background: "var(--hubb-accent)" }}
+            className="flex items-center justify-between w-full py-3.5 px-5 rounded-xl text-white font-bold text-sm transition-all hover:scale-[1.01] active:scale-[0.99] btn-gradient"
           >
             <div className="flex items-center gap-2">
               <span
