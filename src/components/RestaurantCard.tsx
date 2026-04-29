@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useFavorites } from "@/lib/store";
 import type { Restaurant } from "@/lib/types";
 
 export default function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const saved = isFavorite(restaurant.id);
   const priceIndicator = restaurant.minimumOrder < 500 ? "$" : restaurant.minimumOrder < 1000 ? "$$" : "$$$";
 
   return (
@@ -51,12 +54,12 @@ export default function RestaurantCard({ restaurant }: { restaurant: Restaurant 
         {/* Favorite button */}
         <button
           type="button"
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(restaurant.id); }}
           className="absolute top-3 right-12 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110"
-          style={{ background: "rgba(255,255,255,0.85)" }}
-          aria-label="Save to favorites"
+          style={{ background: saved ? "rgba(255,59,48,0.15)" : "rgba(255,255,255,0.85)" }}
+          aria-label={saved ? "Remove from favorites" : "Save to favorites"}
         >
-          <svg className="w-4 h-4" style={{ color: "var(--text-secondary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4" style={{ color: saved ? "#FF3B30" : "var(--text-secondary)" }} fill={saved ? "#FF3B30" : "none"} stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           </svg>
         </button>

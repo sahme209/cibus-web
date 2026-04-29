@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import FoodItemCard from "@/components/FoodItemCard";
 import RestaurantCard from "@/components/RestaurantCard";
-import { useCart } from "@/lib/store";
+import { useCart, useFavorites } from "@/lib/store";
 import { useToast } from "@/components/ToastProvider";
 import * as api from "@/lib/api";
 import Link from "next/link";
@@ -26,6 +26,7 @@ export default function RestaurantDetailPage() {
   const [showStoreInfo, setShowStoreInfo] = useState(false);
   const [similarRestaurants, setSimilarRestaurants] = useState<Restaurant[]>([]);
   const { cart, subtotal, itemCount, addItem } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const { showToast } = useToast();
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -202,11 +203,15 @@ export default function RestaurantDetailPage() {
             <span className="text-xs font-semibold text-white hidden sm:inline">Group Order</span>
           </button>
           <button
+            onClick={() => {
+              toggleFavorite(id);
+              showToast(isFavorite(id) ? "Removed from favorites" : "Saved to favorites");
+            }}
             className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition-transform hover:scale-110"
-            style={{ background: "rgba(0,0,0,0.3)" }}
-            aria-label="Save restaurant"
+            style={{ background: isFavorite(id) ? "rgba(255,59,48,0.3)" : "rgba(0,0,0,0.3)" }}
+            aria-label={isFavorite(id) ? "Remove from favorites" : "Save restaurant"}
           >
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-white" fill={isFavorite(id) ? "#FF3B30" : "none"} stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </button>

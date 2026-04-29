@@ -111,6 +111,24 @@ export function useAddress() {
   return useContext(AddressContext);
 }
 
+// --- Favorites Context ---
+
+interface FavoritesContextType {
+  favorites: string[];
+  isFavorite: (restaurantId: string) => boolean;
+  toggleFavorite: (restaurantId: string) => void;
+}
+
+const FavoritesContext = createContext<FavoritesContextType>({
+  favorites: [],
+  isFavorite: () => false,
+  toggleFavorite: () => {},
+});
+
+export function useFavorites() {
+  return useContext(FavoritesContext);
+}
+
 // --- Combined Provider ---
 
 export function StoreProvider({ children }: { children: ReactNode }) {
@@ -294,6 +312,34 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Favorites
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const saved = localStorage.getItem("hubb_favorites");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("hubb_favorites", JSON.stringify(favorites));
+  }, [favorites]);
+
+  const isFavorite = useCallback(
+    (restaurantId: string) => favorites.includes(restaurantId),
+    [favorites]
+  );
+
+  const toggleFavorite = useCallback((restaurantId: string) => {
+    setFavorites((prev) =>
+      prev.includes(restaurantId)
+        ? prev.filter((id) => id !== restaurantId)
+        : [...prev, restaurantId]
+    );
+  }, []);
+
   // Addresses
   const [addresses, setAddresses] = useState<DeliveryAddress[]>([]);
   const [selectedAddress, setSelectedAddress] =
@@ -343,16 +389,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           cancelSwitch,
         }}
       >
-        <AddressContext.Provider
-          value={{
-            addresses,
-            selectedAddress,
-            selectAddress: setSelectedAddress,
-            refreshAddresses,
-          }}
+        <FavoritesContext.Provider
+          value={{ favorites, isFavorite, toggleFavorite }}
         >
-          {children}
-        </AddressContext.Provider>
+          <AddressContext.Provider
+            value={{
+              addresses,
+              selectedAddress,
+              selectAddress: setSelectedAddress,
+              refreshAddresses,
+            }}
+          >
+            {children}
+          </AddressContext.Provider>
+        </FavoritesContext.Provider>
       </CartContext.Provider>
     </AuthContext.Provider>
   );

@@ -10,7 +10,7 @@ import QuickReorder from "@/components/QuickReorder";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import PickedForYou from "@/components/PickedForYou";
 import FilterBar from "@/components/FilterBar";
-import { useAuth } from "@/lib/store";
+import { useAuth, useFavorites } from "@/lib/store";
 import type { Restaurant } from "@/lib/types";
 import * as api from "@/lib/api";
 
@@ -29,6 +29,7 @@ const CATEGORIES = [
 
 export default function HomePage() {
   const { isLoggedIn, user, loading: authLoading } = useAuth();
+  const { favorites } = useFavorites();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [featured, setFeatured] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
@@ -223,6 +224,26 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8"><RecentlyViewed /></section>
+
+      {/* Your Favorites */}
+      {!loading && favorites.length > 0 && restaurants.length > 0 && (() => {
+        const favRestaurants = restaurants.filter(r => favorites.includes(r.id));
+        if (favRestaurants.length === 0) return null;
+        return (
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">❤️</span>
+                <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight" style={{ color: "var(--text-primary)" }}>Your Favorites</h2>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
+              {favRestaurants.slice(0, 6).map((r) => <RestaurantCard key={`fav-${r.id}`} restaurant={r} />)}
+            </div>
+          </section>
+        );
+      })()}
+
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8"><QuickReorder /></section>
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8"><PickedForYou /></section>
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8"><PopularItems /></section>
